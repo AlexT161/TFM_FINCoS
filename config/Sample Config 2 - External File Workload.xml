@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<FINCoS>
+	<TestOptions RT_MODE="1" RT_RESOLUTION="1"
+		TIMESTAMPING_MODE="SEND_TIME" />
+	<Drivers>
+		<Driver address="127.0.0.1" connection="Esper (sample)" name="DRIVER01"
+			threadCount="1">
+			<Workload>
+				<Phase type="External File">
+					<path>./data/Sample_Typed_Timestamped_DataFile.csv</path>
+					<loopCount>5</loopCount>
+					<timestamps contains="true" timeUnit="0" use="true" />
+					<eventTypes contains="true" />
+				</Phase>
+			</Workload>
+			<Logging log="false" />
+		</Driver>
+	</Drivers>
+	<Sinks>
+		<Sink address="127.0.0.1" connection="Esper (sample)" name="SINK01">
+			<Stream>StockAvg</Stream>
+			<Logging fieldsToLog="all" flushInterval="10" log="true"
+				samplingRate="1.0" />
+		</Sink>
+	</Sinks>
+</FINCoS>

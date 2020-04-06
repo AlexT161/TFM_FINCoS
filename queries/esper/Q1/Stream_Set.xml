@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<esper-configuration xmlns="http://www.espertech.com/schema/esper" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="esper-configuration-8.0.xsd">
+  <common>
+    <event-type name="StockTick">
+      <java-util-map>
+        <map-property class="string" name="symbol"/>
+        <map-property class="double" name="price"/>
+        <map-property class="int" name="volume"/>
+        <map-property class="long" name="TS"/>
+      </java-util-map>
+    </event-type>
+    <event-type name="StockAvg">
+      <java-util-map>
+        <map-property class="string" name="symbol"/>
+        <map-property class="double" name="avgPrice"/>
+        <map-property class="long" name="TS"/>
+      </java-util-map>
+    </event-type>
+    <event-type name="Nuevo">
+      <java-util-map>
+        <map-property class="boolean" name="bul"/>
+        <map-property class="int" name="entero"/>
+        <map-property class="long" name="TS"/>
+      </java-util-map>
+    </event-type>
+    <event-type name="Prueba">
+      <java-util-map>
+        <map-property class="int" name="entero"/>
+        <map-property class="double" name="avgEntero"/>
+        <map-property class="long" name="TS"/>
+      </java-util-map>
+    </event-type>
+  </common>
+  <compiler/>
+  <runtime/>
+</esper-configuration>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Esper-Queries>
+      <Query name= "StockAvg" text="select symbol, AVG(price) as avgPrice, StockTick.TS as TS from StockTick.win:time(1 min) group by symbol"/>
+	  <Query name= "Prueba" text="select entero, AVG(entero) as avgEntero, Nuevo.TS as TS from Nuevo.win:time(1 min)"/>
+</Esper-Queries>

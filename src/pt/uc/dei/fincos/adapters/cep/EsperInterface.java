@@ -54,6 +54,7 @@ import pt.uc.dei.fincos.sink.Sink;
 
 import com.espertech.esper.common.client.*;
 import com.espertech.esper.common.client.configuration.Configuration;
+import com.espertech.esper.compiler.client.EPCompilerProvider;
 import com.espertech.esper.runtime.client.*;
 
 /**
@@ -68,9 +69,11 @@ public final class EsperInterface extends CEP_EngineInterface {
     private Configuration esperConfig;
 
     /** Provider os Esper services. */
+    //private EPServiceProvider epService;
     private EPRuntime runtime;
 
     /** Esper runtime. */
+    //private EPRuntime runtime;
     private EPEventService myEvent;
 
     /** Stores schemas for streams whose events are represented as Maps or Object-arrays.*/
@@ -205,13 +208,14 @@ public final class EsperInterface extends CEP_EngineInterface {
         this.esperConfig = new Configuration();
         this.esperConfig.configure(new File(esperConfigurationFile));
         if (useExternalTimer) {
+//            esperConfig.getEngineDefaults().getThreading().setInternalTimerEnabled(false);
             esperConfig.getEngineDefaults().getThreading().setInternalTimerEnabled(false);
         }
 
         parseStreamsList(queriesFile, esperConfigurationFile);
-
+        //this.epService = EPServiceProviderManager.getDefaultProvider(esperConfig);
         this.runtime = EPRuntimeProvider.getDefaultRuntime(esperConfig);
-
+        //this.runtime = epService.getEPRuntime();
         this.myEvent = runtime.getEventService();
         this.status.setStep(Step.CONNECTED);
         this.unlistenedQueries = new ArrayList<EPStatement>();
@@ -335,6 +339,8 @@ public final class EsperInterface extends CEP_EngineInterface {
                             }
                         }
 //                        esperConfig.removeEventType(typeName, true);
+//						  Removed without replacement.
+//                        Undeploying a module removes the event types owned by the module.
 //                        esperConfig.addEventType(typeName, attNames, attTypes);
                         esperConfig.getCommon().addEventType(typeName, attNames, attTypes);
                     }
@@ -391,16 +397,21 @@ public final class EsperInterface extends CEP_EngineInterface {
         stopAllListeners();
 
         // Stops all "internal" queries
-        for (EPStatement q: unlistenedQueries) {
-//            if (!q.isStopped() && !q.isDestroyed()) {
-//                q.stop();
-//            }
-            if (!q.isDestroyed()) {
-                q.undeploy();
+/*        for (EPStatement q: unlistenedQueries) {
+            if (!q.isStopped() && !q.isDestroyed()) {
+                q.stop();
             }
-//            if (!q.isDestroyed()) {
-//                q.destroy();
-//            }
+            if (!q.isDestroyed()) {
+                q.destroy();
+            }
+        }
+        this.runtime.destroy();
+*/
+        for (EPStatement q: unlistenedQueries) {
+            if (!q.isDestroyed()) {
+                q.getStatements()[0].removeListener(this);
+            	q.stop();
+            }
         }
         this.runtime.destroy();
         destroyInstance();
@@ -448,11 +459,12 @@ public final class EsperInterface extends CEP_EngineInterface {
                         System.err.println("WARNING: Query \"" + query.getKey()
                                            + "\" has no registered listener.");
                         System.out.println("Loading query: \n"  + query.getValue());
-//                        EPStatement st = runtime.getEPAdministrator.createEPL(query.getValue(),
+//                      EPStatement st = runtime.getEPAdministrator.createEPL(query.getValue(),
 //                                                                                  query.getKey());
-                        EPDeploymentService st = runtime.getDeploymentService();
+//                      unlistenedQueries.add(st);
 
-//                        unlistenedQueries.add(st);
+                        EPCompiled compiled = EPCompilerProvider.getCompiler().compile(query.getValue(), null);
+                        EPDeployment st = runtime.getDeploymentService().deploy(compiled);
                         unlistenedQueries.add((EPStatement) st);
                     }
                 }
@@ -558,7 +570,14 @@ public final class EsperInterface extends CEP_EngineInterface {
                 i++;
             }
             synchronized (myEvent) {
-                myEvent.sendEvent(mapEvent, eventTypeName);
+            	//runtime.sendEvent(mapEvent, eventTypeName);
+            	
+               /**
+                * sendEvent(Map map, String mapEventTypeName)
+                * Replaced by EPEventService#sendEventMap(Map<String, Object> event, String eventTypeName)              
+            	*/
+            	
+            	myEvent.sendEventMap(mapEvent, eventTypeName);
             }
         } else {
             System.err.println("Unknown event 1 type \"" + eventTypeName + "\"."
@@ -637,7 +656,10 @@ public final class EsperInterface extends CEP_EngineInterface {
             }
 
             synchronized (myEvent) {
-                myEvent.sendEvent(pojoEvent);
+                //myEvent.sendEvent(pojoEvent);
+                //sendEvent(Object object)
+                //Replaced by EPEventService#sendEventBean(Object event, String eventTypeName)
+            	myEvent.sendEventBean(pojoEvent, eventTypeName);
             }
         } catch (ClassNotFoundException cnfe) {
             System.err.println("Unknown event 2 type \"" + eventTypeName
@@ -705,7 +727,10 @@ public final class EsperInterface extends CEP_EngineInterface {
                 }
             }
             synchronized (myEvent) {
-                myEvent.sendEvent(objArrEvent, eventTypeName);
+                //myEvent.sendEvent(objArrEvent, eventTypeName);
+            	//sendEvent(Object[] objectarray, String objectArrayEventTypeName)
+            	//Replaced by EPEventService#sendEventObjectArray(Object[] event, String eventTypeName);
+                myEvent.sendEventObjectArray(objArrEvent, eventTypeName);
             }
         } else {
             System.err.println("Unknown event 3 type \"" + eventTypeName + "\"."
@@ -774,7 +799,10 @@ public final class EsperInterface extends CEP_EngineInterface {
                 i++;
             }
             synchronized (myEvent) {
-                myEvent.sendEvent(mapEvent, eventTypeName);
+            	//sendEvent(Map map, String mapEventTypeName)
+                //myEvent.sendEvent(mapEvent, eventTypeName);
+                //Replaced by EPEventService#sendEventMap(Map<String, Object> event, String eventTypeName)
+                myEvent.sendEventMap(mapEvent, eventTypeName);
             }
         } else {
             System.err.println("Unknown event 4 type \"" + eventTypeName + "\"."
@@ -847,7 +875,10 @@ public final class EsperInterface extends CEP_EngineInterface {
             }
 
             synchronized (myEvent) {
-                myEvent.sendEvent(pojoEvent);
+            	//myEvent.sendEvent(pojoEvent);
+                //sendEvent(Object object)
+                //Replaced by EPEventService#sendEventBean(Object event, String eventTypeName)
+            	myEvent.sendEventBean(pojoEvent, eventTypeName);
             }
         } catch (ClassNotFoundException cnfe) {
             System.err.println("Unknown event 5 type \"" + eventTypeName + "\". "
@@ -924,7 +955,10 @@ public final class EsperInterface extends CEP_EngineInterface {
                 i++;
             }
             synchronized (myEvent) {
-                myEvent.sendEvent(objArrEvent, eventTypeName);
+                //myEvent.sendEvent(objArrEvent, eventTypeName);
+            	//sendEvent(Object[] objectarray, String objectArrayEventTypeName)
+            	//Replaced by EPEventService#sendEventObjectArray(Object[] event, String eventTypeName);
+                myEvent.sendEventObjectArray(objArrEvent, eventTypeName);
             }
         } else {
             System.err.println("Unknown event 6 type \"" + eventTypeName + "\"."
@@ -1011,8 +1045,11 @@ public final class EsperInterface extends CEP_EngineInterface {
      * @param extTimestamp  the latest timestamp
      */
     private void advanceClock(Long extTimestamp) {
-        if (extTimestamp != lastExtTS) { // Time advanced
-            this.myEvent.sendEvent(new CurrentTimeEvent(extTimestamp));
+        if (extTimestamp != lastExtTS) { // Time advanced       	
+        	//New method EPEventService#advanceTime(long time);
+        	//Replaces sendEvent(new CurrentTimeEvent(time))
+        	this.myEvent.advanceTime(extTimestamp);
+            //this.myEvent.sendEvent(new CurrentTimeEvent(extTimestamp));
             lastExtTS = extTimestamp;
         }
     }

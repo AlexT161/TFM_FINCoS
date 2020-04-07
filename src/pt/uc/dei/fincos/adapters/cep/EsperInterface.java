@@ -407,6 +407,7 @@ public final class EsperInterface extends CEP_EngineInterface {
         this.runtime.destroy();
 */
         for (EPStatement q: unlistenedQueries) {
+        	if (!q.isDestroyed()) {
             	try {
 					((EPDeploymentService) q).undeployAll();
 				} catch (EPUndeployException e) {
@@ -414,6 +415,7 @@ public final class EsperInterface extends CEP_EngineInterface {
 					System.out.println("Error en el método disconnect");
 					e.printStackTrace();
 				}
+        	}
         }
         this.runtime.destroy();
         destroyInstance();

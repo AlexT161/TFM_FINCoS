@@ -250,11 +250,11 @@ public final class EsperListener extends OutputListener implements UpdateListene
 				runtime.getDeploymentService().undeploy(query.getDeploymentId());
 			} catch (EPRuntimeDestroyedException e) {
 				// TODO Auto-generated catch block
-				System.out.println("Error en el disconnect");
+				System.out.println("Error en el método disconnect");
 				e.printStackTrace();
 			} catch (EPUndeployException e) {
 				// TODO Auto-generated catch block
-				System.out.println("Error en el disconnect");
+				System.out.println("Error en el método disconnect");
 				e.printStackTrace();
 			}
     		}

@@ -209,7 +209,7 @@ public final class EsperInterface extends CEP_EngineInterface {
         this.esperConfig.configure(new File(esperConfigurationFile));
         if (useExternalTimer) {
 //            esperConfig.getEngineDefaults().getThreading().setInternalTimerEnabled(false);
-            esperConfig.getEngineDefaults().getThreading().setInternalTimerEnabled(false);
+            esperConfig.getRuntime().getThreading().setInternalTimerEnabled(false);
         }
 
         parseStreamsList(queriesFile, esperConfigurationFile);
@@ -395,7 +395,6 @@ public final class EsperInterface extends CEP_EngineInterface {
 
         // Stops all queries with a listener attached
         stopAllListeners();
-
         // Stops all "internal" queries
 /*        for (EPStatement q: unlistenedQueries) {
             if (!q.isStopped() && !q.isDestroyed()) {
@@ -408,10 +407,13 @@ public final class EsperInterface extends CEP_EngineInterface {
         this.runtime.destroy();
 */
         for (EPStatement q: unlistenedQueries) {
-            if (!q.isDestroyed()) {
-                q.getStatements()[0].removeListener(this);
-            	q.stop();
-            }
+            	try {
+					((EPDeploymentService) q).undeployAll();
+				} catch (EPUndeployException e) {
+					// TODO Auto-generated catch block
+					System.out.println("Error en el método disconnect");
+					e.printStackTrace();
+				}
         }
         this.runtime.destroy();
         destroyInstance();

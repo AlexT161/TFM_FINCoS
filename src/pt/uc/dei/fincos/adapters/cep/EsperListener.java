@@ -22,6 +22,8 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 
 import com.espertech.esper.common.client.*;
+import com.espertech.esper.common.client.configuration.Configuration;
+import com.espertech.esper.compiler.client.CompilerArguments;
 import com.espertech.esper.compiler.client.EPCompilerProvider;
 import com.espertech.esper.runtime.client.*;
 
@@ -42,7 +44,9 @@ public final class EsperListener extends OutputListener implements UpdateListene
     /** Reference to the Esper service provider. */
 	//private EPServiceProvider epService;
     private EPRuntime runtime;
-
+    
+    private Configuration configuration;
+    
     /** The query this listener listens to. */
 //    private EPStatement query;
     private EPDeployment query;					
@@ -81,8 +85,9 @@ public final class EsperListener extends OutputListener implements UpdateListene
     	//	Sink sinkInstance, EPServiceProvider epService,
             Sink sinkInstance, EPRuntime runtime,
             String queryOutputName, String queryText,
-            LinkedHashMap<String, String> querySchema, int eventFormat) {
+            LinkedHashMap<String, String> querySchema, int eventFormat, Configuration configuration) {
         super(lsnrID, rtMode, rtResolution, sinkInstance);
+        this.configuration = configuration;
         this.runtime = runtime;
         this.queryText = queryText;
         this.querySchema = querySchema;
@@ -95,7 +100,11 @@ public final class EsperListener extends OutputListener implements UpdateListene
         try {
             System.out.println("Loading query: \n" + queryText);
 //            query = epService.getEPAdministrator().createEPL(queryText, queryOutputName);
-            EPCompiled compiled = EPCompilerProvider.getCompiler().compile(queryText, null);
+            CompilerArguments args = new CompilerArguments(configuration);
+            args.getPath().add(runtime.getRuntimePath());
+            EPCompiled compiled = EPCompilerProvider.getCompiler().compile(queryText, args);
+            
+//            EPCompiled compiled = EPCompilerProvider.getCompiler().compile(queryText, null);
             query = runtime.getDeploymentService().deploy(compiled);
         } catch (Exception e) {
             throw new Exception("Could not create EPL statement ("

@@ -31,6 +31,17 @@
       </java-util-map>
     </event-type>
   </common>
-  <compiler/>
+  <compiler>
+  			<bytecode
+                allow-subscriber="true"
+                access-modifier-context="public"
+                access-modifier-event-type="public"
+                access-modifier-expression="public"
+                access-modifier-named-window="public"
+                access-modifier-script="public"
+                access-modifier-table="public"
+                access-modifier-variable="public"
+                bus-modifier-event-type="bus"/>
+   </compiler>
   <runtime/>
 </esper-configuration>

@@ -54,6 +54,7 @@ import pt.uc.dei.fincos.sink.Sink;
 
 import com.espertech.esper.common.client.*;
 import com.espertech.esper.common.client.configuration.Configuration;
+import com.espertech.esper.compiler.client.CompilerArguments;
 import com.espertech.esper.compiler.client.EPCompilerProvider;
 import com.espertech.esper.runtime.client.*;
 
@@ -206,6 +207,9 @@ public final class EsperInterface extends CEP_EngineInterface {
         String esperConfigurationFile = retrieveConnectionProperty("Configuration_file_path");
 
         this.esperConfig = new Configuration();
+   //     esperConfig.getCompiler().getByteCode().setAllowSubscriber(true);
+   //     esperConfig.getCompiler().getByteCode().setAccessModifiersPublic();
+   //     esperConfig.getCompiler().getByteCode().setBusModifierEventType(EventTypeBusModifier.BUS);
         this.esperConfig.configure(new File(esperConfigurationFile));
         if (useExternalTimer) {
 //            esperConfig.getEngineDefaults().getThreading().setInternalTimerEnabled(false);
@@ -456,7 +460,7 @@ public final class EsperInterface extends CEP_EngineInterface {
                         outputListeners[i] = new EsperListener("lsnr-0" + (i + 1),
                                 rtMode, rtResolution, sinkInstance, this.runtime,
                                 query.getKey(), query.getValue(),
-                                this.streamsSchemas.get(query.getKey()), this.eventFormat);
+                                this.streamsSchemas.get(query.getKey()), this.eventFormat, esperConfig);
                         outputListeners[i].load();
                         i++;
                     } else {
@@ -466,8 +470,11 @@ public final class EsperInterface extends CEP_EngineInterface {
 //                      EPStatement st = runtime.getEPAdministrator.createEPL(query.getValue(),
 //                                                                                  query.getKey());
 //                      unlistenedQueries.add(st);
-
-                        EPCompiled compiled = EPCompilerProvider.getCompiler().compile(query.getValue(), null);
+                        String epl = "@public @buseventtype create schema Test as " + query.getKey() + ";\n" + query.getValue()+";\n";
+                        System.out.println("Consulta:" + epl);
+                        CompilerArguments args = new CompilerArguments(esperConfig);
+                        args.getPath().add(runtime.getRuntimePath());
+                        EPCompiled compiled = EPCompilerProvider.getCompiler().compile(epl, args);
                         EPDeployment st = runtime.getDeploymentService().deploy(compiled);
                         unlistenedQueries.add((EPStatement) st);
                     }
@@ -490,6 +497,7 @@ public final class EsperInterface extends CEP_EngineInterface {
     @Override
     public synchronized void send(Event e) throws Exception {
         if (this.status.getStep() == Step.READY || this.status.getStep() == Step.CONNECTED) {
+        	System.out.println("Event Format:" + this.eventFormat);
             if (this.eventFormat == OBJECT_ARRAY_FORMAT) {
                 sendObjectArrayEvent(e);
             } else if (this.eventFormat == POJO_FORMAT) {

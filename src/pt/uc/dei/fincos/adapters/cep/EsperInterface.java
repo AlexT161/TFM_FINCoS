@@ -610,7 +610,7 @@ public final class EsperInterface extends CEP_EngineInterface {
         try {
             Class<?> eventSchema = Class.forName(eventTypeName);
             Field[] eventFields = eventSchema.getDeclaredFields();
-            Object pojoEvent = eventSchema.newInstance();
+            Object pojoEvent = eventSchema.getDeclaredConstructor().newInstance();
 
             int eventFieldCount = this.rtMode != Globals.NO_RT
                                   ? event.getType().getAttributeCount() + 1
@@ -835,7 +835,7 @@ public final class EsperInterface extends CEP_EngineInterface {
         try {
             Class<?> eventSchema = Class.forName(eventTypeName);
             Field[] eventFields = eventSchema.getDeclaredFields();
-            Object pojoEvent = eventSchema.newInstance();
+            Object pojoEvent = eventSchema.getDeclaredConstructor().newInstance();
 
             int eventFieldCount = this.rtMode != Globals.NO_RT
                                   ? event.getPayload().length + 1

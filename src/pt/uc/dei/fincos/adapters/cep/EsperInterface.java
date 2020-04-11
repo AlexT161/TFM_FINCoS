@@ -298,10 +298,10 @@ public final class EsperInterface extends CEP_EngineInterface {
             typeName = type.getAttribute("name");
             inputStreams.add(typeName);
 
-            if (type.getElementsByTagName("java-util-map") != null
-                    && type.getElementsByTagName("java-util-map").getLength() > 0) {
-                NodeList attributes = ((Element) type.getElementsByTagName("java-util-map").
-                                      item(0)).getElementsByTagName("map-property");
+            if (type.getElementsByTagName("objectarray") != null
+                    && type.getElementsByTagName("objectarray").getLength() > 0) {
+                NodeList attributes = ((Element) type.getElementsByTagName("objectarray").
+                                      item(0)).getElementsByTagName("objectarray-property");
                 // Add streams whose events are represented as Maps or Object-arrays
                 if (this.eventFormat == MAP_FORMAT || this.eventFormat == OBJECT_ARRAY_FORMAT) {
                     typeAtts = new LinkedHashMap<String, String>(attributes.getLength());
@@ -470,13 +470,14 @@ public final class EsperInterface extends CEP_EngineInterface {
 //                      EPStatement st = runtime.getEPAdministrator.createEPL(query.getValue(),
 //                                                                                  query.getKey());
 //                      unlistenedQueries.add(st);
-                        String epl = "@public @buseventtype create schema Test as " + query.getKey() + ";\n" + query.getValue()+";\n";
-                        System.out.println("Consulta:" + epl);
+//                        String epl = "@public @buseventtype create schema Test as " + query.getKey() + ";\n" + query.getValue()+";\n";
+//                        esperConfig = runtime.getConfigurationDeepCopy();
                         CompilerArguments args = new CompilerArguments(esperConfig);
                         args.getPath().add(runtime.getRuntimePath());
-                        EPCompiled compiled = EPCompilerProvider.getCompiler().compile(epl, args);
+                        EPCompiled compiled = EPCompilerProvider.getCompiler().compile(query.getValue(), args);
                         EPDeployment st = runtime.getDeploymentService().deploy(compiled);
-                        unlistenedQueries.add((EPStatement) st);
+                        unlistenedQueries.add(st.getStatements()[0]);
+                        
                     }
                 }
 
@@ -497,7 +498,7 @@ public final class EsperInterface extends CEP_EngineInterface {
     @Override
     public synchronized void send(Event e) throws Exception {
         if (this.status.getStep() == Step.READY || this.status.getStep() == Step.CONNECTED) {
-        	System.out.println("Event Format:" + this.eventFormat);
+//        	System.out.println("Event Format:" + this.eventFormat);
             if (this.eventFormat == OBJECT_ARRAY_FORMAT) {
                 sendObjectArrayEvent(e);
             } else if (this.eventFormat == POJO_FORMAT) {
@@ -549,7 +550,7 @@ public final class EsperInterface extends CEP_EngineInterface {
             if (eventSchema.size() != fieldCount) {
                 System.err.println("ERROR: Number of fields in event \""
                                    + event + "\" (" + (fieldCount)
-                                   + ") does not match schema of event type \""
+                                   + ") does not match schema of event type Map \""
                                    + eventTypeName + "\" ("
                                    + eventSchema.size() + ").");
                 return;
@@ -619,7 +620,7 @@ public final class EsperInterface extends CEP_EngineInterface {
             if (eventFields.length != eventFieldCount) {
                 System.err.println("ERROR: Number of fields in event \"" + event
                                     + "\" (" + (eventFieldCount)
-                                    + ") does not match schema of event type \""
+                                    + ") does not match schema of POJO event type \""
                                     + eventTypeName + "\" ("
                                     + eventFields.length + ").");
                 return;
@@ -707,7 +708,7 @@ public final class EsperInterface extends CEP_EngineInterface {
             if (eventSchema.size() != fieldCount) {
                 System.err.println("ERROR: Number of fields in event \""
                         + event + "\" (" + (fieldCount)
-                        + ") does not match schema of event type \""
+                        + ") does not match schema of event type Object Array \""
                         + eventTypeName + "\" ("
                         + eventSchema.size() + ").");
                 return;
@@ -770,7 +771,7 @@ public final class EsperInterface extends CEP_EngineInterface {
             if (eventSchema.size() != fieldCount) {
                 System.err.println("ERROR: Number of fields in event \""
                         + event + "\" (" + (fieldCount)
-                        + ") does not match schema of event type \""
+                        + ") does not match schema of event type CSV Map \""
                         + eventTypeName + "\" ("
                         + eventSchema.size() + ").");
                 return;
@@ -844,7 +845,7 @@ public final class EsperInterface extends CEP_EngineInterface {
             if (eventFields.length != eventFieldCount) {
                 System.err.println("ERROR: Number of fields in event \""
                                 + event + "\" (" + (eventFieldCount)
-                                + ") does not match schema of event type \""
+                                + ") does not match schema of event type CSV POJO \""
                                 + eventTypeName + "\" ("
                                 + eventFields.length + ").");
                 return;
@@ -928,7 +929,7 @@ public final class EsperInterface extends CEP_EngineInterface {
             if (eventSchema.size() != fieldCount) {
                 System.err.println("ERROR: Number of fields in event \""
                         + event + "\" (" + (fieldCount)
-                        + ") does not match schema of event type \""
+                        + ") does not match schema of event type CSV Object Array \""
                         + eventTypeName + "\" ("
                         + eventSchema.size() + ").");
                 return;

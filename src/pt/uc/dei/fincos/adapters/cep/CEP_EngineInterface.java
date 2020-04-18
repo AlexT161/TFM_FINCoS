@@ -136,12 +136,10 @@ public abstract class CEP_EngineInterface implements InputAdapter {
      */
     protected final String retrieveConnectionProperty(String propertyName) throws Exception {
         String retrievedProperty = this.connProperties.getProperty(propertyName);
-
         if (retrievedProperty == null || retrievedProperty.isEmpty()) {
             throw new Exception("Required connection property \""
                                + propertyName + "\" is missing.");
         }
-
         return retrievedProperty;
     }
 

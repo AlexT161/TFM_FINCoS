@@ -296,7 +296,6 @@ public final class Sink extends JFrame implements SinkRemoteFunctions {
                 showInfo("Connecting to CEP engine...");
                 try {
                     cepEngineInterface.connect();
-                    showInfo("Pasado connect");
                     cepEngineInterface.load(sinkCfg.getOutputStreamList(), this);
                     showInfo("Done!");
                 } catch (Exception e) {

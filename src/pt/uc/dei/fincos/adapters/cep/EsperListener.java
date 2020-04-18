@@ -62,6 +62,8 @@ public final class EsperListener extends OutputListener implements UpdateListene
 
     /** The format used to exchange events with the Esper engine. */
     private int eventFormat;
+    
+ //   private int outputNumber;
 
     /**
      * Constructor for direct communication between Esper and Sink.
@@ -93,6 +95,7 @@ public final class EsperListener extends OutputListener implements UpdateListene
         this.querySchema = querySchema;
         this.queryOutputName = queryOutputName;
         this.setEventFormat(eventFormat);
+   //     this.outputNumber = outputNumber;
     }
 
     @Override
@@ -255,7 +258,7 @@ public final class EsperListener extends OutputListener implements UpdateListene
     public void disconnect() {
     	if (query != null) {
     		try {
-    			query.getStatements()[0].removeListener(this);
+    			query.getStatements()[1].removeListener(this);
 				runtime.getDeploymentService().undeploy(query.getDeploymentId());
 			} catch (EPRuntimeDestroyedException e) {
 				// TODO Auto-generated catch block

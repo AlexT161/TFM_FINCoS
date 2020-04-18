@@ -54,6 +54,7 @@ import pt.uc.dei.fincos.sink.Sink;
 
 import com.espertech.esper.common.client.*;
 import com.espertech.esper.common.client.configuration.Configuration;
+import com.espertech.esper.common.client.util.EventTypeBusModifier;
 import com.espertech.esper.compiler.client.CompilerArguments;
 import com.espertech.esper.compiler.client.EPCompilerProvider;
 import com.espertech.esper.runtime.client.*;
@@ -153,7 +154,7 @@ public final class EsperInterface extends CEP_EngineInterface {
      * @param rtResolution  response time measurement resolution
      *                      (either Milliseconds or Nanoseconds)
      */
-    private EsperInterface(Properties connProps, int rtMode, int rtResolution) {
+    public EsperInterface(Properties connProps, int rtMode, int rtResolution) {
         super(rtMode, rtResolution);
         this.status = new Status(Step.DISCONNECTED, 0);
         this.setConnProperties(connProps);
@@ -207,12 +208,12 @@ public final class EsperInterface extends CEP_EngineInterface {
         String esperConfigurationFile = retrieveConnectionProperty("Configuration_file_path");
 
         this.esperConfig = new Configuration();
-   //     esperConfig.getCompiler().getByteCode().setAllowSubscriber(true);
-   //     esperConfig.getCompiler().getByteCode().setAccessModifiersPublic();
-   //     esperConfig.getCompiler().getByteCode().setBusModifierEventType(EventTypeBusModifier.BUS);
+        esperConfig.getCompiler().getByteCode().setAllowSubscriber(true);
+        esperConfig.getCompiler().getByteCode().setAccessModifiersPublic();
+        esperConfig.getCompiler().getByteCode().setBusModifierEventType(EventTypeBusModifier.BUS);
         this.esperConfig.configure(new File(esperConfigurationFile));
         if (useExternalTimer) {
-//            esperConfig.getEngineDefaults().getThreading().setInternalTimerEnabled(false);
+          //esperConfig.getEngineDefaults().getThreading().setInternalTimerEnabled(false);
             esperConfig.getRuntime().getThreading().setInternalTimerEnabled(false);
         }
 
@@ -416,7 +417,7 @@ public final class EsperInterface extends CEP_EngineInterface {
 					((EPDeploymentService) q).undeployAll();
 				} catch (EPUndeployException e) {
 					// TODO Auto-generated catch block
-					System.out.println("Error en el método disconnect");
+					System.out.println("Error en el método disconnect del EsperInterface");
 					e.printStackTrace();
 				}
         	}
@@ -470,12 +471,15 @@ public final class EsperInterface extends CEP_EngineInterface {
 //                      EPStatement st = runtime.getEPAdministrator.createEPL(query.getValue(),
 //                                                                                  query.getKey());
 //                      unlistenedQueries.add(st);
-//                        String epl = "@public @buseventtype create schema Test as " + query.getKey() + ";\n" + query.getValue()+";\n";
+                        String epl = "@public create schema objectarray as " + query.getKey() + ";\n" + query.getValue()+";\n";
 //                        esperConfig = runtime.getConfigurationDeepCopy();
-                        CompilerArguments args = new CompilerArguments(esperConfig);
-                        args.getPath().add(runtime.getRuntimePath());
-                        EPCompiled compiled = EPCompilerProvider.getCompiler().compile(query.getValue(), args);
-                        EPDeployment st = runtime.getDeploymentService().deploy(compiled);
+                        EPDeployment st = compileDeploy(runtime, epl);
+//                        st.getStatements()[0].addListener(...);
+                        
+     //                    CompilerArguments args = new CompilerArguments(esperConfig);
+     //                   args.getPath().add(runtime.getRuntimePath());
+     //                   EPCompiled compiled = EPCompilerProvider.getCompiler().compile(query.getValue(), args);
+     //                   EPDeployment st = runtime.getDeploymentService().deploy(compiled);
                         unlistenedQueries.add(st.getStatements()[0]);
                         
                     }
@@ -494,7 +498,31 @@ public final class EsperInterface extends CEP_EngineInterface {
             return false;
         }
     }
-
+    
+    public static EPDeployment compileDeploy(EPRuntime runtime, String epl) {
+    	  try {
+    	    // Obtain a copy of the engine configuration
+    		System.out.println("epl: "+epl);
+    	    Configuration configuration = runtime.getConfigurationDeepCopy();
+    	    System.out.println("Configuration OK");
+    	    // Build compiler arguments
+    	    CompilerArguments args = new CompilerArguments(configuration);
+    	    System.out.println("Argumentos construidos");
+    	    // Make the existing EPL objects available to the compiler
+    	    args.getPath().add(runtime.getRuntimePath());
+    	    System.out.println("le da el camino al runtime");
+    	    // Compile
+    	    EPCompiled compiled = EPCompilerProvider.getCompiler().compile(epl, args);
+    	    System.out.println("Compilando Argumentos");
+    	    // Return the deployment
+    	    return runtime.getDeploymentService().deploy(compiled);
+    	  }
+    	  catch (Exception ex) {
+    	    throw new RuntimeException(ex);
+    	  }
+    	}
+    
+    
     @Override
     public synchronized void send(Event e) throws Exception {
         if (this.status.getStep() == Step.READY || this.status.getStep() == Step.CONNECTED) {

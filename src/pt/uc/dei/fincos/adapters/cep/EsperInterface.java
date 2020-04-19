@@ -455,14 +455,18 @@ public final class EsperInterface extends CEP_EngineInterface {
 
             if (outputStreams != null) {
                 this.outputListeners = new EsperListener[outputStreams.length];
+                System.out.println("Longitud de Outputstreams:"+outputStreams.length);
                 int i = 0;
+                System.out.println("Entry Set: "+this.queryNamesAndTexts.entrySet());
                 for (Entry<String, String> query : this.queryNamesAndTexts.entrySet()) {
+                	System.out.println("Clave: "+ query.getKey());
                     if (hasListener(query.getKey(), outputStreams)) {
                         outputListeners[i] = new EsperListener("lsnr-0" + (i + 1),
                                 rtMode, rtResolution, sinkInstance, this.runtime,
                                 query.getKey(), query.getValue(),
                                 this.streamsSchemas.get(query.getKey()), this.eventFormat, esperConfig);
                         outputListeners[i].load();
+                        System.out.println("Creado lsnr-0" + (i + 1));
                         i++;
                     } else {
                         System.err.println("WARNING: Query \"" + query.getKey()
@@ -1073,10 +1077,13 @@ public final class EsperInterface extends CEP_EngineInterface {
      */
     private boolean hasListener(String queryName, String[] listenedQueries) {
         for (int i = 0; i < listenedQueries.length; i++) {
-            if (queryName.equals(listenedQueries[i])) {
+        	System.out.println("ListenedQueries:"+listenedQueries[i]);
+        	if (queryName.equals(listenedQueries[i])) {
+            	System.out.println("Se cumple hasListener");
                 return true;
             }
         }
+        System.out.println("No se cumple hasListener");
         return false;
     }
 

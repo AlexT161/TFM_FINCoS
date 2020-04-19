@@ -3,7 +3,7 @@
     xmlns="http://www.espertech.com/schema/esper"
     xsi:noNamespaceSchemaLocation="esper-configuration-8-0.xsd">
 <common>
-    <event-type name="StockTick">
+   <event-type name="StockTick">
       <objectarray>
         <objectarray-property name="symbol" class="string"/>
         <objectarray-property name="price" class="double"/>
@@ -19,8 +19,7 @@
       </objectarray>
     </event-type>
     <event-type name="Nuevo">
-<!--       <java-util-map> -->
-	<objectarray>
+	  <objectarray>
         <objectarray-property name="bul" class="boolean"/>
         <objectarray-property name="entero" class="int"/>
         <objectarray-property name="TS" class="long"/>

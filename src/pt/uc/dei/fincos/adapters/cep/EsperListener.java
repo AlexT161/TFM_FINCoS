@@ -258,7 +258,7 @@ public final class EsperListener extends OutputListener implements UpdateListene
     public void disconnect() {
     	if (query != null) {
     		try {
-    			query.getStatements()[1].removeListener(this);
+    			query.getStatements()[0].removeListener(this);
 				runtime.getDeploymentService().undeploy(query.getDeploymentId());
 			} catch (EPRuntimeDestroyedException e) {
 				// TODO Auto-generated catch block

@@ -22,14 +22,14 @@
 	  <objectarray>
         <objectarray-property name="bul" class="boolean"/>
         <objectarray-property name="entero" class="int"/>
-        <objectarray-property name="TS" class="long"/>
+        <objectarray-property name="TeS" class="long"/>
       </objectarray>
     </event-type>
     <event-type name="Prueba">
       <objectarray>
         <objectarray-property name="entero" class="int"/>
         <objectarray-property name="avgEntero" class="double"/>
-        <objectarray-property name="TS" class="long"/>
+        <objectarray-property name="TeS" class="long"/>
       </objectarray>
     </event-type>
 <!-- Sample for an variant stream configuration that is a stream of events of multiple types. -->
@@ -45,23 +45,23 @@
 	</logging>    	
   </common>
   <compiler>
-  		<view-resources>
-			<!-- This setting is false by default. When false, multiple expiry policies (EPL statements where a stream has multiple data windows) are allowed and result in an expiry policy that retains the intersection of the data windows. See retain-intersection and retain-union keywords.
+  	<!--	<view-resources>
+			 This setting is false by default. When false, multiple expiry policies (EPL statements where a stream has multiple data windows) are allowed and result in an expiry policy that retains the intersection of the data windows. See retain-intersection and retain-union keywords.
 				   When setting this flag to true, and when multiple expiry policies are specified for a stream, the data windows act by forwarding the insert and remove stream and thus intersecion and union behavior is not available. 
 				   The setting is available for backward-compatilibility to 2.x versions or special cases where custom behavior is desired.
-			-->
+			
 			<allow-multiple-expiry-policy enabled="false"/>
-		<stream-selection>
+		<stream-selection>-->
 			<!-- By default the runtime generates output for the insert stream only, and not for the remove stream. The "istream" is the default. --> 
 			<!-- To obtain output for remove stream only, or for insert stream and remove stream, there are keywords "rstream" and "irstream" for use in the select clause. -->
 			<!-- This setting controls the default behavior, if no keyword is specified in the select-clause by statements. -->
-			<stream-selector value="istream" />
+		<!--	<stream-selector value="istream" />
 		</stream-selection>
-		</view-resources>
+		</view-resources>-->
 		<!-- The "attach-epl" is for passing the EPL to the compiled byte code (the default is true). -->		
 		<!-- By setting all access modifiers to private modules do not see each others definitions (default is private).-->
 		<!-- By setting the bus modifier for event types to hidden we make sure the "sendEvent" does not allow such event types (default is hidden).-->
-  			<bytecode
+  		<!--	<bytecode
                 allow-subscriber="true"
                 access-modifier-context="public"
                 access-modifier-event-type="public"
@@ -71,6 +71,7 @@
                 access-modifier-table="public"
                 access-modifier-variable="public"
                 bus-modifier-event-type="bus"/>
+-->
    </compiler>
   <runtime/>
 </esper-configuration>

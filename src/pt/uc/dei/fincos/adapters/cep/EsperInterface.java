@@ -52,11 +52,11 @@ import pt.uc.dei.fincos.basic.Status;
 import pt.uc.dei.fincos.basic.Step;
 import pt.uc.dei.fincos.sink.Sink;
 
-import com.espertech.esper.common.client.*;
 import com.espertech.esper.common.client.configuration.Configuration;
 import com.espertech.esper.common.client.util.EventTypeBusModifier;
 import com.espertech.esper.compiler.client.CompilerArguments;
 import com.espertech.esper.compiler.client.EPCompilerProvider;
+import com.espertech.esper.common.client.EPCompiled;
 import com.espertech.esper.runtime.client.*;
 
 /**
@@ -459,7 +459,7 @@ public final class EsperInterface extends CEP_EngineInterface {
                 int i = 0;
                 System.out.println("Entry Set: "+this.queryNamesAndTexts.entrySet());
                 for (Entry<String, String> query : this.queryNamesAndTexts.entrySet()) {
-                	System.out.println("Clave: "+ query.getKey());
+                	System.out.println("Clave: "+ query.getKey());                	
                     if (hasListener(query.getKey(), outputStreams)) {
                         outputListeners[i] = new EsperListener("lsnr-0" + (i + 1),
                                 rtMode, rtResolution, sinkInstance, this.runtime,
@@ -475,17 +475,19 @@ public final class EsperInterface extends CEP_EngineInterface {
 //                      EPStatement st = runtime.getEPAdministrator.createEPL(query.getValue(),
 //                                                                                  query.getKey());
 //                      unlistenedQueries.add(st);
-                        String epl = "@public create schema objectarray as " + query.getKey() + ";\n" + query.getValue()+";\n";
+//                        String epl = "@public create schema Fincos as " + query.getKey() + ";\n" + query.getValue()+";\n";
 //                        esperConfig = runtime.getConfigurationDeepCopy();
-                        EPDeployment st = compileDeploy(runtime, epl);
+//                        EPDeployment st = compileDeploy(runtime, epl);
 //                        st.getStatements()[0].addListener(...);
                         
-     //                    CompilerArguments args = new CompilerArguments(esperConfig);
-     //                   args.getPath().add(runtime.getRuntimePath());
-     //                   EPCompiled compiled = EPCompilerProvider.getCompiler().compile(query.getValue(), args);
-     //                   EPDeployment st = runtime.getDeploymentService().deploy(compiled);
+                         CompilerArguments args = new CompilerArguments(esperConfig);
+                        args.getPath().add(runtime.getRuntimePath());
+                        EPCompiled compiled = EPCompilerProvider.getCompiler().compile(query.getValue(), args);
+                        EPDeployment st = runtime.getDeploymentService().deploy(compiled);
                         unlistenedQueries.add(st.getStatements()[0]);
-                        
+                        System.out.println("Statement: " + st.getStatements()[0]);
+                        System.out.println("Unlistened Queries: " + unlistenedQueries);
+                        System.out.println("Creado lsnr-0" + (i + 1));
                     }
                 }
 
@@ -530,7 +532,7 @@ public final class EsperInterface extends CEP_EngineInterface {
     @Override
     public synchronized void send(Event e) throws Exception {
         if (this.status.getStep() == Step.READY || this.status.getStep() == Step.CONNECTED) {
-//        	System.out.println("Event Format:" + this.eventFormat);
+//        	System.out.println("Enviando eventos: " + this.eventFormat);
             if (this.eventFormat == OBJECT_ARRAY_FORMAT) {
                 sendObjectArrayEvent(e);
             } else if (this.eventFormat == POJO_FORMAT) {
@@ -728,7 +730,9 @@ public final class EsperInterface extends CEP_EngineInterface {
      */
     private void sendObjectArrayEvent(Event event) {
         String eventTypeName = event.getType().getName();
+//        System.out.println("Eventtype:"+eventTypeName);
         LinkedHashMap<String, String> eventSchema = streamsSchemas.get(eventTypeName);
+//        System.out.println("EventSchema:"+eventSchema);
         if (eventSchema != null) {
             Object[] objArrEvent = null;
             Object[] payload = event.getValues();
@@ -747,9 +751,14 @@ public final class EsperInterface extends CEP_EngineInterface {
             }
 
             if (this.rtMode == Globals.NO_RT) { // No RT measurement: send event's payload
-                objArrEvent = payload;
+            	System.out.println("objArrEvent:"+objArrEvent);
+            	System.out.println("payload:"+payload);
+            	objArrEvent = payload;
+            	System.out.println("nuevo objArrEvent:"+objArrEvent);                
             } else { // With RT measurement: send event's payload and timestamp
                 objArrEvent = new Object[fieldCount];
+//                System.out.println("objArrEvent:"+objArrEvent);
+//                System.out.println("payload:"+payload);
                 for (int i = 0; i < fieldCount; i++) {
                     if (i == fieldCount - 1) {    // Timestamp field (last one)
                         if (this.rtMode == Globals.ADAPTER_RT) {

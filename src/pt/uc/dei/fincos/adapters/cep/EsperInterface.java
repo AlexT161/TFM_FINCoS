@@ -283,7 +283,6 @@ public final class EsperInterface extends CEP_EngineInterface {
             queryNamesAndTexts.put(queryName, queryText);
         }
         this.outputStreamList = queryNamesAndTexts.keySet().toArray(new String[0]);
-
         // Parsing of Esper's config file (contains streams list)
         Document confDoc = builder.parse(new File(configFile));
         Element xmlFileRoot = confDoc.getDocumentElement();
@@ -455,7 +454,6 @@ public final class EsperInterface extends CEP_EngineInterface {
 
             if (outputStreams != null) {
                 this.outputListeners = new EsperListener[outputStreams.length];
-                System.out.println("Longitud de Outputstreams:"+outputStreams.length);
                 int i = 0;
                 System.out.println("Entry Set: "+this.queryNamesAndTexts.entrySet());
                 for (Entry<String, String> query : this.queryNamesAndTexts.entrySet()) {
@@ -480,12 +478,11 @@ public final class EsperInterface extends CEP_EngineInterface {
 //                        EPDeployment st = compileDeploy(runtime, epl);
 //                        st.getStatements()[0].addListener(...);
                         
-                         CompilerArguments args = new CompilerArguments(esperConfig);
+                        CompilerArguments args = new CompilerArguments(esperConfig);
                         args.getPath().add(runtime.getRuntimePath());
                         EPCompiled compiled = EPCompilerProvider.getCompiler().compile(query.getValue(), args);
                         EPDeployment st = runtime.getDeploymentService().deploy(compiled);
                         unlistenedQueries.add(st.getStatements()[0]);
-                        System.out.println("Statement: " + st.getStatements()[0]);
                         System.out.println("Unlistened Queries: " + unlistenedQueries);
                         System.out.println("Creado lsnr-0" + (i + 1));
                     }

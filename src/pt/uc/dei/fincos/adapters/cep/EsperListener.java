@@ -104,7 +104,6 @@ public final class EsperListener extends OutputListener implements UpdateListene
             System.out.println("Loading query: \n" + queryText);
 //            query = epService.getEPAdministrator().createEPL(queryText, queryOutputName);
             CompilerArguments args = new CompilerArguments(configuration);
-            System.out.println("Argumentos del Listener: "+args);
             System.out.println("queryOutputName: "+queryOutputName);
             args.getPath().add(runtime.getRuntimePath());
             EPCompiled compiled = EPCompilerProvider.getCompiler().compile(queryText, args);

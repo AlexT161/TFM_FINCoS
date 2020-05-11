@@ -432,9 +432,7 @@ public final class EsperInterface extends CEP_EngineInterface {
 
     @Override
     public synchronized String[] getOutputStreamList() throws Exception {
-        return outputStreamList != null
-        ? outputStreamList
-                : new String[0];
+        return outputStreamList != null ? outputStreamList : new String[0];
     }
 
     @Override
@@ -455,7 +453,9 @@ public final class EsperInterface extends CEP_EngineInterface {
             if (outputStreams != null) {
                 this.outputListeners = new EsperListener[outputStreams.length];
                 int i = 0;
-                System.out.println("Entry Set: "+this.queryNamesAndTexts.entrySet());
+                System.out.println("EsperInterface:Entry Set: "+this.queryNamesAndTexts.entrySet());
+                System.out.println("EsperInterface:OutputStreams: " + outputStreams);
+                System.out.println("EsperInterface:Longitud del OS: "+ outputStreams.length);
                 for (Entry<String, String> query : this.queryNamesAndTexts.entrySet()) {
                 	System.out.println("Clave: "+ query.getKey());                	
                     if (hasListener(query.getKey(), outputStreams)) {
@@ -484,7 +484,7 @@ public final class EsperInterface extends CEP_EngineInterface {
                         EPDeployment st = runtime.getDeploymentService().deploy(compiled);
                         unlistenedQueries.add(st.getStatements()[0]);
                         System.out.println("Unlistened Queries: " + unlistenedQueries);
-                        System.out.println("Creado lsnr-0" + (i + 1));
+                        System.out.println("Creado lsnr-0"+ (i + 1)+ " desde Interface" );
                     }
                 }
 
@@ -1083,7 +1083,7 @@ public final class EsperInterface extends CEP_EngineInterface {
      */
     private boolean hasListener(String queryName, String[] listenedQueries) {
         for (int i = 0; i < listenedQueries.length; i++) {
-        	System.out.println("ListenedQueries:"+listenedQueries[i]);
+        	System.out.println("ListenedQueries:"+listenedQueries[i]+" "+listenedQueries.length);
         	if (queryName.equals(listenedQueries[i])) {
             	System.out.println("Se cumple hasListener");
                 return true;

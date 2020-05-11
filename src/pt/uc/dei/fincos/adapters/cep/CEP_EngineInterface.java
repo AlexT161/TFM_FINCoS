@@ -147,7 +147,6 @@ public abstract class CEP_EngineInterface implements InputAdapter {
      * Starts all listeners.
      */
     protected final void startAllListeners() {
-    	System.out.println("Iniciados Listeners");
         if (this.outputListeners != null) {
             for (int i = 0; i < this.outputListeners.length; i++) {
                 if (outputListeners[i] != null) {

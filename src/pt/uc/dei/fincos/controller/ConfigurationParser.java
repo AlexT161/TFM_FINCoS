@@ -690,7 +690,6 @@ public final class ConfigurationParser {
 
         if (isFileOpen()) {
             Element sinksList = (Element) this.xmlFileRoot.getElementsByTagName("Sinks").item(0);
-
             NodeList sinks = sinksList.getElementsByTagName("Sink");
             ret = new SinkConfig[sinks.getLength()];
 
@@ -738,7 +737,7 @@ public final class ConfigurationParser {
                                         streamNames, log, fieldsToLog,
                                         logSamplingRate, logFlushInterval);
             }
-        }
+        }        
         return ret;
     }
 

@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -150,6 +151,9 @@ public final class Controller_GUI extends JFrame {
     /** Singleton instance of the Controller. */
     static Controller_GUI instance;
 
+    //Contador de drivers en el sistema para iniciar los SINKs sincronizadamente
+    private static AtomicInteger driverCounter = new AtomicInteger(0); //jcf
+    
     /**
      *
      * @return     an unique instance of the Controller app
@@ -1462,7 +1466,7 @@ public final class Controller_GUI extends JFrame {
      */
     private void loadDriver(DriverConfig dr) {
         stopGUIRefresh();
-        DriverLoader drLoader = new DriverLoader(dr);
+        DriverLoader drLoader = new DriverLoader(dr, driverCounter);//jcf added driverCounter
         drLoader.execute();
         startGUIRefresh();
     }
@@ -1491,11 +1495,17 @@ public final class Controller_GUI extends JFrame {
             showInfo("Loading components...");
             try {
                 // Call the remote function "load" for each Driver
+            	driverCounter = new AtomicInteger(0); //jcf
                 for (DriverConfig dr : facade.getDriverList()) {
                     loadDriver(dr);
                     Thread.sleep(250);
                 }
-
+                
+                // Esperamos a que se hayan cargado todos los drivers.
+                while (driverCounter.get() != facade.getDriverList().size()) { //jcf
+                	Thread.sleep(100);//jcf
+                }//jcf
+                
                 // Call the remote function "load" for each Sink
                 for (SinkConfig sink : facade.getSinkList()) {
                     loadSink(sink);
@@ -1666,9 +1676,11 @@ public final class Controller_GUI extends JFrame {
     class DriverLoader extends SwingWorker<Boolean, Void> {
 
         DriverConfig dr;
+        private AtomicInteger driverCounter;//jcf
 
-        public DriverLoader(DriverConfig driverConfig) {
+        public DriverLoader(DriverConfig driverConfig, AtomicInteger counter) {//jcf added counter
             this.dr = driverConfig;
+            this.driverCounter = counter; //jcf
         }
 
         @Override
@@ -1687,6 +1699,7 @@ public final class Controller_GUI extends JFrame {
             } catch (Exception e) {
                 showInfo("Error while loading " + dr.getAlias() + "(" + e.getMessage() + ")");
             }
+            this.driverCounter.incrementAndGet();//jcf
 
             return ret;
 

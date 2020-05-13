@@ -104,7 +104,7 @@ public final class EsperListener extends OutputListener implements UpdateListene
             System.out.println("Loading query: \n" + queryText);
 //            query = epService.getEPAdministrator().createEPL(queryText, queryOutputName);
             CompilerArguments args = new CompilerArguments(configuration);
-            System.out.println("queryOutputName: "+queryOutputName);
+            System.out.println("EsperListener:queryOutputName: "+queryOutputName);
             args.getPath().add(runtime.getRuntimePath());
             EPCompiled compiled = EPCompilerProvider.getCompiler().compile(queryText, args);
             
@@ -119,8 +119,8 @@ public final class EsperListener extends OutputListener implements UpdateListene
     @Override
     public void run() {
 //        query.addListener(this);
-    	System.out.println("METODO RUN: "+this);
     	query.getStatements()[0].addListener(this);
+    	System.out.println("EsperLIstener:método run DeploymentID: "+query.getDeploymentId());
     }
 
 
@@ -244,7 +244,6 @@ public final class EsperListener extends OutputListener implements UpdateListene
         return sb.toString();
     }
 
-    @Override
 /*    public void disconnect() {
     	if (query != null) {
     		query.removeListener(this);
@@ -256,22 +255,25 @@ public final class EsperListener extends OutputListener implements UpdateListene
     		            }
     		}
     }*/
-    
+    @Override
     public void disconnect() {
     	if (query != null) {
-    		try {
-    			query.getStatements()[0].removeListener(this);
+			System.out.println("EsperListener: QueryID: "+query.getDeploymentId());
+			query.getStatements()[0].removeListener(this);
+			if (!query.getStatements()[0].isDestroyed()) {
+			try {
 				runtime.getDeploymentService().undeploy(query.getDeploymentId());
 			} catch (EPRuntimeDestroyedException e) {
 				// TODO Auto-generated catch block
-				System.out.println("Error en el método disconnect");
+				System.out.println("EsperListener:Error en el método disconnect");
 				e.printStackTrace();
 			} catch (EPUndeployException e) {
 				// TODO Auto-generated catch block
-				System.out.println("Error en el método disconnect");
+				System.out.println("EsperListener:Error en el método disconnect");
 				e.printStackTrace();
 			}
     		}
+    	}
     }
     /**
      * Sets the format used to exchange events with the Esper engine.

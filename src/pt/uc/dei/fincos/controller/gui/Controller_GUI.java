@@ -23,6 +23,8 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -57,6 +59,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
@@ -465,6 +468,7 @@ public final class Controller_GUI extends JFrame {
         // Menu Test
         testMenu = new JMenu("Test");
         loadMenuItem = new JMenuItem("Load");
+        loadMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_DOWN_MASK)); //JAT
         loadMenuItem.addActionListener(new ActionListener() {
 
             @Override
@@ -473,6 +477,7 @@ public final class Controller_GUI extends JFrame {
             }
         });
         startMenuItem = new JMenuItem("Start");
+        startMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK)); //JAT
         startMenuItem.addActionListener(new ActionListener() {
 
             @Override
@@ -489,6 +494,7 @@ public final class Controller_GUI extends JFrame {
             }
         });
         stopMenuItem = new JMenuItem("Stop");
+        stopMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK)); //JAT
         stopMenuItem.addActionListener(new ActionListener() {
 
             @Override

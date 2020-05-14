@@ -410,12 +410,11 @@ public final class EsperInterface extends CEP_EngineInterface {
 */
         for (EPStatement q: unlistenedQueries) {
         	if (!q.isDestroyed()) {
-            	try {
-            		runtime.getDeploymentService().undeploy(q.getDeploymentId());
+            	try { //JAT
+            		runtime.getDeploymentService().undeploy(q.getDeploymentId()); //JAT
 	//				((EPDeploymentService) q).undeployAll();
 				} catch (EPUndeployException e) {
 					// TODO Auto-generated catch block
-					System.out.println("EsperInterface:Error en el método disconnect del EsperInterface");
 					e.printStackTrace();
 				}
         	}

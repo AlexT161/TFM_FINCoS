@@ -103,13 +103,10 @@ public final class EsperListener extends OutputListener implements UpdateListene
         try {
             System.out.println("Loading query: \n" + queryText);
 //            query = epService.getEPAdministrator().createEPL(queryText, queryOutputName);
-            CompilerArguments args = new CompilerArguments(configuration);
-            System.out.println("EsperListener:queryOutputName: "+queryOutputName);
-            args.getPath().add(runtime.getRuntimePath());
-            EPCompiled compiled = EPCompilerProvider.getCompiler().compile(queryText, args);
-            
-//            EPCompiled compiled = EPCompilerProvider.getCompiler().compile(queryText, null);
-            query = runtime.getDeploymentService().deploy(compiled);
+            CompilerArguments args = new CompilerArguments(configuration);	//JAT
+            args.getPath().add(runtime.getRuntimePath());	//JAT
+            EPCompiled compiled = EPCompilerProvider.getCompiler().compile(queryText, args);	//JAT
+            query = runtime.getDeploymentService().deploy(compiled);	//JAT
         } catch (Exception e) {
             throw new Exception("Could not create EPL statement ("
                                 + e.getMessage() + ").");
@@ -119,8 +116,7 @@ public final class EsperListener extends OutputListener implements UpdateListene
     @Override
     public void run() {
 //        query.addListener(this);
-    	query.getStatements()[0].addListener(this);
-    	System.out.println("EsperLIstener:método run DeploymentID: "+query.getDeploymentId());
+    	query.getStatements()[0].addListener(this); //JAT
     }
 
 
@@ -258,18 +254,16 @@ public final class EsperListener extends OutputListener implements UpdateListene
     @Override
     public void disconnect() {
     	if (query != null) {
-			System.out.println("EsperListener: QueryID: "+query.getDeploymentId());
+			System.out.println("EsperListener: disconnect QueryID: "+query.getDeploymentId());
 			query.getStatements()[0].removeListener(this);
 			if (!query.getStatements()[0].isDestroyed()) {
 			try {
 				runtime.getDeploymentService().undeploy(query.getDeploymentId());
 			} catch (EPRuntimeDestroyedException e) {
 				// TODO Auto-generated catch block
-				System.out.println("EsperListener:Error en el método disconnect");
 				e.printStackTrace();
 			} catch (EPUndeployException e) {
 				// TODO Auto-generated catch block
-				System.out.println("EsperListener:Error en el método disconnect");
 				e.printStackTrace();
 			}
     		}

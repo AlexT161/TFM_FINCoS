@@ -394,25 +394,17 @@ public final class EsperInterface extends CEP_EngineInterface {
     @Override
     public synchronized void disconnect() {
         this.status.setStep(Step.DISCONNECTED);
-
         // Stops all queries with a listener attached
+        System.out.println("EsperInterface: Entrando en disconnect");
         stopAllListeners();
-        // Stops all "internal" queries
-/*        for (EPStatement q: unlistenedQueries) {
-            if (!q.isStopped() && !q.isDestroyed()) {
-                q.stop();
-            }
-            if (!q.isDestroyed()) {
-                q.destroy();
-            }
-        }
-        this.runtime.destroy();
-*/
+        // Stops all "internal" queries            
         for (EPStatement q: unlistenedQueries) {
+/*        if (!q.isStopped() && !q.isDestroyed()) {
+                q.stop();
+            }	*/
         	if (!q.isDestroyed()) {
             	try { //JAT
             		runtime.getDeploymentService().undeploy(q.getDeploymentId()); //JAT
-	//				((EPDeploymentService) q).undeployAll();
 				} catch (EPUndeployException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -421,6 +413,26 @@ public final class EsperInterface extends CEP_EngineInterface {
         }
         this.runtime.destroy();
         destroyInstance();
+    }
+    
+    @Override
+    public synchronized void disconnect2() {
+//        this.status.setStep(Step.DISCONNECTED);
+        // Stops all queries with a listener attached
+//        stopAllListeners();
+        System.out.println("EsperInterface: no hace nada");
+        // Stops all "internal" queries            
+/*        for (EPStatement q: unlistenedQueries) {
+         	if (!q.isDestroyed()) {
+            	try {
+            		runtime.getDeploymentService().undeploy(q.getDeploymentId());
+				} catch (EPUndeployException e) {
+					e.printStackTrace();
+				}
+        	}
+        }
+        this.runtime.destroy();
+        destroyInstance();*/
     }
 
     @Override

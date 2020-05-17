@@ -939,7 +939,10 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
                 jmsInterface = null;
             }
             if (cepEngineInterface != null) {
-                cepEngineInterface.disconnect();
+            	System.out.println("Driver.Java:Intentando clean");
+//                cepEngineInterface.disconnect();
+                cepEngineInterface.disconnect2(); //JAT
+            	System.out.println("Driver.Java:Desconectado desde clean");
                 cepEngineInterface = null;
             }
 
@@ -991,7 +994,7 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
                 showInfo("Data generation was stopped.");
             } else if (this.status.getStep() == Step.READY
                     || this.status.getStep() == Step.FINISHED) {
-                this.status.setStep(Step.STOPPED);
+            	this.status.setStep(Step.STOPPED);
                 totalEventsSent = 0;
                 phaseEventsSent = 0;
                 clean();

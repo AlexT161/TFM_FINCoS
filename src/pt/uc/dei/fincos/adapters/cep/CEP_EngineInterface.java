@@ -96,7 +96,7 @@ public abstract class CEP_EngineInterface implements InputAdapter {
      * (e.g. close listeners for output streams)
      */
     public abstract void disconnect();
-
+    public abstract void disconnect2();
 
     /**
      * Retrieves the list of input streams on the CEP engine
@@ -150,8 +150,7 @@ public abstract class CEP_EngineInterface implements InputAdapter {
         if (this.outputListeners != null) {
             for (int i = 0; i < this.outputListeners.length; i++) {
                 if (outputListeners[i] != null) {
-                	System.out.println("CEP_EngineInterface:Listener "+outputListeners[i]+" ID: "+outputListeners[i].getId());
-                    outputListeners[i].start();
+                	outputListeners[i].start();
                 }
             }
         }
@@ -163,10 +162,8 @@ public abstract class CEP_EngineInterface implements InputAdapter {
     protected final void stopAllListeners() {
         if (this.outputListeners != null) {
             for (int i = 0; i < this.outputListeners.length; i++) {
-            		System.out.println("CEP_EngineInterface:long "+this.outputListeners.length);
-            		System.out.println("CEP_EngineInterface:i "+i);
                 if (outputListeners[i] != null) {
-                	System.out.println("CEP_EngineInterface:Desconectar Listener "+i+" ID: "+outputListeners[i].getId());
+                	System.out.println("CEP_EngineInterface:Desconectar Listener ID: "+outputListeners[i].getId());
                     outputListeners[i].disconnect();
                 }
             }

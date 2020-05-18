@@ -417,12 +417,12 @@ public final class EsperInterface extends CEP_EngineInterface {
     
     @Override
     public synchronized void disconnect2() {
-//        this.status.setStep(Step.DISCONNECTED);
-        // Stops all queries with a listener attached
-//        stopAllListeners();
-        System.out.println("EsperInterface: no hace nada");
+//        this.status.setStep(Step.DISCONNECTED); //desconecta todo
+//		  Stops all queries with a listener attached
+//        stopAllListeners(); //desconecta todo
+        System.out.println("EsperInterface.disconnect2: detiene las queries internas");
         // Stops all "internal" queries            
-/*        for (EPStatement q: unlistenedQueries) {
+        for (EPStatement q: unlistenedQueries) {
          	if (!q.isDestroyed()) {
             	try {
             		runtime.getDeploymentService().undeploy(q.getDeploymentId());
@@ -431,8 +431,8 @@ public final class EsperInterface extends CEP_EngineInterface {
 				}
         	}
         }
-        this.runtime.destroy();
-        destroyInstance();*/
+/*        this.runtime.destroy(); //Destruir el runtime genera error si aún hay hilos enviando eventos
+        destroyInstance(); */
     }
 
     @Override

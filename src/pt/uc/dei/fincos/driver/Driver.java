@@ -939,10 +939,8 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
                 jmsInterface = null;
             }
             if (cepEngineInterface != null) {
-            	System.out.println("Driver.Java:clean previo a disconnect2()");
 //                cepEngineInterface.disconnect();
                 cepEngineInterface.disconnect2(); //JAT
-            	System.out.println("Driver.Java:Desconectado desde método clean");
                 cepEngineInterface = null;
             }
 

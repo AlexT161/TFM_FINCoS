@@ -112,12 +112,12 @@ public final class Controller_GUI extends JFrame {
 
     // Menu
     private JMenuBar menuBar = new JMenuBar();
-    private JMenu fileMenu, driverMenu, sinkMenu, testMenu, alterLoadFactorMenuItem, viewMenu;
+    private JMenu fileMenu, driverMenu, sinkMenu, testMenu, alterLoadFactorMenuItem, viewMenu, queryMenu, schemaMenu;
     private JMenuItem profileLoadMenuItem, saveMenuItem, saveAsMenuItem, exitMenuItem,
             newDriverMenuItem, editDriverMenuItem, deleteDriverMenuItem,
             newSinkMenuItem, editSinkMenuItem, deleteSinkMenuItem,
             loadMenuItem, startMenuItem, pauseMenuItem, stopMenuItem, switchMenuItem, optionsMenuItem,
-            connectionsMenuItem, perfmonMenuItem;
+            connectionsMenuItem, perfmonMenuItem, newQueryMenuItem, editQueryMenuItem, deleteQueryMenuItem, newSchemaMenuItem, editSchemaMenuItem, deleteSchemaMenuItem;
     private ButtonGroup rateFactorGroup;
 
     // ToolBar
@@ -598,11 +598,84 @@ public final class Controller_GUI extends JFrame {
             }
         });
         perfmonMenuItem.setEnabled(false);
+        
         viewMenu.add(connectionsMenuItem);
         viewMenu.add(perfmonMenuItem);
-
+        
+        //Menu Queries JAT
+        queryMenu = new JMenu("Queries");
+        
+        newQueryMenuItem = new JMenuItem("New...");
+        newQueryMenuItem.addActionListener(new ActionListener(){
+        	
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		System.out.println("Crear nueva query, se debe tener un esquema");
+        	}
+        });
+        
+        editQueryMenuItem = new JMenuItem("Edit...");
+        editQueryMenuItem.addActionListener(new ActionListener(){
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        	System.out.println("Editar Stream");
+        	}
+        });
+        
+        deleteQueryMenuItem = new JMenuItem("Delete");
+        deleteQueryMenuItem.addActionListener(new ActionListener(){
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		if (JOptionPane.showConfirmDialog(null, "Delete Query(ies)?", "Confirm Delete", JOptionPane.YES_NO_OPTION)
+                        == JOptionPane.YES_OPTION) {
+                    deleteQueries();
+        		}
+        	}
+        });
+        
+        queryMenu.add(newQueryMenuItem);
+        queryMenu.add(editQueryMenuItem);
+        queryMenu.add(deleteQueryMenuItem);
+        
+        //Menu Schemas JAT
+        schemaMenu = new JMenu("Schemas");
+        
+        newSchemaMenuItem = new JMenuItem("New...");
+        newSchemaMenuItem.addActionListener(new ActionListener(){
+        	
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		System.out.println("Crear nuevo esquema");
+        	}
+        });
+        
+        editSchemaMenuItem = new JMenuItem("Edit...");
+        editSchemaMenuItem.addActionListener(new ActionListener(){
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        	System.out.println("Editar Esquema");
+        	}
+        });
+        
+        deleteSchemaMenuItem = new JMenuItem("Delete");
+        deleteSchemaMenuItem.addActionListener(new ActionListener(){
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		if (JOptionPane.showConfirmDialog(null, "Delete Schema(s)?", "Confirm Delete", JOptionPane.YES_NO_OPTION)
+                        == JOptionPane.YES_OPTION) {
+                    deleteSchemas();
+        		}
+        	}
+        });
+        
+        schemaMenu.add(newSchemaMenuItem);
+        schemaMenu.add(editSchemaMenuItem);
+        schemaMenu.add(deleteSchemaMenuItem);
+        
         menuBar.add(fileMenu);
+        menuBar.add(schemaMenu);
         menuBar.add(driverMenu);
+        menuBar.add(queryMenu);
         menuBar.add(sinkMenu);
         menuBar.add(testMenu);
         menuBar.add(viewMenu);
@@ -1372,6 +1445,22 @@ public final class Controller_GUI extends JFrame {
         }
     }
 
+    /**
+     * Removes one or more Stream Schema from the Stream_Set.xml // JAT
+     *
+     */
+    public void deleteSchemas() {
+    	System.out.println("Borrar Esquema");
+    }
+    
+    /**
+     * Removes one or more Queries from the Query_Set.xml // JAT
+     *
+     */
+    public void deleteQueries() {
+    	System.out.println("Borrar Consulta");
+    }
+    
     /**
      * Updates the GUI with information about the Status of the components (Drivers and Sinks).
      */

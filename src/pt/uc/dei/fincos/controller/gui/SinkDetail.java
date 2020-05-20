@@ -25,8 +25,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.LinkedHashMap;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -35,6 +37,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import pt.uc.dei.fincos.basic.Globals;
 import pt.uc.dei.fincos.controller.ConnectionConfig;
@@ -54,10 +62,12 @@ public final class SinkDetail extends ComponentDetail {
     private static final long serialVersionUID = 594175403586841062L;
 
     private SinkConfig oldCfg;
+    
+    private LinkedHashMap<String, String> queryNamesAndTexts;
 
     private JPopupMenu streamsPopup = new JPopupMenu();
-
-    /**
+	
+	/**
      * Creates new form for editing a Sink configuration.
      *
      * @param sink  a Sink configuration
@@ -90,7 +100,7 @@ public final class SinkDetail extends ComponentDetail {
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
-
+    
     /**
      * Fills the UI with the parameters of a Sink configuration.
      *
@@ -366,6 +376,29 @@ public final class SinkDetail extends ComponentDetail {
         connCombo.setSelectedIndex(connCombo.getModel().getSize() - 2);
     }
 
+    private String[] parseStreamsList() throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder;
+        builder = factory.newDocumentBuilder();
+        String queriesFile = "./queries/esper/Q1/Query_Set.xml";
+        // Parsing of Queries file
+        Document doc = builder.parse(new File(queriesFile));
+        Element queriesList = doc.getDocumentElement();
+        NodeList queries = queriesList.getElementsByTagName("Query");
+        Element query;
+        String queryName;
+        this.queryNamesAndTexts = new LinkedHashMap<String, String>(queries.getLength());
+        String [] streamList;
+        // Iterates over list of queries/output streams
+        for (int i = 0; i < queries.getLength(); i++) {
+            query = (Element) queries.item(i);
+            queryName = query.getAttribute("name");
+            queryNamesAndTexts.put(queryName,null);
+        }
+        streamList = queryNamesAndTexts.keySet().toArray(new String[0]);
+		return streamList;
+    }
+    
     private void addListeners() {
         okBtn.addActionListener(new ActionListener() {
             @Override
@@ -431,7 +464,14 @@ public final class SinkDetail extends ComponentDetail {
                 if (evt.getClickCount() == 2 && index != -1) {
                     String currentName =
                             (String) ((DefaultListModel) streamsList.getModel()).get(index);
-                    String newName = JOptionPane.showInputDialog("New stream name:", currentName);
+                    String[] lista = null; //JAT
+    				try {
+    					lista = parseStreamsList();
+    				} catch (Exception e1) {
+    					e1.printStackTrace();
+    				}
+                    String newName = (String) JOptionPane.showInputDialog(null,"Stream name:","Streams",JOptionPane.QUESTION_MESSAGE,null,lista,currentName); //JAT                 
+//                   String newName = JOptionPane.showInputDialog("New stream name:", currentName);
                     if (newName == null) {
                         return;
                     } else if (newName.isEmpty()) {
@@ -472,9 +512,17 @@ public final class SinkDetail extends ComponentDetail {
         streamsPopup.add(deleteStream);
 
         addStream.addActionListener(new ActionListener() {
-            @Override
+
+			@Override
             public void actionPerformed(ActionEvent e) {
-                String streamName = JOptionPane.showInputDialog("Stream name:");
+                String[] lista = null; //JAT
+				try {
+					lista = parseStreamsList();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+            	String streamName = (String) JOptionPane.showInputDialog(null,"Stream name:","Streams",JOptionPane.QUESTION_MESSAGE,null,lista,lista[1]); //JAT
                 if (streamName == null) {
                     return;
                 } else if (streamName.isEmpty()) {
@@ -621,7 +669,7 @@ public final class SinkDetail extends ComponentDetail {
 
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+	// Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField addressField;
     private javax.swing.JLabel addressLabel;
     private javax.swing.JTextField aliasField;

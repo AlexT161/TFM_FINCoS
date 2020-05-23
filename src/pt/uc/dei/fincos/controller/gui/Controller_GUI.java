@@ -386,7 +386,42 @@ public final class Controller_GUI extends JFrame {
         fileMenu.add(saveMenuItem);
         fileMenu.add(saveAsMenuItem);
         fileMenu.add(exitMenuItem);
-
+        
+        //Menu Schemas JAT
+        schemaMenu = new JMenu("Schemas");
+        
+        newSchemaMenuItem = new JMenuItem("New...");
+        newSchemaMenuItem.addActionListener(new ActionListener(){
+        	
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		new SchemaDetail(null).setVisible(true);
+        	}
+        });
+        
+        editSchemaMenuItem = new JMenuItem("Edit...");
+        editSchemaMenuItem.addActionListener(new ActionListener(){
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        	System.out.println("Editar Esquema");
+        	}
+        });
+        
+        deleteSchemaMenuItem = new JMenuItem("Delete");
+        deleteSchemaMenuItem.addActionListener(new ActionListener(){
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		if (JOptionPane.showConfirmDialog(null, "Delete Schema(s)?", "Confirm Delete", JOptionPane.YES_NO_OPTION)
+                        == JOptionPane.YES_OPTION) {
+                    deleteSchemas();
+        		}
+        	}
+        });
+        
+        schemaMenu.add(newSchemaMenuItem);
+        schemaMenu.add(editSchemaMenuItem);
+        schemaMenu.add(deleteSchemaMenuItem);
+        
         // Menu Driver
         driverMenu = new JMenu("Drivers");
         newDriverMenuItem = new JMenuItem("New...");
@@ -637,40 +672,7 @@ public final class Controller_GUI extends JFrame {
         queryMenu.add(editQueryMenuItem);
         queryMenu.add(deleteQueryMenuItem);
         
-        //Menu Schemas JAT
-        schemaMenu = new JMenu("Schemas");
         
-        newSchemaMenuItem = new JMenuItem("New...");
-        newSchemaMenuItem.addActionListener(new ActionListener(){
-        	
-        	@Override
-        	public void actionPerformed(ActionEvent e) {
-        		System.out.println("Crear nuevo esquema");
-        	}
-        });
-        
-        editSchemaMenuItem = new JMenuItem("Edit...");
-        editSchemaMenuItem.addActionListener(new ActionListener(){
-        	@Override
-        	public void actionPerformed(ActionEvent e) {
-        	System.out.println("Editar Esquema");
-        	}
-        });
-        
-        deleteSchemaMenuItem = new JMenuItem("Delete");
-        deleteSchemaMenuItem.addActionListener(new ActionListener(){
-        	@Override
-        	public void actionPerformed(ActionEvent e) {
-        		if (JOptionPane.showConfirmDialog(null, "Delete Schema(s)?", "Confirm Delete", JOptionPane.YES_NO_OPTION)
-                        == JOptionPane.YES_OPTION) {
-                    deleteSchemas();
-        		}
-        	}
-        });
-        
-        schemaMenu.add(newSchemaMenuItem);
-        schemaMenu.add(editSchemaMenuItem);
-        schemaMenu.add(deleteSchemaMenuItem);
         
         menuBar.add(fileMenu);
         menuBar.add(schemaMenu);

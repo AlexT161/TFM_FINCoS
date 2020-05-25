@@ -391,6 +391,7 @@ public final class Controller_GUI extends JFrame {
         schemaMenu = new JMenu("Schemas");
         
         newSchemaMenuItem = new JMenuItem("New...");
+        newSchemaMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.ALT_GRAPH_DOWN_MASK)); // Hot key Alt+k
         newSchemaMenuItem.addActionListener(new ActionListener(){
         	
         	@Override
@@ -403,7 +404,7 @@ public final class Controller_GUI extends JFrame {
         editSchemaMenuItem.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent e) {
-        	System.out.println("Editar Esquema");
+        	System.out.println("Controller_GUI:Editar Esquema");
         	}
         });
         
@@ -1452,7 +1453,7 @@ public final class Controller_GUI extends JFrame {
      *
      */
     public void deleteSchemas() {
-    	System.out.println("Borrar Esquema");
+    	System.out.println("Controller_GUI:Borrar Esquema");
     }
     
     /**
@@ -1460,7 +1461,7 @@ public final class Controller_GUI extends JFrame {
      *
      */
     public void deleteQueries() {
-    	System.out.println("Borrar Consulta");
+    	System.out.println("Controller_GUI:Borrar Consulta");
     }
     
     /**

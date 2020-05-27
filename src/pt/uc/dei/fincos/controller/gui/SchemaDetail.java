@@ -167,9 +167,6 @@ public class SchemaDetail extends ComponentDetail{
             };
 
         detailTable.setModel(model);
-//        TableColumn tc = detailTable.getColumnModel().getColumn(1);
-//        TableCellEditor tce = new DefaultCellEditor(dataTypeCombo);
-//        tc.setCellEditor(tce);
         
         detailTable.setPreferredScrollableViewportSize(new Dimension(150, 70));
         scrollType.setViewportView(detailTable);
@@ -187,9 +184,39 @@ public class SchemaDetail extends ComponentDetail{
         okBtn.setIcon(new ImageIcon("imgs/ok.png"));
         okBtn.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {            	
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    if (validateFields()) {
+                        String typeName = eventNameField.getText();
+                        Attribute[] atts = new Attribute[columns.size()];
+                        atts = columns.toArray(atts);
+                        EventType newType = new EventType(typeName, atts);
+
+                        switch (op) {
+                        case UPDATE:
+                            WriteStream.updateEventType(oldType, newType);
+                            dispose();
+                            break;
+                        case INSERT:
+                            WriteStream.addEventType(newType);
+                            dispose();
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "One or more required fields were not correctly filled.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (Exception exc) {
+                    JOptionPane.showMessageDialog(null, exc.getMessage());
+                }
+            }
+            	
+            /*	if(detailTable.getRowCount()==0 || eventNameField.getText().equals("")) {
+					JOptionPane.showMessageDialog(null,"Please fill out all data fields");
+				} else {
             	System.out.println("SchemaDetail: Guardar Stream");
-          }
+            	
+				propertyNameField.setText("");
+				}
+            }*/
         });
         
         //Add the data to the JTable with the properties of the event
@@ -279,7 +306,7 @@ public class SchemaDetail extends ComponentDetail{
             eventNameField.setBackground(defaultColor);
         }
 
-        if (detailTable.getRowCount() <= 1) {
+        if (detailTable.getRowCount() < 1) {
             detailTable.setBackground(INVALID_INPUT_COLOR);
             ret = false;
         } else {

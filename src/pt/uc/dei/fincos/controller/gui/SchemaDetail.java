@@ -1,12 +1,15 @@
 
 package pt.uc.dei.fincos.controller.gui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
@@ -14,12 +17,18 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
@@ -39,11 +48,15 @@ public class SchemaDetail extends ComponentDetail{
 
 	private JButton okBtn;
 	private JButton cancelBtn;
+	private JButton addBtn;
 	private JTable detailTable;
 	private JTextField eventNameField;
+	private JTextField propertyNameField;
 	private JLabel typeLabel;
+	private JLabel propertyLabel;
 	private JPanel schemaPanel;
 	private JScrollPane scrollType;
+	private JPopupMenu detailTablePopup;
 	
 	/** Previous properties of the data type (when the form is open for update). */
     private EventType oldType;
@@ -69,7 +82,7 @@ public class SchemaDetail extends ComponentDetail{
             setTitle("New Event Type");
         }
         
-        this.setSize(250, 300);
+        this.setSize(270, 350);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         this.setVisible(true);
@@ -80,12 +93,16 @@ public class SchemaDetail extends ComponentDetail{
 	private void initComponents() {
 		detailTable = new JTable();
 		typeLabel = new JLabel();
+		propertyLabel = new JLabel();
 		okBtn = new JButton();
 		cancelBtn = new JButton();
+		addBtn = new JButton();
 		eventNameField = new JTextField();
+		propertyNameField = new JTextField();
         schemaPanel = new JPanel();
         scrollType = new JScrollPane();
         dataTypeCombo = new JComboBox();
+        detailTablePopup = new JPopupMenu();
         
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Event Type Detail");
@@ -94,31 +111,48 @@ public class SchemaDetail extends ComponentDetail{
         typeLabel.setText("Event Type:");
         typeLabel.setBounds(14,10,100,25);
         add(typeLabel);
+        
         eventNameField.setBounds(14,38,100,25);
         add(eventNameField);
         
-        schemaPanel.setBounds(30,100,200,130);
+        schemaPanel.setBounds(30,153,200,130);
         schemaPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),"Properties"));    
         this.getContentPane().add(schemaPanel);
         
         cancelBtn.setText("Cancel");
         cancelBtn.setPreferredSize(null);
-        cancelBtn.setBounds(43,240,100,34);
+        cancelBtn.setBounds(43,282,100,34);
         add(cancelBtn);
         
         okBtn.setText("OK");
         okBtn.setPreferredSize(null);
-        okBtn.setBounds(145,240,100,34);
+        okBtn.setBounds(145,282,100,34);
         add(okBtn);
         
+        propertyLabel.setText("Property:");
+        propertyLabel.setBounds(14,70,100,20);
+        add(propertyLabel);
+        
+        propertyNameField.setBounds(14,100,100,25);
+        add(propertyNameField);
+        
+        dataTypeCombo.setModel(new DefaultComboBoxModel(new String[] { "BOOLEAN", "DOUBLE", "FLOAT", "INTEGER", "LONG", "TEXT" }));
+        dataTypeCombo.setBounds(120,100,110,25);
+        add(dataTypeCombo);
+        
+        addBtn.setText("Add property");
+        addBtn.setPreferredSize(null);
+        addBtn.setBounds(64,130,120,20);
+        add(addBtn);
+        
         String [] columnsName = {"Name", "Data Type"};
-        Object	[][] data = {null};
+        Object	[][] data = {};
         DefaultTableModel model = new DefaultTableModel(data,columnsName) {
             Class[] types = new Class [] {
-                    String.class, JComboBox.class
+                    String.class, String.class
                 };
                 boolean[] canEdit = new boolean [] {
-                    true, true
+                    false, false
                 };
 
                 @Override
@@ -132,19 +166,16 @@ public class SchemaDetail extends ComponentDetail{
                 }
             };
 
-        dataTypeCombo.setModel(new DefaultComboBoxModel(new String[] { "BOOLEAN", "DOUBLE", "FLOAT", "INTEGER", "LONG", "TEXT" }));
         detailTable.setModel(model);
-        TableColumn tc = detailTable.getColumnModel().getColumn(1);
-        TableCellEditor tce = new DefaultCellEditor(dataTypeCombo);
-        tc.setCellEditor(tce);
+//        TableColumn tc = detailTable.getColumnModel().getColumn(1);
+//        TableCellEditor tce = new DefaultCellEditor(dataTypeCombo);
+//        tc.setCellEditor(tce);
         
         detailTable.setPreferredScrollableViewportSize(new Dimension(150, 70));
         scrollType.setViewportView(detailTable);
         schemaPanel.add(scrollType);
 	}
 
-
-	
 	private void addListeners() {
         cancelBtn.setIcon(new ImageIcon("imgs/cancel.png"));
         cancelBtn.addActionListener(new ActionListener() {
@@ -160,6 +191,56 @@ public class SchemaDetail extends ComponentDetail{
             	System.out.println("SchemaDetail: Guardar Stream");
           }
         });
+        
+        //Add the data to the JTable with the properties of the event
+        addBtn.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//Validation (no leave blank data)
+				if(propertyNameField.getText().equals("")) {
+					JOptionPane.showMessageDialog(null,"Please fill out all data fields");
+				} else {
+					String combotext = (String) dataTypeCombo.getSelectedItem();
+					String data[] = {propertyNameField.getText(),combotext};
+					DefaultTableModel newModel = (DefaultTableModel) detailTable.getModel();
+					newModel.addRow(data);
+					propertyNameField.setText("");
+				}
+			}       	
+        });
+        
+        detailTable.addMouseListener(new PopupListener(detailTablePopup));
+        
+        JMenuItem deleteColMenuItem = new JMenuItem("Delete");
+        
+        deleteColMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	DefaultTableModel deleteModel = (DefaultTableModel) detailTable.getModel();
+                if (detailTable.getSelectedRowCount()==1) {
+                    deleteModel.removeRow(detailTable.getSelectedRow());
+                    } else {
+                    JOptionPane.showMessageDialog(null, "Select a column to delete");
+                }
+            }
+        });
+        
+        detailTablePopup.add(deleteColMenuItem);
+                
+        detailTable.getModel().addTableModelListener(new TableModelListener() {
+            public void tableChanged(TableModelEvent e) {
+               int row = e.getFirstRow();
+               int col = e.getColumn();
+               if (row < detailTable.getRowCount() && col != -1
+                   && detailTable.isEditing()) {
+                   String newAttName = (String) detailTable.getValueAt(row, col);
+                   Attribute oldAtt = columns.get(row);
+                   Attribute newAtt = oldAtt.clone();
+                   newAtt.setName(newAttName);
+                   updateColumn(oldAtt, newAtt);
+               }
+            }
+          });
 	}
 	
     /**
@@ -188,10 +269,66 @@ public class SchemaDetail extends ComponentDetail{
     }
 
 	@Override
-	protected boolean validateFields() throws Exception { //temporal
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public boolean validateFields() {
+        boolean ret = true;
+        if (eventNameField.getText() == null || eventNameField.getText().isEmpty()) {
+            eventNameField.setBackground(INVALID_INPUT_COLOR);
+            ret = false;
+        } else {
+            Color defaultColor = UIManager.getColor("TextField.background");
+            eventNameField.setBackground(defaultColor);
+        }
 
+        if (detailTable.getRowCount() <= 1) {
+            detailTable.setBackground(INVALID_INPUT_COLOR);
+            ret = false;
+        } else {
+            Color defaultColor = UIManager.getColor("Table.background");
+            detailTable.setBackground(defaultColor);
+        }
+
+        return ret;
+	}
 	
+    /**
+     * Updates the definition of a attribute of this data type.
+     *
+     * @param oldColumn     the old attribute configuration
+     * @param newColumn     the new attribute configuration
+     */
+    public void updateColumn(Attribute oldColumn, Attribute newColumn) {
+        int index = this.columns.indexOf(oldColumn);
+
+        if (index > -1) {
+            removeColumn(index);
+            addColumn(index, newColumn);
+        }
+    }
+
+    /**
+     * Adds an attribute to this data type.
+     *
+     * @param index         attribute index
+     * @param newColumn     the new attribute
+     */
+    public void addColumn(int index, Attribute newColumn) {
+        this.columns.add(index, newColumn);
+        ((DefaultTableModel) this.detailTable.getModel()).insertRow(index, new Object[] {newColumn.getName(), newColumn.getType()});
+    }
+    
+    /**
+     * Adds an attribute to this data type.
+     *
+     * @param newColumn     the new attribute
+     */
+    public void addColumn(Attribute newColumn) {
+        this.columns.add(newColumn);
+        DefaultTableModel model = ((DefaultTableModel) this.detailTable.getModel());
+        model.insertRow(model.getRowCount() - 1, new Object[] {newColumn.getName(), newColumn.getType()});
+    }
+    
+    private void removeColumn(int index) {
+        this.columns.remove(index);
+        ((DefaultTableModel) detailTable.getModel()).removeRow(index);
+    }
 }

@@ -8,11 +8,12 @@ import pt.uc.dei.fincos.basic.EventType;
 public class WriteStream {
 
 	public static void updateEventType(EventType oldType, EventType newType) {
-		JOptionPane.showMessageDialog(null, "Stream correctly updated.", "Update", JOptionPane.PLAIN_MESSAGE);		
+		JOptionPane.showMessageDialog(null, "Stream correctly updated.", "Update", JOptionPane.INFORMATION_MESSAGE);		
 	}
 
 	public static void addEventType(EventType newType) {
-		JOptionPane.showMessageDialog(null, "¡Stream created!", "Create", JOptionPane.PLAIN_MESSAGE);		
+		JOptionPane.showMessageDialog(null, "¡Stream created!", "Create", JOptionPane.INFORMATION_MESSAGE);
+		System.out.println("WriteStreams:NewType: "+newType);
 	}
 
 }

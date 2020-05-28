@@ -2,16 +2,12 @@
 package pt.uc.dei.fincos.controller.gui;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -30,10 +26,9 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
 
 import pt.uc.dei.fincos.basic.Attribute;
+import pt.uc.dei.fincos.basic.Datatype;
 import pt.uc.dei.fincos.basic.EventType;
 
 
@@ -191,7 +186,6 @@ public class SchemaDetail extends ComponentDetail{
                         Attribute[] atts = new Attribute[columns.size()];
                         atts = columns.toArray(atts);
                         EventType newType = new EventType(typeName, atts);
-
                         switch (op) {
                         case UPDATE:
                             WriteStream.updateEventType(oldType, newType);
@@ -208,18 +202,13 @@ public class SchemaDetail extends ComponentDetail{
                     JOptionPane.showMessageDialog(null, exc.getMessage());
                 }
             }
-            	
-            /*	if(detailTable.getRowCount()==0 || eventNameField.getText().equals("")) {
-					JOptionPane.showMessageDialog(null,"Please fill out all data fields");
-				} else {
-            	System.out.println("SchemaDetail: Guardar Stream");
-            	
-				propertyNameField.setText("");
-				}
-            }*/
         });
         
-        //Add the data to the JTable with the properties of the event
+        /**
+         * 
+         * Adds the data to the JTable and the columns Array List with the properties of the event.
+         *
+         */
         addBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -227,13 +216,30 @@ public class SchemaDetail extends ComponentDetail{
 				if(propertyNameField.getText().equals("")) {
 					JOptionPane.showMessageDialog(null,"Please fill out all data fields");
 				} else {
-					String combotext = (String) dataTypeCombo.getSelectedItem();
-					String data[] = {propertyNameField.getText(),combotext};
+					String type = (String) dataTypeCombo.getSelectedItem();
+					String propertyName = propertyNameField.getText();
+					String[] data = {propertyName,type};
 					DefaultTableModel newModel = (DefaultTableModel) detailTable.getModel();
-					newModel.addRow(data);
-					propertyNameField.setText("");
+					newModel.addRow(data);					
+                    Datatype dataType = null;
+                    if (type.equals("INTEGER")) {
+                        dataType = Datatype.INTEGER;
+                    } else if (type.equals("LONG")) {
+                        dataType = Datatype.LONG;
+                    } else if (type.equals("FLOAT")) {
+                        dataType = Datatype.FLOAT;
+                    } else if (type.equals("DOUBLE")) {
+                        dataType = Datatype.DOUBLE;
+                    } else if (type.equals("TEXT")) {
+                        dataType = Datatype.TEXT;
+                    } else if (type.equals("BOOLEAN")) {
+                        dataType = Datatype.BOOLEAN;
+                    }
+					Attribute att = new Attribute(dataType, propertyName);					
+					columns.add(att);
+	                propertyNameField.setText("");
 				}
-			}       	
+			}
         });
         
         detailTable.addMouseListener(new PopupListener(detailTablePopup));
@@ -244,9 +250,11 @@ public class SchemaDetail extends ComponentDetail{
             @Override
             public void actionPerformed(ActionEvent e) {
             	DefaultTableModel deleteModel = (DefaultTableModel) detailTable.getModel();
-                if (detailTable.getSelectedRowCount()==1) {
-                    deleteModel.removeRow(detailTable.getSelectedRow());
-                    } else {
+            	if (detailTable.getSelectedRowCount()==1) {
+                	int row = detailTable.getSelectedRow();
+                	columns.remove(row);
+                    deleteModel.removeRow(row);
+            	} else {
                     JOptionPane.showMessageDialog(null, "Select a column to delete");
                 }
             }
@@ -354,6 +362,11 @@ public class SchemaDetail extends ComponentDetail{
         model.insertRow(model.getRowCount() - 1, new Object[] {newColumn.getName(), newColumn.getType()});
     }
     
+    /**
+     * Removes an attribute to this data type.
+     *
+     * @param index     the position in the Array List
+     */
     private void removeColumn(int index) {
         this.columns.remove(index);
         ((DefaultTableModel) detailTable.getModel()).removeRow(index);

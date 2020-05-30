@@ -395,7 +395,6 @@ public final class EsperInterface extends CEP_EngineInterface {
     public synchronized void disconnect() {
         this.status.setStep(Step.DISCONNECTED);
         // Stops all queries with a listener attached
-        System.out.println("EsperInterface: Entrando en disconnect");
         stopAllListeners();
         // Stops all "internal" queries            
         for (EPStatement q: unlistenedQueries) {
@@ -417,10 +416,6 @@ public final class EsperInterface extends CEP_EngineInterface {
     
     @Override
     public synchronized void disconnect2() {
-//        this.status.setStep(Step.DISCONNECTED); //desconecta todo
-//		  Stops all queries with a listener attached
-//        stopAllListeners(); //desconecta todo
-        System.out.println("EsperInterface.disconnect2: detiene las queries internas");
         // Stops all "internal" queries            
         for (EPStatement q: unlistenedQueries) {
          	if (!q.isDestroyed()) {
@@ -431,8 +426,6 @@ public final class EsperInterface extends CEP_EngineInterface {
 				}
         	}
         }
-/*        this.runtime.destroy(); //Destruir el runtime genera error si aún hay hilos enviando eventos
-        destroyInstance(); */
     }
 
     @Override
@@ -500,7 +493,13 @@ public final class EsperInterface extends CEP_EngineInterface {
         }
     }
     
-//Método deploy según Versión de Esper 8.4    
+    /**
+     * Deployment for Esper 8.4.  JAT
+     *     
+     * @param runtime     this runtime
+     * @param epl     	  the string epl to deploy
+     * 
+     */   
     public static EPDeployment compileDeploy(EPRuntime runtime, String epl) {
     	  try {
     	    // Obtain a copy of the engine configuration

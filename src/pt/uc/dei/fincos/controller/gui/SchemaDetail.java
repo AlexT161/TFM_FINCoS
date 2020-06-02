@@ -58,32 +58,33 @@ public class SchemaDetail extends ComponentDetail{
     
     /** List of attributes of this data type. */
     private ArrayList<Attribute> columns;
+    
 	@SuppressWarnings("rawtypes")
-	private JComboBox dataTypeCombo;    
+	private JComboBox dataTypeCombo; 
     
     
 	public SchemaDetail(EventType st){
 		super(null);
         this.columns = new ArrayList<Attribute>();
-		initComponents();
-		addListeners();
-		
-        if (st != null) {
-            this.oldType = st;
+        initComponents();
+		addListeners();	
+
+		if (st!=null) {
             this.op = UPDATE;
+            this.oldType = st;
             fillProperties(st);
         } else {
-            this.op = INSERT;
-            setTitle("New Event Type");
+        	this.op = INSERT;
+        	setTitle("New Event Type");
         }
-        
+		
         this.setSize(270, 350);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         this.setVisible(true);
 		
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initComponents() {
 		detailTable = new JTable();
@@ -188,7 +189,7 @@ public class SchemaDetail extends ComponentDetail{
                         EventType newType = new EventType(typeName, atts);
                         switch (op) {
                         case UPDATE:
-                            WriteStream.updateEventType(oldType, newType);
+                            WriteStream.updateEventType(oldType,newType);
                             dispose();
                             break;
                         case INSERT:
@@ -299,8 +300,6 @@ public class SchemaDetail extends ComponentDetail{
             this.columns.add(atts[i]);
             model.addRow(new Object[] {atts[i].getName(), atts[i].getType()});
         }
-
-        model.addRow(new Object[] {null, null});
     }
 
 	@Override

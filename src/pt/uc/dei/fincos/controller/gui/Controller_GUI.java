@@ -31,6 +31,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.rmi.AccessException;
 import java.rmi.ConnectException;
@@ -68,6 +69,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import pt.uc.dei.fincos.basic.Globals;
 import pt.uc.dei.fincos.basic.InvalidStateException;
@@ -404,7 +408,18 @@ public final class Controller_GUI extends JFrame {
         editSchemaMenuItem.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent e) {
-        	System.out.println("Controller_GUI:Editar Esquema");
+        		try {
+					new EditSchema(0).setVisible(true);
+				} catch (ParserConfigurationException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (SAXException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
         	}
         });
         
@@ -412,10 +427,7 @@ public final class Controller_GUI extends JFrame {
         deleteSchemaMenuItem.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent e) {
-        		if (JOptionPane.showConfirmDialog(null, "Delete Schema(s)?", "Confirm Delete", JOptionPane.YES_NO_OPTION)
-                        == JOptionPane.YES_OPTION) {
                     deleteSchemas();
-        		}
         	}
         });
         
@@ -1453,8 +1465,19 @@ public final class Controller_GUI extends JFrame {
      *
      */
     public void deleteSchemas() {
-    	System.out.println("Controller_GUI:Borrar Esquema");
-    }
+    	try {
+			new EditSchema(1).setVisible(true);
+		} catch (ParserConfigurationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (SAXException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
     
     /**
      * Removes one or more Queries from the Query_Set.xml // JAT

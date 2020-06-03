@@ -427,7 +427,7 @@ public final class Controller_GUI extends JFrame {
         deleteSchemaMenuItem.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent e) {
-                    deleteSchemas();
+                deleteSchemas();
         	}
         });
         
@@ -658,6 +658,7 @@ public final class Controller_GUI extends JFrame {
         	
         	@Override
         	public void actionPerformed(ActionEvent e) {
+        		new QueryDetail(null).setVisible(true);
         		System.out.println("Crear nueva query, se debe tener un esquema");
         	}
         });

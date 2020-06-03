@@ -34,28 +34,38 @@ public class EditSchema extends ComponentDetail{
 	private JButton delBtn;
 	private JButton cancelBtn;
 	private HashMap<String, EventType> list;
-	
+
+	private String[] combo;
+		
+	 /**
+	 * JAT 
+     * Edit or delete an Event Type from the Stream_Set file depends on the parameter.
+     *
+     * @param p 	0 for edit, > 0 for delete
+     *
+     */
 	public EditSchema(int p) throws ParserConfigurationException, SAXException, IOException{
 		super(null);
-		File f = new File(STREAM_SET_FILE);
-        if (!f.exists()) {
-        	JOptionPane.showMessageDialog(null, "You must first create an Stream","Error", JOptionPane.ERROR_MESSAGE);
+		File f = new File(STREAM_SET_FILE);       
+		this.list = WriteStream.loadStreams();
+		this.combo = new String[list.size()];
+		if (!f.exists() || list.isEmpty()) {
+        	JOptionPane.showMessageDialog(null, "You must create any Stream Schema first","Error", JOptionPane.ERROR_MESSAGE);
         	dispose();
-        }
-        initComponents(p);
-		addListeners();	
-		
-		if (p==0) {
-			setTitle("Edit Event Type");
         } else {
-        	setTitle("Delete Event Type");
+        	initComponents(p);
+        	addListeners();	
+			if (p==0) {
+				setTitle("Edit Event Type");
+	        } else {
+	        	setTitle("Delete Event Type");
+	        }
+			
+	        this.setSize(250, 150);
+	        this.setLocationRelativeTo(null);
+	        this.setResizable(false);
+	        this.setVisible(true);
         }
-		
-        this.setSize(250, 150);
-        this.setLocationRelativeTo(null);
-        this.setResizable(false);
-        this.setVisible(true);
-		
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -68,7 +78,7 @@ public class EditSchema extends ComponentDetail{
 		
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(null);
-        
+                
         nameLabel.setText("Event Type:");
         nameLabel.setBounds(14,10,100,25);
         add(nameLabel);
@@ -89,10 +99,7 @@ public class EditSchema extends ComponentDetail{
             delBtn.setBounds(128,80,100,34);
             add(delBtn);
         }
-        
-		this.list = WriteStream.loadStreams(STREAM_SET_FILE);
-		String[] combo = new String[list.size()];
-		int count = 0;
+        int count = 0;
 		for (String i : list.keySet()) {
 			  combo[count]=i;
 			  count++;
@@ -127,22 +134,18 @@ public class EditSchema extends ComponentDetail{
             @Override
             public void actionPerformed(ActionEvent e) {
             	String type = (String) streamCombo.getSelectedItem();
-            	if (JOptionPane.showConfirmDialog(null, "Delete Schema"+type+"?", "Confirm Delete", JOptionPane.YES_NO_OPTION)
+            	if (JOptionPane.showConfirmDialog(null, "Delete Schema " + type + " ?", "Confirm Delete", JOptionPane.YES_NO_OPTION)
                         == JOptionPane.YES_OPTION) {
             	EventType setType = list.get(type);
             	try {
 					WriteStream.updateEventType(null,setType);
 				} catch (ParserConfigurationException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (TransformerException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (SAXException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
                 dispose();

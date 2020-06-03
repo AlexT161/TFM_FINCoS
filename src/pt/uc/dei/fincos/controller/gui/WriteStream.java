@@ -42,16 +42,15 @@ public class WriteStream {
         if (!f.exists()) {
             createEmptyFile(STREAM_SET_FILE);
         }
-		HashMap<String, EventType> list = loadStreams(STREAM_SET_FILE);
+		HashMap<String, EventType> list = loadStreams();
     	if (oldType!=null) {
-//    		list.remove(oldType.getName(), oldType);
     		list.put(newType.getName(), newType);
             saveToFile(list, STREAM_SET_FILE);
             JOptionPane.showMessageDialog(null, "Stream correctly updated.", "Update", JOptionPane.INFORMATION_MESSAGE);
     	} else {
     		list.remove(newType.getName(), newType);
             saveToFile(list, STREAM_SET_FILE);
-            JOptionPane.showMessageDialog(null, "¡Stream deleted!", "Delete", JOptionPane.INFORMATION_MESSAGE);			
+            JOptionPane.showMessageDialog(null, "¡Stream deleted!", "Delete", JOptionPane.WARNING_MESSAGE);			
     	}
 	}
 
@@ -66,19 +65,19 @@ public class WriteStream {
         if (!f.exists()) {
             createEmptyFile(STREAM_SET_FILE);
         }
-		HashMap<String, EventType> list = loadStreams(STREAM_SET_FILE);
+		HashMap<String, EventType> list = loadStreams();
 		list.put(newType.getName(), newType);
         saveToFile(list, STREAM_SET_FILE);
 		JOptionPane.showMessageDialog(null, "¡Stream created!", "Create", JOptionPane.INFORMATION_MESSAGE);		
 		System.out.println("WriteStreams:NewType: "+newType);
 	}
 		
-	public static HashMap<String, EventType> loadStreams(String path) throws ParserConfigurationException, SAXException, IOException {
+	public static HashMap<String, EventType> loadStreams() throws ParserConfigurationException, SAXException, IOException {
 		HashMap<String, EventType> streams = new HashMap<String,EventType>(1);
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
         builder = factory.newDocumentBuilder();
-        File streamFile = new File(path);
+        File streamFile = new File(STREAM_SET_FILE);
         Document doc = builder.parse(streamFile);
         Element xmlFileRoot = doc.getDocumentElement();
         if (xmlFileRoot != null) {
@@ -122,7 +121,6 @@ public class WriteStream {
                 streams.put(name, event);
             }      
         }
-        System.out.print("streams"+streams);
 		return streams;
 	}
     

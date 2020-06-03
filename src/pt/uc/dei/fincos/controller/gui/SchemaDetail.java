@@ -5,7 +5,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -30,6 +32,7 @@ import javax.swing.table.DefaultTableModel;
 import pt.uc.dei.fincos.basic.Attribute;
 import pt.uc.dei.fincos.basic.Datatype;
 import pt.uc.dei.fincos.basic.EventType;
+import pt.uc.dei.fincos.basic.Globals;
 
 
 /**
@@ -52,6 +55,9 @@ public class SchemaDetail extends ComponentDetail{
 	private JPanel schemaPanel;
 	private JScrollPane scrollType;
 	private JPopupMenu detailTablePopup;
+	
+	/** Path for the file containing the Streams. */
+    public static final String STREAM_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Prueba_set.xml";
 	
 	/** Previous properties of the data type (when the form is open for update). */
     private EventType oldType;
@@ -183,7 +189,7 @@ public class SchemaDetail extends ComponentDetail{
             public void actionPerformed(ActionEvent ev) {
                 try {
                     if (validateFields()) {
-                        String typeName = eventNameField.getText();
+                        String typeName = eventNameField.getText();                        
                         Attribute[] atts = new Attribute[columns.size()];
                         atts = columns.toArray(atts);
                         EventType newType = new EventType(typeName, atts);
@@ -193,8 +199,27 @@ public class SchemaDetail extends ComponentDetail{
                             dispose();
                             break;
                         case INSERT:
-                            WriteStream.addEventType(newType);
-                            dispose();
+                        	File f = new File(STREAM_SET_FILE);
+                            if (f.exists()) {
+                            	HashMap<String, EventType> list = WriteStream.loadStreams();
+                            	boolean ver = true;
+                            	for (String i : list.keySet()) {           			
+                            		if(eventNameField.getText().equals(i)) {
+                            			ver = false;
+                            		}
+                            	}
+                            	if(ver == false) {
+                            		eventNameField.setBackground(INVALID_INPUT_COLOR);
+                            		JOptionPane.showMessageDialog(null, "Stream Name already used.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+                            	}                   		
+                            	else{
+                            		WriteStream.addEventType(newType);
+                            		dispose();
+                            	}
+                            } else {
+                        		WriteStream.addEventType(newType);
+                        		dispose();
+                        	}
                         }
                     } else {
                         JOptionPane.showMessageDialog(null, "One or more required fields were not correctly filled.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
@@ -303,7 +328,7 @@ public class SchemaDetail extends ComponentDetail{
     }
 
 	@Override
-    public boolean validateFields() {
+    public boolean validateFields(){
         boolean ret = true;
         if (eventNameField.getText() == null || eventNameField.getText().isEmpty()) {
             eventNameField.setBackground(INVALID_INPUT_COLOR);
@@ -312,7 +337,6 @@ public class SchemaDetail extends ComponentDetail{
             Color defaultColor = UIManager.getColor("TextField.background");
             eventNameField.setBackground(defaultColor);
         }
-
         if (detailTable.getRowCount() < 1) {
             detailTable.setBackground(INVALID_INPUT_COLOR);
             ret = false;

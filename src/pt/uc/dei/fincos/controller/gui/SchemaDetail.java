@@ -201,6 +201,7 @@ public class SchemaDetail extends ComponentDetail{
                         case INSERT:
                         	File f = new File(STREAM_SET_FILE);
                             if (f.exists()) {
+                            	WriteStream.open(STREAM_SET_FILE);
                             	HashMap<String, EventType> list = WriteStream.loadStreams();
                             	boolean ver = true;
                             	for (String i : list.keySet()) {           			
@@ -349,7 +350,7 @@ public class SchemaDetail extends ComponentDetail{
 	}
 	
     /**
-     * Updates the definition of a attribute of this data type.
+     * Updates the definition of an attribute of this data type.
      *
      * @param oldColumn     the old attribute configuration
      * @param newColumn     the new attribute configuration

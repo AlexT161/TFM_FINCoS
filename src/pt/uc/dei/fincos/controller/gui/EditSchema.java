@@ -46,7 +46,8 @@ public class EditSchema extends ComponentDetail{
      */
 	public EditSchema(int p) throws ParserConfigurationException, SAXException, IOException{
 		super(null);
-		File f = new File(STREAM_SET_FILE);       
+		File f = new File(STREAM_SET_FILE);
+		WriteStream.open(STREAM_SET_FILE);
 		this.list = WriteStream.loadStreams();
 		this.combo = new String[list.size()];
 		if (!f.exists() || list.isEmpty()) {

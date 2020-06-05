@@ -30,6 +30,8 @@ public class WriteStream {
 	
 	/** Path for the file containing the Streams. */
     public static final String STREAM_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Prueba_set.xml";
+	private static File streamFile;
+	private static Element xmlFileRoot;
     
     /**
      * Update an Event Type with new attributes.
@@ -42,6 +44,7 @@ public class WriteStream {
         if (!f.exists()) {
             createEmptyFile(STREAM_SET_FILE);
         }
+        open(STREAM_SET_FILE);
 		HashMap<String, EventType> list = loadStreams();
     	if (oldType!=null) {
     		list.put(newType.getName(), newType);
@@ -52,6 +55,7 @@ public class WriteStream {
             saveToFile(list, STREAM_SET_FILE);
             JOptionPane.showMessageDialog(null, "¡Stream deleted!", "Delete", JOptionPane.WARNING_MESSAGE);			
     	}
+    	closeFile();
 	}
 
     /**
@@ -65,22 +69,58 @@ public class WriteStream {
         if (!f.exists()) {
             createEmptyFile(STREAM_SET_FILE);
         }
+        open(STREAM_SET_FILE);
 		HashMap<String, EventType> list = loadStreams();
 		list.put(newType.getName(), newType);
         saveToFile(list, STREAM_SET_FILE);
 		JOptionPane.showMessageDialog(null, "¡Stream created!", "Create", JOptionPane.INFORMATION_MESSAGE);		
-		System.out.println("WriteStreams:NewType: "+newType);
 	}
-		
-	public static HashMap<String, EventType> loadStreams() throws ParserConfigurationException, SAXException, IOException {
-		HashMap<String, EventType> streams = new HashMap<String,EventType>(1);
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	
+    /**
+     * Opens a XML file containing the streams.
+     *
+     * @param path      Path to stream file
+     *
+     * @throws ParserConfigurationException     if an error occurs while parsing
+     *                                          the XML setup file
+     * @throws SAXException                     if an error occurs while parsing
+     *                                          the XML setup file
+     * @throws IOException                      for disk I/O errors
+     */
+    public static void open(String path)
+    throws ParserConfigurationException, SAXException, IOException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
         builder = factory.newDocumentBuilder();
-        File streamFile = new File(STREAM_SET_FILE);
+        streamFile = new File(path);
         Document doc = builder.parse(streamFile);
-        Element xmlFileRoot = doc.getDocumentElement();
-        if (xmlFileRoot != null) {
+        xmlFileRoot = doc.getDocumentElement();
+    }
+		
+	public static boolean isFileOpen() {
+		return (xmlFileRoot != null);
+	}
+
+    /**
+     * Unloads parser's stream file.
+     *
+     */
+    public static void closeFile() {
+        xmlFileRoot = null;
+    }
+    
+    /**
+     * Creates a HashMap with the Streams loaded from the Stream_Set XML file.
+     *
+     * @throws ParserConfigurationException 
+     * @throws IOException 
+     * @throws TransformerException
+     * @return streams		HashMap with names and Events
+     *
+     */
+	public static HashMap<String, EventType> loadStreams() throws ParserConfigurationException, SAXException, IOException {
+		HashMap<String, EventType> streams = new HashMap<String,EventType>(1);
+		if(isFileOpen()) {
             Element streamList = (Element) xmlFileRoot.
                     getElementsByTagName("common").item(0);
             NodeList stream = streamList.getElementsByTagName("event-type");
@@ -99,17 +139,17 @@ public class WriteStream {
                     String propName = prop.getAttribute("name");
                     String type = prop.getAttribute("class");
                     Datatype dataType = null;
-                    if (type.equals("INTEGER")) {
+                    if (type.equals("int")) {
                         dataType = Datatype.INTEGER;
-                    } else if (type.equals("LONG")) {
+                    } else if (type.equals("long")) {
                         dataType = Datatype.LONG;
-                    } else if (type.equals("FLOAT")) {
+                    } else if (type.equals("float")) {
                         dataType = Datatype.FLOAT;
-                    } else if (type.equals("DOUBLE")) {
+                    } else if (type.equals("double")) {
                         dataType = Datatype.DOUBLE;
-                    } else if (type.equals("TEXT")) {
+                    } else if (type.equals("string")) {
                         dataType = Datatype.TEXT;
-                    } else if (type.equals("BOOLEAN")) {
+                    } else if (type.equals("boolean")) {
                         dataType = Datatype.BOOLEAN;
                     }                    
                     Attribute att = new Attribute(dataType, propName);	
@@ -157,8 +197,23 @@ public class WriteStream {
 			Attribute[] atributes = event.getAttributes();
 			for(int i=0; i < event.getAttributeCount();i++) {
 				Element property = docu.createElement("objectarray-property");
+				String type = atributes[i].getType().toString();
+				String dataType = null;
+				if (type.equals("INTEGER")) {
+                    dataType = "int";
+                } else if (type.equals("LONG")) {
+                    dataType = "long";
+                } else if (type.equals("FLOAT")) {
+                    dataType = "float";
+                } else if (type.equals("DOUBLE")) {
+                    dataType = "double";
+                } else if (type.equals("TEXT")) {
+                    dataType = "string";
+                } else if (type.equals("BOOLEAN")) {
+                    dataType = "boolean";
+                }
 				property.setAttribute("name", event.getAttributesNames()[i]);
-				property.setAttribute("class", atributes[i].getType().toString());		
+				property.setAttribute("class", dataType);		
 				element.appendChild(property);
 				}
 			eventType.appendChild(element);

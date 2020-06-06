@@ -11,13 +11,13 @@
         <objectarray-property name="TS" class="long"/>
       </objectarray>
     </event-type>
-<!--    <event-type name="StockAvg" type="Output">
+    <event-type name="StockAvg" type="Output">
       <objectarray>
         <objectarray-property name="symbol" class="string"/>
         <objectarray-property name="avgPrice" class="double"/>
         <objectarray-property name="TS" class="long"/>
       </objectarray>
-    </event-type>-->
+    </event-type>
     <event-type name="Nuevo" type="Input">
 	  <objectarray>
         <objectarray-property name="bul" class="boolean"/>
@@ -25,13 +25,13 @@
         <objectarray-property name="TeS" class="long"/>
       </objectarray>
     </event-type>
-<!--    <event-type name="Prueba" type="Output">
+    <event-type name="Prueba" type="Output">
       <objectarray>
         <objectarray-property name="entero" class="int"/>
         <objectarray-property name="avgEntero" class="double"/>
         <objectarray-property name="TeS" class="long"/>
       </objectarray>
-    </event-type>-->
+    </event-type>
     <event-type name="StockAvg2" type="Output">
       <objectarray>
         <objectarray-property name="symbol" class="string"/>
@@ -39,10 +39,11 @@
       </objectarray>
     </event-type>
 <!-- Sample for an variant stream configuration that is a stream of events of multiple types. -->
-<!--	<variant-stream name="MyVariantStream">
-	  <variant-event-type name="StockAvg"/>	
+	<variant-stream name="MyVariantStream">
+	  <variant-event-type name="StockAvg"/>
+	  <variant-event-type name="StockAvg2"/>	
 	  <variant-event-type name="Prueba"/>	
-	</variant-stream>    -->
+	</variant-stream>    
 	<logging>
 		<!-- By default the compiler and runtime do not report JBDC query performance information or other relevant JDBC API information. By setting this flag JDBC query information is measured and logged at information level.-->
 		<jdbc enabled="false" />

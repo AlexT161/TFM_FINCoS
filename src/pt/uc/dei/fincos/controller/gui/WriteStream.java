@@ -51,7 +51,7 @@ public class WriteStream {
             saveToFile(list, STREAM_SET_FILE);
             JOptionPane.showMessageDialog(null, "Stream correctly updated.", "Update", JOptionPane.INFORMATION_MESSAGE);
     	} else {
-    		list.remove(newType.getName(), newType);
+    		list.remove(newType.getName());
             saveToFile(list, STREAM_SET_FILE);
             JOptionPane.showMessageDialog(null, "¡Stream deleted!", "Delete", JOptionPane.WARNING_MESSAGE);			
     	}

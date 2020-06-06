@@ -658,7 +658,7 @@ public final class Controller_GUI extends JFrame {
         	
         	@Override
         	public void actionPerformed(ActionEvent e) {
-        		new QueryDetail(null).setVisible(true);
+        		new PatternDetail(null,null).setVisible(true);
         		System.out.println("Crear nueva query, se debe tener un esquema");
         	}
         });
@@ -667,7 +667,15 @@ public final class Controller_GUI extends JFrame {
         editQueryMenuItem.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent e) {
-        	System.out.println("Editar Stream");
+        		try {
+        			new EditPattern(0).setVisible(true);
+				} catch (ParserConfigurationException e1) {
+					e1.printStackTrace();
+				} catch (SAXException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}        		
         	}
         });
         
@@ -677,7 +685,15 @@ public final class Controller_GUI extends JFrame {
         	public void actionPerformed(ActionEvent e) {
         		if (JOptionPane.showConfirmDialog(null, "Delete Query(ies)?", "Confirm Delete", JOptionPane.YES_NO_OPTION)
                         == JOptionPane.YES_OPTION) {
-                    deleteQueries();
+                    try {
+						deletePattern();
+					} catch (ParserConfigurationException e1) {
+						e1.printStackTrace();
+					} catch (SAXException e1) {
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
         		}
         	}
         });
@@ -1482,11 +1498,14 @@ public final class Controller_GUI extends JFrame {
     
     /**
      * Removes one or more Queries from the Query_Set.xml // JAT
+     * @throws IOException 
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
      *
      */
-    public void deleteQueries() {
-    	System.out.println("Controller_GUI:Borrar Consulta");
-    }
+    public void deletePattern() throws ParserConfigurationException, SAXException, IOException {
+    		new EditPattern(1).setVisible(true);
+    	}
     
     /**
      * Updates the GUI with information about the Status of the components (Drivers and Sinks).

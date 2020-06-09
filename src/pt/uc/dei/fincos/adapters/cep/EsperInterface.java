@@ -470,9 +470,7 @@ public final class EsperInterface extends CEP_EngineInterface {
                         System.out.println("Loading query: \n"  + query.getValue());
 //                      EPStatement st = runtime.getEPAdministrator.createEPL(query.getValue(),
 //                                                                                  query.getKey());
-//                      unlistenedQueries.add(st);
-                        
-//                        String epl = "@public create schema Fincos as " + query.getKey() + ";\n" + query.getValue()+";\n";
+//                      unlistenedQueries.add(st);                        
                         esperConfig = runtime.getConfigurationDeepCopy(); //JAT
                         EPDeployment st = compileDeploy(runtime, query.getValue()); //JAT
                         unlistenedQueries.add(st.getStatements()[0]); //JAT
@@ -497,7 +495,7 @@ public final class EsperInterface extends CEP_EngineInterface {
      * Deployment for Esper 8.4.  JAT
      *     
      * @param runtime     this runtime
-     * @param epl     	  the string epl to deploy
+     * @param epl     	  the text of the Statement to compile and deploy
      * 
      */   
     public static EPDeployment compileDeploy(EPRuntime runtime, String epl) {

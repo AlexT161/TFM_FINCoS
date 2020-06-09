@@ -17,7 +17,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import pt.uc.dei.fincos.basic.EventType;
 import pt.uc.dei.fincos.basic.Globals;
 import pt.uc.dei.fincos.controller.ConfigurationParser;
 
@@ -36,7 +35,7 @@ public class WritePattern {
 	/** Path for the file containing the Queries. */
     public static final String QUERY_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Q_Prueba_set.xml";
 
-	public static void addPattern(String name, String text) throws ParserConfigurationException, TransformerException, IOException, SAXException {
+	public static void addPattern(String name, String text) throws ParserConfigurationException, TransformerException, IOException, SAXException{
 		File f = new File(QUERY_SET_FILE);
         if (!f.exists()) {
             createEmptyFile(QUERY_SET_FILE);
@@ -44,11 +43,12 @@ public class WritePattern {
         open(QUERY_SET_FILE);
         HashMap<String, String> queryList = getPatternList();
         queryList.put(name, text);
+        new QueryStream(name, text);
         saveToFile(queryList, QUERY_SET_FILE);
         JOptionPane.showMessageDialog(null, "Pattern created, please fill out the Attributes", "Create", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
-	public static void updatePattern(String pattern, String text) throws ParserConfigurationException, IOException, TransformerException, SAXException {
+	public static void updatePattern(String name, String text) throws ParserConfigurationException, IOException, TransformerException, SAXException {
 		File f = new File(QUERY_SET_FILE);
         if (!f.exists()) {
             createEmptyFile(QUERY_SET_FILE);
@@ -56,11 +56,12 @@ public class WritePattern {
         open(QUERY_SET_FILE);
 		HashMap<String, String> list = getPatternList();
     	if (text!=null) {
-    		list.put(pattern, text);
+    		list.put(name, text);
+            new QueryStream(name , text);
             saveToFile(list, QUERY_SET_FILE);
             JOptionPane.showMessageDialog(null, "Pattern correctly updated.", "Update", JOptionPane.INFORMATION_MESSAGE);
     	} else {
-    		list.remove(pattern);
+    		list.remove(name);
             saveToFile(list, QUERY_SET_FILE);
             JOptionPane.showMessageDialog(null, "¡Pattern deleted!", "Delete", JOptionPane.WARNING_MESSAGE);			
     	}

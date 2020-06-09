@@ -77,6 +77,14 @@ public class PatternDetail extends ComponentDetail{
         
         nameField.setBounds(110,10,100,25);
         add(nameField);
+        switch (op) {
+        case UPDATE:
+            nameField.setText(oldPattern);
+            nameField.setEditable(false);
+            break;
+        case INSERT:
+        	break;
+        }
         
         patternPanel.setBounds(10,50,480,70);
         patternPanel.setBorder(BorderFactory.createTitledBorder("Pattern"));
@@ -120,20 +128,26 @@ public class PatternDetail extends ComponentDetail{
             	String name= nameField.getText();
             	String qtext = patternField.getText();
             	try {
-					if (validateFields()) {
-						try {
-							WritePattern.addPattern(name,qtext);
-						} catch (ParserConfigurationException e) {
-							e.printStackTrace();
-						} catch (TransformerException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						} catch (SAXException e) {
-							e.printStackTrace();
+					if (validateFields()) {						
+							switch (op) {
+	                        case UPDATE:
+								WritePattern.updatePattern(name,qtext);
+	                            dispose();
+	                            break;
+	                        case INSERT:
+	                        try {
+								WritePattern.addPattern(name,qtext);
+							} catch (ParserConfigurationException e) {
+								e.printStackTrace();
+							} catch (TransformerException e) {
+								e.printStackTrace();
+							} catch (IOException e) {
+								e.printStackTrace();
+							} catch (SAXException e) {
+								e.printStackTrace();
+							}
+							dispose();
 						}
-						//QuerySchema(name);
-						dispose();
 					} else {
 						JOptionPane.showMessageDialog(null, "One or more required fields were not correctly filled.", "Invalid Input", JOptionPane.ERROR_MESSAGE);                    	
 					}

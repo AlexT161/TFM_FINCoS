@@ -50,11 +50,11 @@ public class QueryStream extends ComponentDetail{
         this.text = text;		
 		if (st!=null) {
             this.op = UPDATE;
-            fillProperties(st);
+            splitQuery(this.text);
         } else {
         	this.op = INSERT;
         	setTitle("New Event Type");
-        	parseQuery(this.text);
+        	splitQuery(this.text);
         }
 		
 		initComponents(name);
@@ -67,25 +67,16 @@ public class QueryStream extends ComponentDetail{
 
 	}
 
-	private void parseQuery(String text2) {
-		System.out.println(text2);
-		props.add(text2);		
-	}
-
-	private void fillProperties(EventType type) {
-		Attribute[] atts = type.getAttributes();
-        DefaultTableModel model = (DefaultTableModel) detailTable.getModel();
-
-        int rowCount = model.getRowCount();
-        for (int i = 0; i < rowCount; i++) {
-            model.removeRow(0);
-        }
-
-        for (int i = 0; i < atts.length; i++) {
-            this.columns.add(atts[i]);
-            model.addRow(new Object[] {atts[i].getName(), atts[i].getType()});
-        }
-        props = null;
+	private void splitQuery(String text2) {
+		int beginIndex = text2.indexOf("select")+6;
+		int endIndex = text2.lastIndexOf(" from");
+		String text3 = text2.substring(beginIndex, endIndex);
+		String[] parts = text3.split(",");
+		for (int j = 0; j < parts.length; j++) {
+			String[] split2 = parts[j].split(" ");
+			props.add(split2[split2.length - 1]);
+			System.out.println(props);
+		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

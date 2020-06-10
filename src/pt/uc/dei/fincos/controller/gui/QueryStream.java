@@ -1,10 +1,11 @@
 package pt.uc.dei.fincos.controller.gui;
 
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -23,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
 
 import pt.uc.dei.fincos.basic.Attribute;
 import pt.uc.dei.fincos.basic.Datatype;
+import pt.uc.dei.fincos.basic.EventType;
 
 @SuppressWarnings("serial")
 public class QueryStream extends ComponentDetail{
@@ -35,13 +37,26 @@ public class QueryStream extends ComponentDetail{
 	@SuppressWarnings("rawtypes")
 	private JComboBox dataTypeCombo, propertyCombo;
 	private JPopupMenu detailTablePopup;
-
+	private String name, text;
+	private ArrayList<String> props = new ArrayList<String>();
+	
     /** List of attributes of this data type. */
     private ArrayList<Attribute> columns;
     
-	public QueryStream(String name, String text) {
+	public QueryStream(String name, String text, EventType st) {
 		super(null);
         this.columns = new ArrayList<Attribute>();
+        this.name = name;
+        this.text = text;		
+		if (st!=null) {
+            this.op = UPDATE;
+            fillProperties(st);
+        } else {
+        	this.op = INSERT;
+        	setTitle("New Event Type");
+        	parseQuery(this.text);
+        }
+		
 		initComponents(name);
 		addListeners();
 		
@@ -50,6 +65,27 @@ public class QueryStream extends ComponentDetail{
         this.setResizable(false);
         this.setVisible(true);
 
+	}
+
+	private void parseQuery(String text2) {
+		System.out.println(text2);
+		props.add(text2);		
+	}
+
+	private void fillProperties(EventType type) {
+		Attribute[] atts = type.getAttributes();
+        DefaultTableModel model = (DefaultTableModel) detailTable.getModel();
+
+        int rowCount = model.getRowCount();
+        for (int i = 0; i < rowCount; i++) {
+            model.removeRow(0);
+        }
+
+        for (int i = 0; i < atts.length; i++) {
+            this.columns.add(atts[i]);
+            model.addRow(new Object[] {atts[i].getName(), atts[i].getType()});
+        }
+        props = null;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -92,9 +128,12 @@ public class QueryStream extends ComponentDetail{
         typeLabel.setBounds(120,10,100,20);
         add(typeLabel);
         
-        String[] props = { "P1", "P2", "P3", "P4"};
+        String[] fill = new String[props.size()];
+        for(int i=0; i < props.size(); i++) {
+        	fill[i] = props.get(i);
+        }
         
-        propertyCombo.setModel(new DefaultComboBoxModel(props));
+        propertyCombo.setModel(new DefaultComboBoxModel(fill));
         propertyCombo.setBounds(14,30,110,25);
         add(propertyCombo);
         
@@ -181,12 +220,45 @@ public class QueryStream extends ComponentDetail{
 				}
         });
 		
+        okBtn.setIcon(new ImageIcon("imgs/ok.png"));
+        okBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    if (validateFields()) {               
+                        Attribute[] atts = new Attribute[columns.size()];
+                        atts = columns.toArray(atts);
+                        EventType newType = new EventType(name, atts);
+                        switch (op) {
+                        case UPDATE:
+                            WriteStream.updateEventType(name, newType);
+                            dispose();
+                            break;
+                        case INSERT:
+                        	WriteStream.addEventType(newType);
+                        	dispose();      
+                        }
+                    } else {
+                    	JOptionPane.showMessageDialog(null, "You must assign a type to every attribute","Invalid Input", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (Exception exc) {
+                    JOptionPane.showMessageDialog(null, exc.getMessage());
+                }
+            }
+        });
 	}
 
 	@Override
 	protected boolean validateFields() throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+		boolean ret= true;
+		String propertyName = (String) propertyCombo.getSelectedItem();
+		if (propertyName == null) {
+			ret = true;
+		} else {
+			ret = false;
+			propertyCombo.setBackground(INVALID_INPUT_COLOR);
+		}
+		return ret;
 	}
 
 }

@@ -39,19 +39,19 @@ public class WriteStream {
      * @param udType 	the Event to modify
      *
      */
-    public static void updateEventType(EventType oldType,EventType newType) throws ParserConfigurationException, TransformerException, IOException, SAXException {
+    public static void updateEventType(String oldType,EventType newType) throws ParserConfigurationException, TransformerException, IOException, SAXException {
 		File f = new File(STREAM_SET_FILE);
         if (!f.exists()) {
             createEmptyFile(STREAM_SET_FILE);
         }
         open(STREAM_SET_FILE);
 		HashMap<String, EventType> list = loadStreams();
-    	if (oldType!=null) {
+    	if (newType!=null) {
     		list.put(newType.getName(), newType);
             saveToFile(list, STREAM_SET_FILE);
             JOptionPane.showMessageDialog(null, "Stream correctly updated.", "Update", JOptionPane.INFORMATION_MESSAGE);
     	} else {
-    		list.remove(newType.getName());
+    		list.remove(oldType);
             saveToFile(list, STREAM_SET_FILE);
             JOptionPane.showMessageDialog(null, "¡Stream deleted!", "Delete", JOptionPane.WARNING_MESSAGE);			
     	}

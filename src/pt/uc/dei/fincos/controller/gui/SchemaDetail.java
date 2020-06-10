@@ -60,7 +60,7 @@ public class SchemaDetail extends ComponentDetail{
     public static final String STREAM_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Prueba_set.xml";
 	
 	/** Previous properties of the data type (when the form is open for update). */
-    private EventType oldType;
+    private String oldType;
     
     /** List of attributes of this data type. */
     private ArrayList<Attribute> columns;
@@ -77,7 +77,7 @@ public class SchemaDetail extends ComponentDetail{
 
 		if (st!=null) {
             this.op = UPDATE;
-            this.oldType = st;
+            this.oldType = st.getName();
             fillProperties(st);
         } else {
         	this.op = INSERT;

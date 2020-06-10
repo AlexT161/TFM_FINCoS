@@ -137,9 +137,8 @@ public class EditSchema extends ComponentDetail{
             	String type = (String) streamCombo.getSelectedItem();
             	if (JOptionPane.showConfirmDialog(null, "Delete Schema " + type + " ?", "Confirm Delete", JOptionPane.YES_NO_OPTION)
                         == JOptionPane.YES_OPTION) {
-            	EventType setType = list.get(type);
             	try {
-					WriteStream.updateEventType(null,setType);
+					WriteStream.updateEventType(type,null);
 				} catch (ParserConfigurationException e1) {
 					e1.printStackTrace();
 				} catch (TransformerException e1) {

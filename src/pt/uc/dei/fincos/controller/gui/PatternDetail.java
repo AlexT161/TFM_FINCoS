@@ -40,11 +40,11 @@ public class PatternDetail extends ComponentDetail{
 		addListeners();
 		
 		if (os!=null) {
-            this.op = UPDATE;
+            this.op = 1; //Update
             this.oldPattern = os;
             fillProperties(os,tx);
         } else {
-        	this.op = INSERT;
+        	this.op = 0; //Insert
         	setTitle("New Query");
         }
 		
@@ -77,13 +77,14 @@ public class PatternDetail extends ComponentDetail{
         
         nameField.setBounds(110,10,100,25);
         add(nameField);
-        switch (op) {
-        case UPDATE:
+        
+        switch (op) {       	
+        case 1:
             nameField.setText(oldPattern);
             nameField.setEditable(false);
             break;
-        case INSERT:
-        	break;
+        case 0:
+        	nameField.setEnabled(true);
         }
         
         patternPanel.setBounds(10,50,480,70);
@@ -130,11 +131,11 @@ public class PatternDetail extends ComponentDetail{
             	try {
 					if (validateFields()) {						
 							switch (op) {
-	                        case UPDATE:
-								WritePattern.updatePattern(name,qtext);
+	                        case 1:
+	                        	WritePattern.updatePattern(name,qtext);
 	                            dispose();
 	                            break;
-	                        case INSERT:
+	                        case 0:
 	                        try {
 								WritePattern.addPattern(name,qtext);
 							} catch (ParserConfigurationException e) {

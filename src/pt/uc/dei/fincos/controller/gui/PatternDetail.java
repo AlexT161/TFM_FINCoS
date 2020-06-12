@@ -23,7 +23,12 @@ import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
 
-
+/**
+ * GUI for configuration of Patterns.
+ *
+ * @author  John Alexander Torres
+ *
+ */
 @SuppressWarnings("serial")
 public class PatternDetail extends ComponentDetail{
 

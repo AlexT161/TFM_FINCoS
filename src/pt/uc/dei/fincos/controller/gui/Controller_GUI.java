@@ -683,8 +683,6 @@ public final class Controller_GUI extends JFrame {
         deleteQueryMenuItem.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent e) {
-        		if (JOptionPane.showConfirmDialog(null, "Delete Query(ies)?", "Confirm Delete", JOptionPane.YES_NO_OPTION)
-                        == JOptionPane.YES_OPTION) {
                     try {
 						deletePattern();
 					} catch (ParserConfigurationException e1) {
@@ -695,7 +693,6 @@ public final class Controller_GUI extends JFrame {
 						e1.printStackTrace();
 					}
         		}
-        	}
         });
         
         queryMenu.add(newQueryMenuItem);

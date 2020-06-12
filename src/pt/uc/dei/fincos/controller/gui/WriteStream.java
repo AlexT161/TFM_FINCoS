@@ -36,22 +36,28 @@ public class WriteStream {
     /**
      * Update an Event Type with new attributes.
      *
-     * @param udType 	the Event to modify
+     * @param oldType 	the Name of the Event to modify
+     * @param newType	the New event with the attributes, "null" for delete
+     * @param type		0 for Input, 1 for Output
      *
      */
-    public static void updateEventType(String oldType,EventType newType) throws ParserConfigurationException, TransformerException, IOException, SAXException {
+    public static void updateEventType(String oldType, EventType newType, int type) throws ParserConfigurationException, TransformerException, IOException, SAXException {
 		File f = new File(STREAM_SET_FILE);
         if (!f.exists()) {
             createEmptyFile(STREAM_SET_FILE);
         }
         open(STREAM_SET_FILE);
-		HashMap<String, EventType> list = loadStreams();
+		HashMap<String[], EventType> list = loadStreams();
     	if (newType!=null) {
-    		list.put(newType.getName(), newType);
+    		String typeClass = getType(type);
+    		String[] key = {newType.getName(),typeClass};
+    		list.put(key, newType);
             saveToFile(list, STREAM_SET_FILE);
             JOptionPane.showMessageDialog(null, "Stream correctly updated.", "Update", JOptionPane.INFORMATION_MESSAGE);
     	} else {
-    		list.remove(oldType);
+    		String typeClass = getType(type);
+    		String[] key = {oldType,typeClass};
+    		list.remove(key);
             saveToFile(list, STREAM_SET_FILE);
             JOptionPane.showMessageDialog(null, "¡Stream deleted!", "Delete", JOptionPane.WARNING_MESSAGE);			
     	}
@@ -62,21 +68,42 @@ public class WriteStream {
      * Add a new Event Type to the Stream_Set file.
      *
      * @param newType 	the Event to add
+     * @param type		the type of the Stream 0 for Input, 1 for Output
      *
      */
-	public static void addEventType(EventType newType) throws Exception {		
+	public static void addEventType(EventType newType, int type) throws Exception {		
 		File f = new File(STREAM_SET_FILE);
         if (!f.exists()) {
             createEmptyFile(STREAM_SET_FILE);
         }
         open(STREAM_SET_FILE);
-		HashMap<String, EventType> list = loadStreams();
-		list.put(newType.getName(), newType);
+		HashMap<String[], EventType> list = loadStreams();
+		String typeClass = getType(type);
+		String[] key = {newType.getName(),typeClass};
+		list.put(key, newType);
         saveToFile(list, STREAM_SET_FILE);
 		JOptionPane.showMessageDialog(null, "¡Stream created!", "Create", JOptionPane.INFORMATION_MESSAGE);		
 	}
 	
     /**
+     * Return the type of the Stream.
+     *
+     * @param type		the type of the Stream 0 for Input, 1 for Output
+     *
+     */
+    private static String getType(int type) {
+    	String typeClass;
+		if(type == 0) {
+			typeClass="Input";
+		} else if (type == 1){
+			typeClass="Output";
+		} else {
+			typeClass= "";
+		}
+		return typeClass;		
+	}
+
+	/**
      * Opens a XML file containing the streams.
      *
      * @param path      Path to stream file
@@ -118,19 +145,19 @@ public class WriteStream {
      * @return streams		HashMap with names and Events
      *
      */
-	public static HashMap<String, EventType> loadStreams() throws ParserConfigurationException, SAXException, IOException {
-		HashMap<String, EventType> streams = new HashMap<String,EventType>(1);
+	public static HashMap<String[], EventType> loadStreams() throws ParserConfigurationException, SAXException, IOException {
+		HashMap<String[], EventType> streams = new HashMap<String[],EventType>(1);
 		if(isFileOpen()) {
             Element streamList = (Element) xmlFileRoot.
                     getElementsByTagName("common").item(0);
             NodeList stream = streamList.getElementsByTagName("event-type");
             Element element;
             String name;
-//            String typeStr;
+            String typeStr;
             for (int i = 0; i < stream.getLength(); i++) {
             	element = (Element) stream.item(i);
                 name = element.getAttribute("name");
-//                typeStr = element.getAttribute("type");
+                typeStr = element.getAttribute("type");
                 Element propList = (Element) element.getElementsByTagName("objectarray").item(0);
                 NodeList properties = propList.getElementsByTagName("objectarray-property");
                 ArrayList<Attribute> columns = new ArrayList<Attribute>(properties.getLength());
@@ -158,7 +185,8 @@ public class WriteStream {
                 Attribute[] atts = new Attribute[columns.size()];
                 atts = columns.toArray(atts);                
                 EventType event = new EventType(name, atts);
-                streams.put(name, event);
+                String[] key = {name,typeStr};
+                streams.put(key, event);
             }      
         }
 		return streams;
@@ -169,12 +197,13 @@ public class WriteStream {
      *
      * @param list  	the list of Streams
      * @param filePath  the path of XML file
+     * @param Choose	0 for Input Streams, 1 for Output Streams
      * @throws ParserConfigurationException 
      * @throws IOException 
      * @throws TransformerException 
      *
      */
-	public static void saveToFile(HashMap<String, EventType> list, String filePath) 
+	public static void saveToFile(HashMap<String[], EventType> list, String filePath) 
 	throws IOException, ParserConfigurationException, TransformerException {
 		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -188,10 +217,10 @@ public class WriteStream {
 		root.setAttribute("xsi:noNamespaceSchemaLocation", "esper-configuration-8-0.xsd");
 		
 		Element common = docu.createElement("common");
-		for(String name : list.keySet()) {
+		for(String[] name : list.keySet()) {
 			Element eventType = docu.createElement("event-type");			
-			eventType.setAttribute("name", name);
-			eventType.setAttribute("type", "Input");
+			eventType.setAttribute("name", name[0]);			
+			eventType.setAttribute("type", name[1]);
 			Element element = docu.createElement("objectarray");
 			EventType event = list.get(name);
 			Attribute[] atributes = event.getAttributes();

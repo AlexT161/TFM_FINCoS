@@ -195,17 +195,17 @@ public class SchemaDetail extends ComponentDetail{
                         EventType newType = new EventType(typeName, atts);
                         switch (op) {
                         case UPDATE:
-                            WriteStream.updateEventType(oldType,newType);
+                            WriteStream.updateEventType(oldType,newType,0);
                             dispose();
                             break;
                         case INSERT:
                         	File f = new File(STREAM_SET_FILE);
                             if (f.exists()) {
                             	WriteStream.open(STREAM_SET_FILE);
-                            	HashMap<String, EventType> list = WriteStream.loadStreams();
+                            	HashMap<String[], EventType> list = WriteStream.loadStreams();
                             	boolean ver = true;
-                            	for (String i : list.keySet()) {           			
-                            		if(eventNameField.getText().equals(i)) {
+                            	for (String[] i : list.keySet()) {           			
+                            		if(eventNameField.getText().equals(i[0]) && i[1]=="Input") {
                             			ver = false;
                             		}
                             	}
@@ -214,11 +214,11 @@ public class SchemaDetail extends ComponentDetail{
                             		JOptionPane.showMessageDialog(null, "Stream Name already used.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
                             	}                   		
                             	else{
-                            		WriteStream.addEventType(newType);
+                            		WriteStream.addEventType(newType,0);
                             		dispose();
                             	}
                             } else {
-                        		WriteStream.addEventType(newType);
+                        		WriteStream.addEventType(newType,0);
                         		dispose();
                         	}
                         }

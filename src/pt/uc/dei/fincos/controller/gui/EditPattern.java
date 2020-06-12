@@ -20,6 +20,13 @@ import org.xml.sax.SAXException;
 
 import pt.uc.dei.fincos.basic.Globals;
 
+/**
+ *	Edit or delete the selected pattern depends on the mode selected
+ *	0 for edit, > 0 for delete
+ *
+ * @author John Alexander Torres
+ *
+ */
 @SuppressWarnings("serial")
 public class EditPattern extends ComponentDetail{
 
@@ -34,7 +41,7 @@ public class EditPattern extends ComponentDetail{
 	/** Path for the file containing the Queries. */
     public static final String PATTERNS_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Q_Prueba_set.xml";
 
-
+    
 	public EditPattern(int mode) throws ParserConfigurationException, SAXException, IOException {
 		super(null);
 		File f = new File(PATTERNS_FILE);

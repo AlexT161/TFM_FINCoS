@@ -26,6 +26,14 @@ import pt.uc.dei.fincos.basic.Attribute;
 import pt.uc.dei.fincos.basic.Datatype;
 import pt.uc.dei.fincos.basic.EventType;
 
+/**
+ * 
+ * GUI for split the Patterns or queries and assign the types to each attribute
+ * 
+ * @author Alexander Torres Rivera
+ *
+ */
+
 @SuppressWarnings("serial")
 public class QueryStream extends ComponentDetail{
 	
@@ -66,7 +74,13 @@ public class QueryStream extends ComponentDetail{
         this.setVisible(true);
 
 	}
-
+	
+	/**
+	 * 
+	 * Split the Pattern or query and add each Attribute to the ArrayList
+	 * 
+	 * @param text2		String with the pattern detail
+	 */
 	private void splitQuery(String text2) {
 		int beginIndex = text2.indexOf("select")+6;
 		int endIndex = text2.lastIndexOf(" from");
@@ -75,7 +89,6 @@ public class QueryStream extends ComponentDetail{
 		for (int j = 0; j < parts.length; j++) {
 			String[] split2 = parts[j].split(" ");
 			props.add(split2[split2.length - 1]);
-			System.out.println(props);
 		}
 	}
 
@@ -222,11 +235,11 @@ public class QueryStream extends ComponentDetail{
                         EventType newType = new EventType(name, atts);
                         switch (op) {
                         case UPDATE:
-                            WriteStream.updateEventType(name, newType);
+                            WriteStream.updateEventType(name, newType, 1);
                             dispose();
                             break;
                         case INSERT:
-                        	WriteStream.addEventType(newType);
+                        	WriteStream.addEventType(newType, 1);
                         	dispose();      
                         }
                     } else {

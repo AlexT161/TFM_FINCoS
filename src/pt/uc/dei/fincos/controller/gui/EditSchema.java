@@ -33,7 +33,7 @@ public class EditSchema extends ComponentDetail{
 	private JButton setBtn;
 	private JButton delBtn;
 	private JButton cancelBtn;
-	private HashMap<String, EventType> list;
+	private HashMap<String[], EventType> list;
 
 	private String[] combo;
 		
@@ -49,7 +49,14 @@ public class EditSchema extends ComponentDetail{
 		File f = new File(STREAM_SET_FILE);
 		WriteStream.open(STREAM_SET_FILE);
 		this.list = WriteStream.loadStreams();
-		this.combo = new String[list.size()];
+		System.out.println(list);
+		int size=0;
+		for (String[] i : list.keySet()) {
+        	if (i[1].equals("Input")) {
+        		size++;
+        	}
+		}
+		this.combo = new String[size];
 		if (!f.exists() || list.isEmpty()) {
         	JOptionPane.showMessageDialog(null, "You must create any Stream Schema first","Error", JOptionPane.ERROR_MESSAGE);
         	dispose();
@@ -100,11 +107,17 @@ public class EditSchema extends ComponentDetail{
             delBtn.setBounds(128,80,100,34);
             add(delBtn);
         }
+        
         int count = 0;
-		for (String i : list.keySet()) {
-			  combo[count]=i;
-			  count++;
-			}
+        for (String[] i : list.keySet()) {
+        	if (i[1].equals("Input")) {
+        		combo[count] = i[0];
+        		count++;
+        	} else {
+        		;
+        	}
+        }
+        
 	    streamCombo.setModel(new DefaultComboBoxModel(combo));
 	    streamCombo.setBounds(14,40,110,25);
 	    add(streamCombo);        
@@ -124,7 +137,9 @@ public class EditSchema extends ComponentDetail{
             @Override
             public void actionPerformed(ActionEvent e) {
             	String type = (String) streamCombo.getSelectedItem();
-            	EventType setType = list.get(type);
+            	String[] key = {type,"Input"};
+            	EventType setType = list.get(key);
+            	System.out.print(setType);
             	new SchemaDetail(setType).setVisible(true);
                 dispose();
             }
@@ -138,7 +153,7 @@ public class EditSchema extends ComponentDetail{
             	if (JOptionPane.showConfirmDialog(null, "Delete Schema " + type + " ?", "Confirm Delete", JOptionPane.YES_NO_OPTION)
                         == JOptionPane.YES_OPTION) {
             	try {
-					WriteStream.updateEventType(type,null);
+					WriteStream.updateEventType(type, null, 0);
 				} catch (ParserConfigurationException e1) {
 					e1.printStackTrace();
 				} catch (TransformerException e1) {

@@ -292,4 +292,33 @@ public class WriteStream {
         saveToFile(null, filePath);
     }
     
+    /**
+     * Loads the Stream List from the Stream_Set.xml file and returns a HashMap depends on type.
+     * 
+     * @param type	0 for Input, 1 for Output Streams
+     * @return HashMap <String, EvenType> with the type selected
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws IOException
+     */
+    public static HashMap<String, EventType> loadStreams(int type) throws ParserConfigurationException, SAXException, IOException{
+    	HashMap<String[], EventType> streams = new HashMap<String[],EventType>(1);
+		streams = loadStreams();
+		HashMap<String, EventType> streams2 = new HashMap<String,EventType>(1);
+		if (type == 0) {
+			for (String[] i : streams.keySet()) {
+	        	if (i[1].equals("Input")) {
+	        		streams2.put(i[0], streams.get(i));
+	        	}
+			}
+		} else {
+			for (String[] i : streams.keySet()) {
+	        	if (i[1].equals("Output")) {
+	        		streams2.put(i[0], streams.get(i));
+	        	}
+			}
+		}
+    	return streams2;    	
+    }
+    
 }

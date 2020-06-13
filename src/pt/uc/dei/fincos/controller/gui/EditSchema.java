@@ -33,7 +33,7 @@ public class EditSchema extends ComponentDetail{
 	private JButton setBtn;
 	private JButton delBtn;
 	private JButton cancelBtn;
-	private HashMap<String[], EventType> list;
+	private HashMap<String, EventType> list;
 
 	private String[] combo;
 		
@@ -48,15 +48,9 @@ public class EditSchema extends ComponentDetail{
 		super(null);
 		File f = new File(STREAM_SET_FILE);
 		WriteStream.open(STREAM_SET_FILE);
-		this.list = WriteStream.loadStreams();
-		System.out.println(list);
-		int size=0;
-		for (String[] i : list.keySet()) {
-        	if (i[1].equals("Input")) {
-        		size++;
-        	}
-		}
-		this.combo = new String[size];
+		list = WriteStream.loadStreams(0);
+		System.out.println("EditSchema:list: " + list);
+		this.combo = new String[list.size()];
 		if (!f.exists() || list.isEmpty()) {
         	JOptionPane.showMessageDialog(null, "You must create any Stream Schema first","Error", JOptionPane.ERROR_MESSAGE);
         	dispose();
@@ -109,13 +103,9 @@ public class EditSchema extends ComponentDetail{
         }
         
         int count = 0;
-        for (String[] i : list.keySet()) {
-        	if (i[1].equals("Input")) {
-        		combo[count] = i[0];
+        for (String i : list.keySet()) {
+        		combo[count] = i;
         		count++;
-        	} else {
-        		;
-        	}
         }
         
 	    streamCombo.setModel(new DefaultComboBoxModel(combo));
@@ -137,9 +127,10 @@ public class EditSchema extends ComponentDetail{
             @Override
             public void actionPerformed(ActionEvent e) {
             	String type = (String) streamCombo.getSelectedItem();
-            	String[] key = {type,"Input"};
-            	EventType setType = list.get(key);
-            	System.out.print(setType);
+            	EventType setType = list.get(type);
+            	System.out.println("EditSchema:type: " + type);
+            	System.out.println("EditSchema:list: " + list);
+            	System.out.println("EditSchema:SetType: " + setType);
             	new SchemaDetail(setType).setVisible(true);
                 dispose();
             }

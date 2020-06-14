@@ -56,11 +56,12 @@ public class QueryStream extends ComponentDetail{
         this.columns = new ArrayList<Attribute>();
         this.name = name;
         this.text = text;		
-		if (st!=null) {
-            this.op = UPDATE;
+		
+        if (st!=null) {
+            this.op = 0;
             splitQuery(this.text);
         } else {
-        	this.op = INSERT;
+        	this.op = 1;
         	setTitle("New Event Type");
         	splitQuery(this.text);
         }
@@ -234,11 +235,11 @@ public class QueryStream extends ComponentDetail{
                         atts = columns.toArray(atts);
                         EventType newType = new EventType(name, atts);
                         switch (op) {
-                        case UPDATE:
+                        case 0:
                             WriteStream.updateEventType(name, newType, 1);
                             dispose();
                             break;
-                        case INSERT:
+                        case 1:
                         	WriteStream.addEventType(newType, 1);
                         	dispose();      
                         }

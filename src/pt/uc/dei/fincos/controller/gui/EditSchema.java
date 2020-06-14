@@ -42,14 +42,14 @@ public class EditSchema extends ComponentDetail{
      * Edit or delete an Event Type from the Stream_Set file depends on the parameter.
      *
      * @param p 	0 for edit, > 0 for delete
+	 * @throws TransformerException 
      *
      */
-	public EditSchema(int p) throws ParserConfigurationException, SAXException, IOException{
+	public EditSchema(int p) throws ParserConfigurationException, SAXException, IOException, TransformerException{
 		super(null);
 		File f = new File(STREAM_SET_FILE);
 		WriteStream.open(STREAM_SET_FILE);
 		list = WriteStream.loadStreams(0);
-		System.out.println("EditSchema:list: " + list);
 		this.combo = new String[list.size()];
 		if (!f.exists() || list.isEmpty()) {
         	JOptionPane.showMessageDialog(null, "You must create any Stream Schema first","Error", JOptionPane.ERROR_MESSAGE);
@@ -128,9 +128,6 @@ public class EditSchema extends ComponentDetail{
             public void actionPerformed(ActionEvent e) {
             	String type = (String) streamCombo.getSelectedItem();
             	EventType setType = list.get(type);
-            	System.out.println("EditSchema:type: " + type);
-            	System.out.println("EditSchema:list: " + list);
-            	System.out.println("EditSchema:SetType: " + setType);
             	new SchemaDetail(setType).setVisible(true);
                 dispose();
             }

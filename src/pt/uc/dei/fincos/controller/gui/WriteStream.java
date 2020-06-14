@@ -42,29 +42,59 @@ public class WriteStream {
      *
      */
     public static void updateEventType(String oldType, EventType newType, int type) throws ParserConfigurationException, TransformerException, IOException, SAXException {
-		File f = new File(STREAM_SET_FILE);
-        if (!f.exists()) {
-            createEmptyFile(STREAM_SET_FILE);
-        }
-        open(STREAM_SET_FILE);
-		HashMap<String[], EventType> list = loadStreams();
+		openFile();
     	if (newType!=null) {
-    		String typeClass = getType(type);
-    		String[] key = {newType.getName(),typeClass};
-    		list.put(key, newType);
+    		HashMap<String[], EventType> list = updateList(oldType, newType, type);   		
             saveToFile(list, STREAM_SET_FILE);
             JOptionPane.showMessageDialog(null, "Stream correctly updated.", "Update", JOptionPane.INFORMATION_MESSAGE);
     	} else {
-    		String typeClass = getType(type);
-    		String[] key = {oldType,typeClass};
-    		list.remove(key);
-            saveToFile(list, STREAM_SET_FILE);
+    		HashMap<String[], EventType> list = deleteFromList(oldType, type);
+    		saveToFile(list, STREAM_SET_FILE);
             JOptionPane.showMessageDialog(null, "¡Stream deleted!", "Delete", JOptionPane.WARNING_MESSAGE);			
     	}
     	closeFile();
 	}
 
-    /**
+    private static HashMap<String[], EventType> updateList(String oldType, EventType newType, int type) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+    	HashMap<String, EventType> inputList = loadStreams(0);
+    	HashMap<String, EventType> outputList = loadStreams(1);
+    	if (type==0) {
+    		inputList.replace(oldType, newType);
+    	} else {
+    		outputList.replace(oldType, newType);
+    	}
+    	HashMap<String[], EventType> list = mergeLists(inputList, outputList); 	
+       	return list;
+	}
+    
+    private static HashMap<String[], EventType> deleteFromList(String oldType, int type) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+    	HashMap<String, EventType> inputList = loadStreams(0);
+    	HashMap<String, EventType> outputList = loadStreams(1);
+    	if (type==0) {
+    		inputList.remove(oldType);
+    	} else {
+    		outputList.remove(oldType);
+    	}
+    	HashMap<String[], EventType> list = mergeLists(inputList, outputList); 	
+    	return list;
+	}
+    
+	private static HashMap<String[], EventType> mergeLists(HashMap<String, EventType> inputList,
+			HashMap<String, EventType> outputList) {
+		HashMap<String[], EventType> list = new HashMap<String[], EventType>(1);
+
+    	for(String i : inputList.keySet()) {
+    		String[] key = {i,"Input"};
+    		list.put(key, inputList.get(i));
+    	}
+    	for(String j : outputList.keySet()) {
+    		String[] key = {j,"Output"};
+    		list.put(key, outputList.get(j));
+    	}
+		return list;
+	}
+
+	/**
      * Add a new Event Type to the Stream_Set file.
      *
      * @param newType 	the Event to add
@@ -72,26 +102,31 @@ public class WriteStream {
      *
      */
 	public static void addEventType(EventType newType, int type) throws Exception {		
-		File f = new File(STREAM_SET_FILE);
+		openFile();
+		HashMap<String[], EventType> list = loadStreams();		
+		String typeClass = setType(type);
+		String[] key = {newType.getName(),typeClass};
+		list.put(key, newType);
+        saveToFile(list, STREAM_SET_FILE);
+		JOptionPane.showMessageDialog(null, "¡Stream created!", "Create", JOptionPane.INFORMATION_MESSAGE);
+		closeFile();
+	}
+	
+    private static void openFile() throws ParserConfigurationException, TransformerException, IOException, SAXException{
+    	File f = new File(STREAM_SET_FILE);
         if (!f.exists()) {
             createEmptyFile(STREAM_SET_FILE);
         }
         open(STREAM_SET_FILE);
-		HashMap<String[], EventType> list = loadStreams();
-		String typeClass = getType(type);
-		String[] key = {newType.getName(),typeClass};
-		list.put(key, newType);
-        saveToFile(list, STREAM_SET_FILE);
-		JOptionPane.showMessageDialog(null, "¡Stream created!", "Create", JOptionPane.INFORMATION_MESSAGE);		
 	}
-	
-    /**
+
+	/**
      * Return the type of the Stream.
      *
      * @param type		the type of the Stream 0 for Input, 1 for Output
      *
      */
-    private static String getType(int type) {
+    private static String setType(int type) {
     	String typeClass;
 		if(type == 0) {
 			typeClass="Input";
@@ -300,10 +335,11 @@ public class WriteStream {
      * @throws ParserConfigurationException
      * @throws SAXException
      * @throws IOException
+     * @throws TransformerException 
      */
-    public static HashMap<String, EventType> loadStreams(int type) throws ParserConfigurationException, SAXException, IOException{
-    	HashMap<String[], EventType> streams = new HashMap<String[],EventType>(1);
-		streams = loadStreams();
+    public static HashMap<String, EventType> loadStreams(int type) throws ParserConfigurationException, SAXException, IOException, TransformerException{
+    	openFile();
+    	HashMap<String[], EventType> streams = loadStreams();
 		HashMap<String, EventType> streams2 = new HashMap<String,EventType>(1);
 		if (type == 0) {
 			for (String[] i : streams.keySet()) {
@@ -311,7 +347,7 @@ public class WriteStream {
 	        		streams2.put(i[0], streams.get(i));
 	        	}
 			}
-		} else {
+		} else if (type == 1){
 			for (String[] i : streams.keySet()) {
 	        	if (i[1].equals("Output")) {
 	        		streams2.put(i[0], streams.get(i));

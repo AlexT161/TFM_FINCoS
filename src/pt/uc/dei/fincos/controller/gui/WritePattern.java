@@ -22,7 +22,7 @@ import pt.uc.dei.fincos.basic.Globals;
 import pt.uc.dei.fincos.controller.ConfigurationParser;
 
 /**
- * Create, edit or delete a pattern in the query set file and calls the QueryStream to assign types.
+ * Create, edit or delete a pattern in the Query_Set file and calls the QueryStream to assign types.
  * 
  * @author John Alexander Torres
  *
@@ -38,6 +38,17 @@ public class WritePattern {
 	/** Path for the file containing the Queries. */
     public static final String QUERY_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Q_Prueba_set.xml";
 
+    
+	/**
+	 * Adds a new Pattern to the Query_Set file
+	 * 
+	 * @param name	Name of the pattern
+	 * @param text	Query text
+	 * @throws ParserConfigurationException
+	 * @throws TransformerException
+	 * @throws IOException
+	 * @throws SAXException
+	 */
 	public static void addPattern(String name, String text) throws ParserConfigurationException, TransformerException, IOException, SAXException{
 		HashMap<String, String> queryList = openAndGetList();
         queryList.put(name, text);
@@ -46,6 +57,17 @@ public class WritePattern {
         JOptionPane.showMessageDialog(null, "Pattern created, please fill out the Attributes", "Create", JOptionPane.INFORMATION_MESSAGE);
 	}
 
+	
+	/**
+	 * Updates a Pattern From the Query_Set file
+	 * 
+	 * @param name	Name of the pattern
+	 * @param text	Query text
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws TransformerException
+	 */
 	public static void updatePattern(String name, String text) throws ParserConfigurationException, SAXException, IOException, TransformerException{
 		HashMap<String, String> list = openAndGetList();
     	if (text!=null) {
@@ -56,6 +78,16 @@ public class WritePattern {
     	closeFile();
 	}
 
+	
+	/**
+	 * Creates a Query_Set file instance and loads the patterns from the Query_Set file
+	 * 
+	 * @return	List of Queries
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws TransformerException
+	 */
 	private static HashMap<String, String> openAndGetList() throws ParserConfigurationException, SAXException, IOException, TransformerException {
 		File f = new File(QUERY_SET_FILE);
         if (!f.exists()) {
@@ -97,8 +129,10 @@ public class WritePattern {
 	 */
 	private static void updateQuery(String name, String text, HashMap<String, String> list) throws ParserConfigurationException, SAXException, IOException, TransformerException {
     	list.put(name, text);
-		String[] key = {name,"Output"};
-		EventType stream = WriteStream.loadStreams().get(key);
+    	HashMap<String, EventType> streamList = WriteStream.loadStreams(1);
+		EventType stream = streamList.get(name);
+		System.out.print(streamList);
+		System.out.print(stream);
         new QueryStream(name , text, stream);
         saveToFile(list, QUERY_SET_FILE);
         JOptionPane.showMessageDialog(null, "Pattern correctly updated, edit the Attributes if is necessary.", "Update", JOptionPane.INFORMATION_MESSAGE);		

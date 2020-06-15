@@ -37,10 +37,6 @@ public class EditPattern extends ComponentDetail{
 	private HashMap<String, String> list;
 
 	private String[] combo;
-
-	/** Path for the file containing the Queries. */
-    public static final String PATTERNS_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Q_Prueba_set.xml";
-
     
 	/**
 	 * Edit or delete the selected pattern depends on the mode selected
@@ -50,25 +46,17 @@ public class EditPattern extends ComponentDetail{
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-	public EditPattern(int mode) throws ParserConfigurationException, SAXException, IOException {
+	public EditPattern(HashMap<String, String> list, int mode) throws ParserConfigurationException, SAXException, IOException {
 		super(null);
-		File f = new File(PATTERNS_FILE);
-		WritePattern.open(PATTERNS_FILE);
-		this.list = WritePattern.getPatternList();
+		this.list = list;
 		this.combo = new String[list.size()];
-		if (!f.exists() || list.isEmpty()) {
-        	JOptionPane.showMessageDialog(null, "You must create a Pattern first","Error", JOptionPane.ERROR_MESSAGE);
-        	dispose();
-        } else {	        
-			initComponents(mode);
-			addListeners();
-			
-			this.setSize(250, 150);
-		    this.setLocationRelativeTo(null);
-		    this.setResizable(false);
-		    this.setVisible(true);
-        }
-		dispose();
+		initComponents(mode);
+		addListeners();
+
+		this.setSize(250, 150);
+		this.setLocationRelativeTo(null);
+		this.setResizable(false);
+		this.setVisible(true);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

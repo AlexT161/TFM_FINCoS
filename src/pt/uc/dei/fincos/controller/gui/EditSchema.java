@@ -44,14 +44,7 @@ public class EditSchema extends ComponentDetail{
 	public EditSchema(HashMap<String, EventType> list, int p) throws ParserConfigurationException, SAXException, IOException, TransformerException{
 		super(null);
 		this.list = list;
-//		File f = new File(STREAM_SET_FILE);
-//		WriteStream.open(STREAM_SET_FILE);
-//		list = WriteStream.loadStreams(0);
 		this.combo = new String[list.size()];
-//		if (!f.exists() || list.isEmpty()) {
-//        	JOptionPane.showMessageDialog(null, "You must create a Stream Schema first","Error", JOptionPane.ERROR_MESSAGE);
-//        	dispose();
-//        } else {
         	initComponents(p);
         	addListeners();	
 			if (p==0) {

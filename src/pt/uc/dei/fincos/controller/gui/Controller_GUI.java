@@ -115,6 +115,8 @@ public final class Controller_GUI extends JFrame {
     public static final String CONNECTIONS_FILE = Globals.APP_PATH + "config" + File.separator + "Connections.fcf";
 	/** Path for the file containing the Streams. */
     public static final String STREAM_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Prueba_set.xml";
+	/** Path for the file containing the Queries. */
+    public static final String PATTERNS_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Q_Prueba_set.xml";
 
 
     //	=========================== GUI ===================================
@@ -676,15 +678,7 @@ public final class Controller_GUI extends JFrame {
         editQueryMenuItem.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent e) {
-        		try {
-        			new EditPattern(0).setVisible(true);
-				} catch (ParserConfigurationException e1) {
-					e1.printStackTrace();
-				} catch (SAXException e1) {
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}        		
+        		editPattern();        		
         	}
         });
         
@@ -1572,6 +1566,42 @@ public final class Controller_GUI extends JFrame {
     	}
     }
     
+    public void editPattern(){
+    	File f = new File(PATTERNS_FILE);
+    	try {
+    		WritePattern.open(PATTERNS_FILE);
+    	} catch (ParserConfigurationException e) {
+    		e.printStackTrace();
+    	} catch (SAXException e) {
+    		e.printStackTrace();
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	}
+    	HashMap<String, String> list = new HashMap<String, String>(1);
+    	try {
+    		list = WritePattern.getPatternList();
+    	} catch (ParserConfigurationException e) {
+    		e.printStackTrace();
+    	} catch (SAXException e) {
+    		e.printStackTrace();
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	}
+    	if (!f.exists() || list.isEmpty()) {
+    		JOptionPane.showMessageDialog(null, "You must create a Pattern first","Error", JOptionPane.ERROR_MESSAGE);
+    	} else {	        
+    		try {
+    			new EditPattern(list,0).setVisible(true);
+    		} catch (ParserConfigurationException e) {
+    			e.printStackTrace();
+    		} catch (SAXException e) {
+    			e.printStackTrace();
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
+    	}
+    }
+    
     /**
      * Removes one or more Queries from the Query_Set.xml // JAT
      * @throws IOException 
@@ -1580,8 +1610,32 @@ public final class Controller_GUI extends JFrame {
      *
      */
     public void deletePattern() throws ParserConfigurationException, SAXException, IOException {
-    		new EditPattern(1).setVisible(true);
+    	File f = new File(PATTERNS_FILE);
+    	try {
+    		WritePattern.open(PATTERNS_FILE);
+    	} catch (ParserConfigurationException e) {
+    		e.printStackTrace();
+    	} catch (SAXException e) {
+    		e.printStackTrace();
+    	} catch (IOException e) {
+    		e.printStackTrace();
     	}
+    	HashMap<String, String> list = new HashMap<String, String>(1);
+    	try {
+    		list = WritePattern.getPatternList();
+    	} catch (ParserConfigurationException e) {
+    		e.printStackTrace();
+    	} catch (SAXException e) {
+    		e.printStackTrace();
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	}
+    	if (!f.exists() || list.isEmpty()) {
+    		JOptionPane.showMessageDialog(null, "You must create a Pattern first","Error", JOptionPane.ERROR_MESSAGE);
+    	} else {
+    		new EditPattern(list, 1).setVisible(true);
+    	}
+    }
     
     /**
      * Updates the GUI with information about the Status of the components (Drivers and Sinks).

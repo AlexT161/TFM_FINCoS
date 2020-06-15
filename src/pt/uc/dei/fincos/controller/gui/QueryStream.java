@@ -3,9 +3,7 @@ package pt.uc.dei.fincos.controller.gui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -188,11 +186,6 @@ public class QueryStream extends ComponentDetail{
             }
         });
         
-        /**
-         * 
-         * Adds the data to the JTable and the columns Array List with the properties of the event.
-         *
-         */
         addBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {

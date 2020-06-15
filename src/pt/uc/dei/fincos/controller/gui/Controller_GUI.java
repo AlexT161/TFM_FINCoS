@@ -20,6 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,6 +41,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -74,6 +76,7 @@ import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
 
+import pt.uc.dei.fincos.basic.EventType;
 import pt.uc.dei.fincos.basic.Globals;
 import pt.uc.dei.fincos.basic.InvalidStateException;
 import pt.uc.dei.fincos.basic.Step;
@@ -110,6 +113,8 @@ public final class Controller_GUI extends JFrame {
 
     /** Path for the file containing connections. */
     public static final String CONNECTIONS_FILE = Globals.APP_PATH + "config" + File.separator + "Connections.fcf";
+	/** Path for the file containing the Streams. */
+    public static final String STREAM_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Prueba_set.xml";
 
 
     //	=========================== GUI ===================================
@@ -409,21 +414,7 @@ public final class Controller_GUI extends JFrame {
         editSchemaMenuItem.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent e) {
-        		try {
-					new EditSchema(0).setVisible(true);
-				} catch (ParserConfigurationException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (SAXException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (TransformerException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+        		editSchemas();
         	}
         });
         
@@ -662,8 +653,22 @@ public final class Controller_GUI extends JFrame {
         	
         	@Override
         	public void actionPerformed(ActionEvent e) {
+        		try {
+					if(WriteStream.loadStreams(0).isEmpty()) {
+						JOptionPane.showMessageDialog(null, "You should first create some Input Stream", "Warning", JOptionPane.WARNING_MESSAGE);
+					}
+				} catch (HeadlessException e1) {
+					e1.printStackTrace();
+				} catch (ParserConfigurationException e1) {
+					e1.printStackTrace();
+				} catch (SAXException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (TransformerException e1) {
+					e1.printStackTrace();
+				}
         		new PatternDetail(null,null).setVisible(true);
-        		System.out.println("Crear nueva query, se debe tener un esquema");
         	}
         });
         
@@ -1479,26 +1484,93 @@ public final class Controller_GUI extends JFrame {
     }
 
     /**
-     * Removes one or more Stream Schema from the Stream_Set.xml // JAT
+     * Calls the Stream Schema Editor if exist any Stream Schema in the Stream_Set.xml // JAT
+     *
+     */
+    public void editSchemas() {
+    	File f = new File(STREAM_SET_FILE);
+		try {
+			WriteStream.open(STREAM_SET_FILE);
+		} catch (ParserConfigurationException e2) {
+			e2.printStackTrace();
+		} catch (SAXException e2) {
+			e2.printStackTrace();
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
+		HashMap<String, EventType> list = new HashMap<String, EventType>(1);
+		try {
+			list = WriteStream.loadStreams(0);
+		} catch (ParserConfigurationException e2) {
+			e2.printStackTrace();
+		} catch (SAXException e2) {
+			e2.printStackTrace();
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		} catch (TransformerException e2) {
+			e2.printStackTrace();
+		}
+		if (!f.exists() || list.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "You must create a Stream Schema first","Error", JOptionPane.ERROR_MESSAGE);
+			WriteStream.closeFile();
+		} else {
+			try {
+				new EditSchema(list, 0).setVisible(true);
+			} catch (ParserConfigurationException e1) {
+				e1.printStackTrace();
+			} catch (SAXException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} catch (TransformerException e1) {
+				e1.printStackTrace();
+			}
+		}
+    }
+    /**
+     * Removes a Stream Schema from the Stream_Set.xml // JAT
      *
      */
     public void deleteSchemas() {
+    	File f = new File(STREAM_SET_FILE);
     	try {
-			new EditSchema(1).setVisible(true);
-		} catch (ParserConfigurationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (SAXException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+    		WriteStream.open(STREAM_SET_FILE);
+    	} catch (ParserConfigurationException e2) {
+    		e2.printStackTrace();
+    	} catch (SAXException e2) {
+    		e2.printStackTrace();
+    	} catch (IOException e2) {
+    		e2.printStackTrace();
+    	}
+    	HashMap<String, EventType> list = new HashMap<String, EventType>(1);
+    	try {
+    		list = WriteStream.loadStreams(0);
+    	} catch (ParserConfigurationException e2) {
+    		e2.printStackTrace();
+    	} catch (SAXException e2) {
+    		e2.printStackTrace();
+    	} catch (IOException e2) {
+    		e2.printStackTrace();
+    	} catch (TransformerException e2) {
+    		e2.printStackTrace();
+    	}
+    	if (!f.exists() || list.isEmpty()) {
+    		JOptionPane.showMessageDialog(null, "You must create a Stream Schema first","Error", JOptionPane.ERROR_MESSAGE);
+    		WriteStream.closeFile();
+    	} else {
+    		try {
+    			new EditSchema(list, 1).setVisible(true);
+    		} catch (ParserConfigurationException e1) {
+    			e1.printStackTrace();
+    		} catch (SAXException e1) {
+    			e1.printStackTrace();
+    		} catch (IOException e1) {
+    			e1.printStackTrace();
+    		} catch (TransformerException e) {
+    			e.printStackTrace();
+    		}
+    	}
+    }
     
     /**
      * Removes one or more Queries from the Query_Set.xml // JAT

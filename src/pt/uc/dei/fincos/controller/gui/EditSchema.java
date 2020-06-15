@@ -23,10 +23,7 @@ import pt.uc.dei.fincos.basic.Globals;
 
 @SuppressWarnings("serial")
 public class EditSchema extends ComponentDetail{
-	
-	/** Path for the file containing the Streams. */
-    public static final String STREAM_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Prueba_set.xml";
-    
+	    
 	@SuppressWarnings("rawtypes")
 	private JComboBox streamCombo;
 	private JLabel nameLabel;
@@ -34,7 +31,6 @@ public class EditSchema extends ComponentDetail{
 	private JButton delBtn;
 	private JButton cancelBtn;
 	private HashMap<String, EventType> list;
-
 	private String[] combo;
 		
 	 /**
@@ -45,16 +41,17 @@ public class EditSchema extends ComponentDetail{
 	 * @throws TransformerException 
      *
      */
-	public EditSchema(int p) throws ParserConfigurationException, SAXException, IOException, TransformerException{
+	public EditSchema(HashMap<String, EventType> list, int p) throws ParserConfigurationException, SAXException, IOException, TransformerException{
 		super(null);
-		File f = new File(STREAM_SET_FILE);
-		WriteStream.open(STREAM_SET_FILE);
-		list = WriteStream.loadStreams(0);
+		this.list = list;
+//		File f = new File(STREAM_SET_FILE);
+//		WriteStream.open(STREAM_SET_FILE);
+//		list = WriteStream.loadStreams(0);
 		this.combo = new String[list.size()];
-		if (!f.exists() || list.isEmpty()) {
-        	JOptionPane.showMessageDialog(null, "You must create any Stream Schema first","Error", JOptionPane.ERROR_MESSAGE);
-        	dispose();
-        } else {
+//		if (!f.exists() || list.isEmpty()) {
+//        	JOptionPane.showMessageDialog(null, "You must create a Stream Schema first","Error", JOptionPane.ERROR_MESSAGE);
+//        	dispose();
+//        } else {
         	initComponents(p);
         	addListeners();	
 			if (p==0) {
@@ -62,13 +59,13 @@ public class EditSchema extends ComponentDetail{
 	        } else {
 	        	setTitle("Delete Event Type");
 	        }
-			
+					
 	        this.setSize(250, 150);
 	        this.setLocationRelativeTo(null);
 	        this.setResizable(false);
 	        this.setVisible(true);
         }
-	}
+	
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initComponents(int p) throws ParserConfigurationException, SAXException, IOException {

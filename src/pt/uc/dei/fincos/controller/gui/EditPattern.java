@@ -42,6 +42,14 @@ public class EditPattern extends ComponentDetail{
     public static final String PATTERNS_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Q_Prueba_set.xml";
 
     
+	/**
+	 * Edit or delete the selected pattern depends on the mode selected
+	 * 
+	 * @param mode	0 for edit, > 0 for delete
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
 	public EditPattern(int mode) throws ParserConfigurationException, SAXException, IOException {
 		super(null);
 		File f = new File(PATTERNS_FILE);
@@ -49,7 +57,7 @@ public class EditPattern extends ComponentDetail{
 		this.list = WritePattern.getPatternList();
 		this.combo = new String[list.size()];
 		if (!f.exists() || list.isEmpty()) {
-        	JOptionPane.showMessageDialog(null, "You must create any Stream Schema first","Error", JOptionPane.ERROR_MESSAGE);
+        	JOptionPane.showMessageDialog(null, "You must create a Pattern first","Error", JOptionPane.ERROR_MESSAGE);
         	dispose();
         } else {	        
 			initComponents(mode);
@@ -60,6 +68,7 @@ public class EditPattern extends ComponentDetail{
 		    this.setResizable(false);
 		    this.setVisible(true);
         }
+		dispose();
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

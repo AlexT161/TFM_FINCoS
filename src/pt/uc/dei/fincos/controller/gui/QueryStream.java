@@ -11,6 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -244,6 +245,29 @@ public class QueryStream extends ComponentDetail{
                 }
             }
         });
+        
+        detailTable.addMouseListener(new PopupListener(detailTablePopup));
+        
+        JMenuItem deleteColMenuItem = new JMenuItem("Remove");
+        
+        deleteColMenuItem.addActionListener(new ActionListener() {
+            @SuppressWarnings("unchecked")
+			@Override
+            public void actionPerformed(ActionEvent e) {
+            	DefaultTableModel deleteModel = (DefaultTableModel) detailTable.getModel();
+            	if (detailTable.getSelectedRowCount()==1) {
+                	int row = detailTable.getSelectedRow();
+                	columns.remove(row);
+                	String value = deleteModel.getValueAt(row, 0).toString();
+                    propertyCombo.addItem(value);
+                	deleteModel.removeRow(row);             
+            	} else {
+                    JOptionPane.showMessageDialog(null, "Select a column to delete");
+                }
+            }
+        });
+        
+        detailTablePopup.add(deleteColMenuItem);
 	}
 
 	@Override

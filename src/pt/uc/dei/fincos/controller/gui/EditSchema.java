@@ -3,7 +3,6 @@ package pt.uc.dei.fincos.controller.gui;
 import java.util.HashMap;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 
 import javax.swing.DefaultComboBoxModel;
@@ -19,7 +18,6 @@ import javax.xml.transform.TransformerException;
 import org.xml.sax.SAXException;
 
 import pt.uc.dei.fincos.basic.EventType;
-import pt.uc.dei.fincos.basic.Globals;
 
 @SuppressWarnings("serial")
 public class EditSchema extends ComponentDetail{

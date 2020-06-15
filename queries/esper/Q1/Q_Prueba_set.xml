@@ -1,1 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><Esper-Queries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><Esper-Queries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><Query name="Nueva" text="select algo, mas, caso from oto"/></Esper-Queries>

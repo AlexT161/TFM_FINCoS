@@ -19,6 +19,12 @@ import org.xml.sax.SAXException;
 
 import pt.uc.dei.fincos.basic.EventType;
 
+/**
+ * @author John Alexander Torres
+ * 
+ * Edit or delete an Event Type from the Stream_Set file depends on the parameter.
+ *
+ */
 @SuppressWarnings("serial")
 public class EditSchema extends ComponentDetail{
 	    
@@ -32,7 +38,7 @@ public class EditSchema extends ComponentDetail{
 	private String[] combo;
 		
 	 /**
-	 * JAT 
+	 * John Alexander Torres 
      * Edit or delete an Event Type from the Stream_Set file depends on the parameter.
      *
      * @param p 	0 for edit, > 0 for delete

@@ -36,7 +36,7 @@ public class WritePattern {
     private static File queryFile;
     
 	/** Path for the file containing the Queries. */
-    public static final String QUERY_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Q_Prueba_set.xml";
+    public static final String QUERY_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Query_Set.xml";
 
     
 	/**

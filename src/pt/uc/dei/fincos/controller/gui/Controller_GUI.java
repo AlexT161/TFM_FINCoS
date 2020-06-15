@@ -114,9 +114,9 @@ public final class Controller_GUI extends JFrame {
     /** Path for the file containing connections. */
     public static final String CONNECTIONS_FILE = Globals.APP_PATH + "config" + File.separator + "Connections.fcf";
 	/** Path for the file containing the Streams. */
-    public static final String STREAM_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Prueba_set.xml";
+    public static final String STREAM_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Stream_Set.xml";
 	/** Path for the file containing the Queries. */
-    public static final String PATTERNS_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Q_Prueba_set.xml";
+    public static final String PATTERNS_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Query_Set.xml";
 
 
     //	=========================== GUI ===================================

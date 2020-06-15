@@ -2,7 +2,6 @@ package pt.uc.dei.fincos.controller.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -17,8 +16,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
-
-import pt.uc.dei.fincos.basic.Globals;
 
 /**
  *	Edit or delete the selected pattern depends on the mode selected

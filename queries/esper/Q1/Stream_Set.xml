@@ -38,11 +38,17 @@
         <objectarray-property name="Avg2" class="double"/>
       </objectarray>
     </event-type>
+    <event-type name="Prueba2" type="Output">
+		<objectarray>
+			<objectarray-property class="int" name="sum(avgEntero)" />
+		</objectarray>
+	</event-type>
 <!-- Sample for an variant stream configuration that is a stream of events of multiple types. -->
 	<variant-stream name="MyVariantStream">
 	  <variant-event-type name="StockAvg"/>
-<!--	  <variant-event-type name="StockAvg2"/>	
-	  <variant-event-type name="Prueba"/>-->
+	  <variant-event-type name="StockAvg2"/>	
+	  <variant-event-type name="Prueba"/>
+	  <variant-event-type name="Prueba2" />
 	</variant-stream>    
 	<logging>
 		<!-- By default the compiler and runtime do not report JBDC query performance information or other relevant JDBC API information. By setting this flag JDBC query information is measured and logged at information level.-->

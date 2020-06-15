@@ -29,7 +29,7 @@ import pt.uc.dei.fincos.controller.ConfigurationParser;
 public class WriteStream {
 	
 	/** Path for the file containing the Streams. */
-    public static final String STREAM_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Prueba_set.xml";
+    public static final String STREAM_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Stream_Set.xml";
 	private static File streamFile;
 	private static Element xmlFileRoot;
     

@@ -57,7 +57,7 @@ public class SchemaDetail extends ComponentDetail{
 	private JPopupMenu detailTablePopup;
 	
 	/** Path for the file containing the Streams. */
-    public static final String STREAM_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Prueba_set.xml";
+    public static final String STREAM_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Stream_Set.xml";
 	
 	/** Previous properties of the data type (when the form is open for update). */
     private String oldType;

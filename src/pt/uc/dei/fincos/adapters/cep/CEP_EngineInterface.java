@@ -163,8 +163,7 @@ public abstract class CEP_EngineInterface implements InputAdapter {
         if (this.outputListeners != null) {
             for (int i = 0; i < this.outputListeners.length; i++) {
                 if (outputListeners[i] != null) {
-                	System.out.println("CEP_EngineInterface:Desconectar Listener ID: "+outputListeners[i].getId());
-                    outputListeners[i].disconnect();
+                	outputListeners[i].disconnect();
                 }
             }
         }

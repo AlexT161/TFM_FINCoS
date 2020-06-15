@@ -69,6 +69,11 @@ public class SchemaDetail extends ComponentDetail{
 	private JComboBox dataTypeCombo; 
     
     
+	/**
+	 * Configuration of Stream Schemas
+	 * 
+	 * @param st	Stream to update, null for create a new Stream
+	 */
 	public SchemaDetail(EventType st){
 		super(null);
         this.columns = new ArrayList<Attribute>();
@@ -345,7 +350,6 @@ public class SchemaDetail extends ComponentDetail{
             Color defaultColor = UIManager.getColor("Table.background");
             detailTable.setBackground(defaultColor);
         }
-
         return ret;
 	}
 	

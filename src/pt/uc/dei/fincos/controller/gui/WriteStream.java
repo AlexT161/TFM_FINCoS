@@ -250,15 +250,19 @@ public class WriteStream {
 		root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 		root.setAttribute("xmlns", "http://www.espertech.com/schema/esper");
 		root.setAttribute("xsi:noNamespaceSchemaLocation", "esper-configuration-8-0.xsd");
-		
+		boolean variant = false;
 		Element common = docu.createElement("common");
 		for(String[] name : list.keySet()) {
-			Element eventType = docu.createElement("event-type");			
+			Element eventType = docu.createElement("event-type");
+			if(name[1].equals("Output")) {
+				variant = true;
+			}
 			eventType.setAttribute("name", name[0]);			
 			eventType.setAttribute("type", name[1]);
 			Element element = docu.createElement("objectarray");
 			EventType event = list.get(name);
 			Attribute[] atributes = event.getAttributes();
+			
 			for(int i=0; i < event.getAttributeCount();i++) {
 				Element property = docu.createElement("objectarray-property");
 				String type = atributes[i].getType().toString();
@@ -283,16 +287,42 @@ public class WriteStream {
 			eventType.appendChild(element);
 			common.appendChild(eventType);
 		}
-		Element variantStream = docu.createElement("variant-stream");
-		variantStream.setAttribute("name", "MyVariantStream");
-		Element variantEvent = docu.createElement("variant-event-type");
-		variantEvent.setAttribute("name", "salida");
-		variantStream.appendChild(variantEvent);
-		common.appendChild(variantStream);
+		if(variant) {
+			Element variantStream = docu.createElement("variant-stream");
+			variantStream.setAttribute("name", "MyVariantStream");
+			for(String[] name : list.keySet()) {
+				if(name[1].equals("Output")) {
+					Element variantEvent = docu.createElement("variant-event-type");
+					variantEvent.setAttribute("name", name[0]);
+					variantStream.appendChild(variantEvent);
+				}
+			}	
+			common.appendChild(variantStream);
+		}
+		
+		Element loggin = docu.createElement("loggin");
+		Element jdbc = docu.createElement("jdbc");		
+		jdbc.setAttribute("enabled", "false");
+		Element queryPlan = docu.createElement("query-plan");		
+		queryPlan.setAttribute("enabled", "false");
+		loggin.appendChild(jdbc);
+		loggin.appendChild(queryPlan);
+		common.appendChild(loggin);
 		
 		root.appendChild(common);
 		
 		Element compiler = docu.createElement("compiler");
+		
+		Element resources = docu.createElement("view-resources");
+		Element policy = docu.createElement("allow-multiple-expiry-policy");
+		policy.setAttribute("enabled", "true");
+		Element streamSelection = docu.createElement("stream-selection");
+		Element selector = docu.createElement("stream-selector");
+		selector.setAttribute("value", "istream");
+		streamSelection.appendChild(selector);
+		resources.appendChild(policy);
+		resources.appendChild(streamSelection);
+		compiler.appendChild(resources);
 		root.appendChild(compiler);
 		
 		Element runtime = docu.createElement("runtime");

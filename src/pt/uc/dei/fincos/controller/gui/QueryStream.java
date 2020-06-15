@@ -82,7 +82,7 @@ public class QueryStream extends ComponentDetail{
 	 * @param text2		String with the pattern detail
 	 */
 	private void splitQuery(String text2) {
-		int beginIndex = text2.indexOf("select")+6;
+		int beginIndex = text2.indexOf("select") + 6;
 		int endIndex = text2.lastIndexOf(" from");
 		String text3 = text2.substring(beginIndex, endIndex);
 		String[] parts = text3.split(",");
@@ -255,7 +255,7 @@ public class QueryStream extends ComponentDetail{
 			@Override
             public void actionPerformed(ActionEvent e) {
             	DefaultTableModel deleteModel = (DefaultTableModel) detailTable.getModel();
-            	if (detailTable.getSelectedRowCount()==1) {
+            	if (detailTable.getSelectedRowCount() == 1) {
                 	int row = detailTable.getSelectedRow();
                 	columns.remove(row);
                 	String value = deleteModel.getValueAt(row, 0).toString();

@@ -41,8 +41,8 @@
 <!-- Sample for an variant stream configuration that is a stream of events of multiple types. -->
 	<variant-stream name="MyVariantStream">
 	  <variant-event-type name="StockAvg"/>
-	  <variant-event-type name="StockAvg2"/>	
-	  <variant-event-type name="Prueba"/>
+<!--	  <variant-event-type name="StockAvg2"/>	
+	  <variant-event-type name="Prueba"/>-->
 	</variant-stream>    
 	<logging>
 		<!-- By default the compiler and runtime do not report JBDC query performance information or other relevant JDBC API information. By setting this flag JDBC query information is measured and logged at information level.-->

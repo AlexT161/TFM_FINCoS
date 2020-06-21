@@ -24,8 +24,13 @@ import pt.uc.dei.fincos.basic.EventType;
 import pt.uc.dei.fincos.basic.Globals;
 import pt.uc.dei.fincos.controller.ConfigurationParser;
 
-
-//Create or Update Streams
+/**
+ * 
+ * Creates or Updates Streams and set those in the Stream_Set file
+ * 
+ * @author John Alexander Torres
+ *
+ */
 public class WriteStream {
 	
 	/** Path for the file containing the Streams. */

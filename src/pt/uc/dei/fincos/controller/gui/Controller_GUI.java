@@ -129,7 +129,7 @@ public final class Controller_GUI extends JFrame {
             newDriverMenuItem, editDriverMenuItem, deleteDriverMenuItem,
             newSinkMenuItem, editSinkMenuItem, deleteSinkMenuItem,
             loadMenuItem, startMenuItem, pauseMenuItem, stopMenuItem, switchMenuItem, optionsMenuItem,
-            connectionsMenuItem, perfmonMenuItem, newQueryMenuItem, editQueryMenuItem, deleteQueryMenuItem, newSchemaMenuItem, editSchemaMenuItem, deleteSchemaMenuItem;
+            connectionsMenuItem, perfmonMenuItem, offlinePerformMenuItem, newQueryMenuItem, editQueryMenuItem, deleteQueryMenuItem, newSchemaMenuItem, editSchemaMenuItem, deleteSchemaMenuItem;
     private ButtonGroup rateFactorGroup;
 
     // ToolBar
@@ -644,8 +644,18 @@ public final class Controller_GUI extends JFrame {
         });
         perfmonMenuItem.setEnabled(false);
         
+        offlinePerformMenuItem = new JMenuItem("Offline Performance Monitor");
+        offlinePerformMenuItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new PerformanceMonitor();
+            }
+        });
+        
         viewMenu.add(connectionsMenuItem);
         viewMenu.add(perfmonMenuItem);
+        viewMenu.add(offlinePerformMenuItem);     
         
         //Menu Queries JAT
         queryMenu = new JMenu("Queries");

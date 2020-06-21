@@ -451,7 +451,8 @@ public final class GraphPanel extends JPanel {
      * @return               the number of series currently shown on GUI,
      *                       or -1 if the series could not be added
      */
-    public int addSeries(String seriesId, Color color, double scale, String scaleStr,
+    @SuppressWarnings("deprecation")
+	public int addSeries(String seriesId, Color color, double scale, String scaleStr,
             String connection, String streamName, String streamType, String counter) {
         synchronized (graphSeries) {
             if (graphSeries.containsKey(seriesId)) { //Checks if the counter has already been inserted

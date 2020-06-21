@@ -112,7 +112,8 @@ public final class Event implements Serializable {
      * @param attIndex  The index of the attribute whose value must be set
      * @param value     The intended value
      */
-    public void setAttributeValue(int attIndex, Object value) {
+    @SuppressWarnings("deprecation")
+	public void setAttributeValue(int attIndex, Object value) {
         if (value == null || value.equals("null")) {
             return;
         }

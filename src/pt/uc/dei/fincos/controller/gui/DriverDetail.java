@@ -327,7 +327,7 @@ public class DriverDetail extends ComponentDetail {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "deprecation" })
     private void initConnCombo() {
         ConnectionConfig[] conns = Controller_GUI.getInstance().getConnections();
         String[] txts = new String[conns.length + 1];

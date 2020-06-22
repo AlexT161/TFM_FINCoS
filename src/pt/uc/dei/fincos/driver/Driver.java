@@ -163,7 +163,7 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
      * Creates a Driver with a default alias.
      */
     public Driver() {
-        this("Driver");
+        this("Source");
     }
 
     /**
@@ -216,8 +216,8 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
 
         this.status = new Status();
         this.updateStatus(this.status.getStep(), this.status.getProgress());
-        System.out.println("Driver application started. Initializing remote interface...");
-        showInfo("Driver application started. Initializing remote interface...");
+        System.out.println("Source application started. Initializing remote interface...");
+        showInfo("Source application started. Initializing remote interface...");
 
         try {
             this.initializeRMI();
@@ -463,7 +463,7 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
                 || this.status.getStep() == Step.FINISHED
                 || this.status.getStep() == Step.STOPPED
                 || this.status.getStep() == Step.CONNECTED) {
-            showInfo("Loading Driver...");
+            showInfo("Loading Source...");
             this.totalEventCount = 0;
             this.totalEventsSent = 0;
 
@@ -553,16 +553,16 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
             t1 = System.currentTimeMillis();
 
             this.updateStatus(Step.READY, 100);
-            showInfo(" Driver loading finished (elapsed Time: " + (t1 - t0) / 1000
+            showInfo(" Source loading finished (elapsed Time: " + (t1 - t0) / 1000
                     + " seconds)"
                    + "\n\t # Synthetic phases: " + synthPhaseCount
                    + " (Total of generated events: " + generatedEventCount + ")"
                    + "\n\t # External File phases: " + extFilePhaseCount + ".");
             return true;
         } else {
-            showInfo("Cannot load driver. Driver has already been loaded.");
-            throw new InvalidStateException("Cannot load driver. "
-                                          + "Driver has already been loaded.");
+            showInfo("Cannot load source. Source has already been loaded.");
+            throw new InvalidStateException("Cannot load source. "
+                                          + "Source has already been loaded.");
         }
     }
 
@@ -574,9 +574,9 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
      *              opened, <tt>false</tt> otherwise.
      */
     private boolean openLogFile(DriverConfig cfg) {
-        String logHeader = "FINCoS Driver Log File."
-                + "\n Driver Alias: " + cfg.getAlias()
-                + "\n Driver Address: " + cfg.getAddress().getHostAddress()
+        String logHeader = "FINCoS Source Log File."
+                + "\n Source Alias: " + cfg.getAlias()
+                + "\n Source Address: " + cfg.getAddress().getHostAddress()
                 + "\n Connection: " + cfg.getConnection().getAlias()
                 + "\n Load generation start time: " + new Date();
 
@@ -747,8 +747,8 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
             if (this.status.getStep() == Step.PAUSED) {
                 this.resume();
             } else {
-                showInfo("Cannot start driver. Driver has not been loaded.");
-                throw new InvalidStateException("Driver has not been loaded.");
+                showInfo("Cannot start source. Source has not been loaded.");
+                throw new InvalidStateException("Source has not been loaded.");
             }
         }
     }
@@ -915,7 +915,7 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
     private void resume() {
         synchronized (this.status) {
             this.status.setStep(Step.RUNNING);
-            showInfo("Driver has been resumed.");
+            showInfo("Source has been resumed.");
             this.status.notifyAll();
         }
         for (Sender sender : this.senders) {
@@ -957,10 +957,10 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
                     sender.pauseLoad();
                 }
                 this.status.setStep(Step.PAUSED);
-                showInfo("Driver is paused.");
+                showInfo("Source is paused.");
             } else {
-                showInfo("Cannot pause Driver. Driver must be running in order to be paused.");
-                throw new InvalidStateException("Driver must be running in order to be paused.");
+                showInfo("Cannot pause Source. Source must be running in order to be paused.");
+                throw new InvalidStateException("Source must be running in order to be paused.");
             }
         }
     }
@@ -982,7 +982,7 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
                     this.senders = null;
                 }
                 clean();
-                showInfo("Driver has been stopped.");
+                showInfo("Source has been stopped.");
             } else if (this.status.getStep() == Step.LOADING) {
                 this.status.setStep(Step.STOPPED);
                 if (this.dg != null) {
@@ -996,9 +996,9 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
                 totalEventsSent = 0;
                 phaseEventsSent = 0;
                 clean();
-                showInfo("Driver has been stopped.");
+                showInfo("Source has been stopped.");
             } else {
-                throw new InvalidStateException("Driver must be loading, ready, "
+                throw new InvalidStateException("Source must be loading, ready, "
                                     + "running or paused in order to be stopped.");
             }
         }
@@ -1015,7 +1015,7 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
                 }
                 showInfo("Done!");
             } else {
-                throw new InvalidStateException("Driver must be running or "
+                throw new InvalidStateException("Source must be running or "
                                     + "paused in order to switch of phase.");
             }
         }
@@ -1032,7 +1032,7 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
                 }
                 showInfo("Done!");
             } else {
-                throw new InvalidStateException("Driver must be running or paused "
+                throw new InvalidStateException("Source must be running or paused "
                                     + "in order to alter event submission rate.");
             }
 

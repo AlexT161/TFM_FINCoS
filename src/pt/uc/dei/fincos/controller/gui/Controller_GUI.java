@@ -432,8 +432,8 @@ public final class Controller_GUI extends JFrame {
         schemaMenu.add(editSchemaMenuItem);
         schemaMenu.add(deleteSchemaMenuItem);
         
-        // Menu Driver
-        driverMenu = new JMenu("Drivers");
+        // Menu Source
+        driverMenu = new JMenu("Sources");
         newDriverMenuItem = new JMenuItem("New...");
         newDriverMenuItem.addActionListener(new ActionListener() {
 
@@ -451,7 +451,7 @@ public final class Controller_GUI extends JFrame {
                 if (selected > -1) {
                     new DriverDetail(facade.getDriverList().get(selected)).setVisible(true);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Select a driver to edit");
+                    JOptionPane.showMessageDialog(null, "Select a source to edit");
                 }
             }
         });
@@ -460,7 +460,7 @@ public final class Controller_GUI extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (JOptionPane.showConfirmDialog(null, "Delete Driver(s)?", "Confirm Delete", JOptionPane.YES_NO_OPTION)
+                if (JOptionPane.showConfirmDialog(null, "Delete Source(s)?", "Confirm Delete", JOptionPane.YES_NO_OPTION)
                         == JOptionPane.YES_OPTION) {
                     deleteDrivers();
                 }
@@ -652,6 +652,7 @@ public final class Controller_GUI extends JFrame {
                 new PerformanceMonitor();
             }
         });
+        offlinePerformMenuItem.setEnabled(false);
         
         viewMenu.add(connectionsMenuItem);
         viewMenu.add(perfmonMenuItem);
@@ -860,7 +861,7 @@ public final class Controller_GUI extends JFrame {
 
         //Drivers Panel
         driversPanel = new JPanel(new BorderLayout());
-        driversPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Drivers"));
+        driversPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Sources"));
         driversTable = new JTable();
         driversTable.setModel(
                 new DefaultTableModel(new String[]{"Status", "Alias", "Address"},
@@ -921,7 +922,7 @@ public final class Controller_GUI extends JFrame {
                     dscreen.fillProperties(copy);
                     dscreen.setVisible(true);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Select a Driver to copy");
+                    JOptionPane.showMessageDialog(null, "Select a Source to copy");
                 }
             }
         });
@@ -936,7 +937,7 @@ public final class Controller_GUI extends JFrame {
                         showInfo("Loading " + dr.getAlias() + "...");
                         loadDriver(dr);
                     } else {
-                        JOptionPane.showMessageDialog(null, "Select a Driver to load");
+                        JOptionPane.showMessageDialog(null, "Select a Source to load");
                     }
                 }
             }
@@ -953,7 +954,7 @@ public final class Controller_GUI extends JFrame {
                         DriverConfig dr = facade.getDriverList().get(selected);
                         startDriver(dr);
                     } else {
-                        JOptionPane.showMessageDialog(null, "Select a Driver to start");
+                        JOptionPane.showMessageDialog(null, "Select a Source to start");
                     }
                 }
             }
@@ -973,10 +974,10 @@ public final class Controller_GUI extends JFrame {
                             showInfo("Pausing " + dr.getAlias() + "...");
                             pauseDriver(dr);
                         } else {
-                            showInfo("Could not pause " + dr.getAlias() + ". Driver is not connected.");
+                            showInfo("Could not pause " + dr.getAlias() + ". Source is not connected.");
                         }
                     } else {
-                        JOptionPane.showMessageDialog(null, "Select a Driver to pause");
+                        JOptionPane.showMessageDialog(null, "Select a Source to pause");
                     }
                 }
             }
@@ -994,10 +995,10 @@ public final class Controller_GUI extends JFrame {
                             showInfo("Stopping " + dr.getAlias() + "...");
                             stopDriver(dr);
                         } else {
-                            showInfo("Could not stop " + dr.getAlias() + ". Driver is not connected.");
+                            showInfo("Could not stop " + dr.getAlias() + ". Source is not connected.");
                         }
                     } else {
-                        JOptionPane.showMessageDialog(null, "Select a Driver to stop");
+                        JOptionPane.showMessageDialog(null, "Select a Source to stop");
                     }
                 }
             }
@@ -1177,7 +1178,7 @@ public final class Controller_GUI extends JFrame {
                 || this.facade.getSinkList() == null
                 || this.facade.getSinkList().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Cannot save configuration file. "
-                    + "It is necessary to configure at least one Driver and one Sink.");
+                    + "It is necessary to configure at least one Source and one Sink.");
             return false;
         }
 
@@ -1211,7 +1212,7 @@ public final class Controller_GUI extends JFrame {
                 || this.facade.getSinkList() == null
                 || this.facade.getSinkList().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Cannot save configuration file. "
-                    + "It is necessary to configure at least one Driver and one Sink.");
+                    + "It is necessary to configure at least one Source and one Sink.");
             return false;
         }
 
@@ -1383,7 +1384,7 @@ public final class Controller_GUI extends JFrame {
                 }
                 configModified = true;
             } else {
-                JOptionPane.showMessageDialog(null, "Select a driver to delete");
+                JOptionPane.showMessageDialog(null, "Select a Source to delete");
             }
         }
     }
@@ -1768,7 +1769,7 @@ public final class Controller_GUI extends JFrame {
     private void loadAllComponents() {
         if (facade.getDriverList() == null
                 || facade.getDriverList().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Cannot load test. It is necessary to configure at least one Driver and one Sink.");
+            JOptionPane.showMessageDialog(null, "Cannot load test. It is necessary to configure at least one Source and one Sink.");
         } else {
             // Stops GUI refreshing thread
             stopGUIRefresh();
@@ -1812,7 +1813,7 @@ public final class Controller_GUI extends JFrame {
             RemoteDriverCaller starter = new RemoteDriverCaller(dr, "start");
             starter.execute();
         } else {
-            showInfo("Could not start " + dr.getAlias() + ". Driver is not connected.");
+            showInfo("Could not start " + dr.getAlias() + ". Source is not connected.");
         }
     }
 
@@ -1821,7 +1822,7 @@ public final class Controller_GUI extends JFrame {
      */
     private synchronized void startLoadSubmission() {
         if (facade.getDriverList() == null || facade.getDriverList().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Cannot start test. It is necessary to configure at least one Driver and one Sink.");
+            JOptionPane.showMessageDialog(null, "Cannot start test. It is necessary to configure at least one Source and one Sink.");
         } else {
             showInfo("Load submission started.");
             for (DriverConfig dr : facade.getDriverList()) {
@@ -1841,7 +1842,7 @@ public final class Controller_GUI extends JFrame {
             RemoteDriverCaller caller = new RemoteDriverCaller(dr, "pause");
             caller.execute();
         } else {
-            showInfo("Could not pause " + dr.getAlias() + ". Driver is not connected.");
+            showInfo("Could not pause " + dr.getAlias() + ". Source is not connected.");
         }
     }
 
@@ -1865,7 +1866,7 @@ public final class Controller_GUI extends JFrame {
             RemoteDriverCaller caller = new RemoteDriverCaller(dr, "stop");
             caller.execute();
         } else {
-            showInfo("Could not stop " + dr.getAlias() + ". Driver is not connected.");
+            showInfo("Could not stop " + dr.getAlias() + ". Source is not connected.");
         }
     }
 
@@ -1886,7 +1887,7 @@ public final class Controller_GUI extends JFrame {
      * Stops all Drivers and Sinks.
      */
     private synchronized void stopLoadSubmission() {
-        showInfo("Stopping Drivers...");
+        showInfo("Stopping Sources...");
         for (DriverConfig dr : facade.getDriverList()) {
             stopDriver(dr);
         }
@@ -1907,7 +1908,7 @@ public final class Controller_GUI extends JFrame {
             RemoteDriverCaller caller = new RemoteDriverCaller(dr, "switch");
             caller.execute();
         } else {
-            showInfo("Could not switch phase of " + dr.getAlias() + ". Driver is not connected.");
+            showInfo("Could not switch phase of " + dr.getAlias() + ". Source is not connected.");
         }
     }
 
@@ -1918,7 +1919,7 @@ public final class Controller_GUI extends JFrame {
      *
      */
     private synchronized void switchToNextPhase() {
-        showInfo("Switching Drivers to next phase...");
+        showInfo("Switching Sources to next phase...");
         for (DriverConfig dr : facade.getDriverList()) {
             switchDriverToNextPhase(dr);
         }
@@ -1934,7 +1935,7 @@ public final class Controller_GUI extends JFrame {
             RemoteDriverCaller caller = new RemoteDriverCaller(dr, "alter");
             caller.execute();
         } else {
-            showInfo("Could not alter submission rate of " + dr.getAlias() + ". Driver is not connected.");
+            showInfo("Could not alter submission rate of " + dr.getAlias() + ". Source is not connected.");
         }
     }
 
@@ -1943,7 +1944,7 @@ public final class Controller_GUI extends JFrame {
      *
      */
     private synchronized void alterRate() {
-        showInfo("Altering rates on Drivers...");
+        showInfo("Altering rates on Sources...");
         for (DriverConfig dr : facade.getDriverList()) {
             alterDriverRate(dr);
         }
@@ -1970,13 +1971,13 @@ public final class Controller_GUI extends JFrame {
             try {
                 ret = facade.loadRemoteDriver(dr);
             } catch (ConnectException ce) {
-                showInfo("Could not connect to remote driver " + dr.getAlias() + ". (" + ce.getMessage() + ")");
+                showInfo("Could not connect to remote source " + dr.getAlias() + ". (" + ce.getMessage() + ")");
             } catch (NotBoundException nbe) {
-                showInfo("Could not connect to remote driver " + dr.getAlias() + ". (" + nbe.getClass() + "-" + nbe.getMessage() + ")");
+                showInfo("Could not connect to remote source " + dr.getAlias() + ". (" + nbe.getClass() + "-" + nbe.getMessage() + ")");
             } catch (AccessException ae) {
-                showInfo("Could not connect to remote driver " + dr.getAlias() + ". (" + ae.getClass() + "-" + ae.getMessage() + ")");
+                showInfo("Could not connect to remote source " + dr.getAlias() + ". (" + ae.getClass() + "-" + ae.getMessage() + ")");
             } catch (RemoteException re) {
-                showInfo("Could not connect to remote driver " + dr.getAlias() + ". (" + re.getClass() + "-" + re.getMessage() + ")");
+                showInfo("Could not connect to remote source " + dr.getAlias() + ". (" + re.getClass() + "-" + re.getMessage() + ")");
             } catch (Exception e) {
                 showInfo("Error while loading " + dr.getAlias() + "(" + e.getMessage() + ")");
             }
@@ -1991,9 +1992,9 @@ public final class Controller_GUI extends JFrame {
             try {
                 if (get() != null) {
                     if (get()) {
-                        showInfo("Driver " + dr.getAlias() + " has been successfully loaded.");
+                        showInfo("Source " + dr.getAlias() + " has been successfully loaded.");
                     } else {
-                        showInfo("Remote Driver " + dr.getAlias() + " reported that was not successfully loaded.");
+                        showInfo("Remote Source " + dr.getAlias() + " reported that was not successfully loaded.");
                     }
                 }
             } catch (InterruptedException e) {

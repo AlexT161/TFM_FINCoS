@@ -74,7 +74,7 @@ public class DriverDetail extends ComponentDetail {
             fillProperties(dr);
         } else {
             this.op = INSERT;
-            setTitle("New Driver");
+            setTitle("New Source");
         }
 
         this.setResizable(false);

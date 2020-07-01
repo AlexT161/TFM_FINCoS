@@ -218,7 +218,7 @@ public final class PerformanceMonitor extends JFrame {
                 }
             });
         } else { // Offline processing
-            this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+            this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         }
 
         this.setSize(850, 625);

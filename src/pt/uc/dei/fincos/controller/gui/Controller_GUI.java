@@ -76,6 +76,7 @@ import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
 
+import pt.uc.dei.fincos.adapters.cep.SiddhiISample;
 import pt.uc.dei.fincos.basic.EventType;
 import pt.uc.dei.fincos.basic.Globals;
 import pt.uc.dei.fincos.basic.InvalidStateException;
@@ -129,7 +130,9 @@ public final class Controller_GUI extends JFrame {
             newDriverMenuItem, editDriverMenuItem, deleteDriverMenuItem,
             newSinkMenuItem, editSinkMenuItem, deleteSinkMenuItem,
             loadMenuItem, startMenuItem, pauseMenuItem, stopMenuItem, switchMenuItem, optionsMenuItem,
-            connectionsMenuItem, perfmonMenuItem, offlinePerformMenuItem, newQueryMenuItem, editQueryMenuItem, deleteQueryMenuItem, newSchemaMenuItem, editSchemaMenuItem, deleteSchemaMenuItem;
+            connectionsMenuItem, perfmonMenuItem, offlinePerformMenuItem, siddhiMenuItem,
+            newQueryMenuItem, editQueryMenuItem, deleteQueryMenuItem,
+            newSchemaMenuItem, editSchemaMenuItem, deleteSchemaMenuItem;
     private ButtonGroup rateFactorGroup;
 
     // ToolBar
@@ -652,11 +655,20 @@ public final class Controller_GUI extends JFrame {
                 new PerformanceMonitor();
             }
         });
-        offlinePerformMenuItem.setEnabled(false);
+        
+        siddhiMenuItem = new JMenuItem("Siddhi");
+        siddhiMenuItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new SiddhiISample();
+            }
+        });
         
         viewMenu.add(connectionsMenuItem);
         viewMenu.add(perfmonMenuItem);
         viewMenu.add(offlinePerformMenuItem);     
+        viewMenu.add(siddhiMenuItem); //JAT Temporal
         
         //Menu Queries JAT
         queryMenu = new JMenu("Queries");

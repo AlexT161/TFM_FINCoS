@@ -27,7 +27,7 @@ import io.siddhi.core.util.EventPrinter;
 //import io.siddhi.sample.util.CustomFunctionExtension;
 
 public class SiddhiISample {
-	public static void main(String[] args) throws InterruptedException {
+	public static void main() throws InterruptedException {
 
         // Creating Siddhi Manager
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -49,6 +49,7 @@ public class SiddhiISample {
             @Override
             public void receive(Event[] events) {
                 EventPrinter.print(events);
+                System.out.println("eventos:"+events);
                 //To convert and print event as a map
                 //EventPrinter.print(toMap(events));
             }
@@ -67,6 +68,7 @@ public class SiddhiISample {
         inputHandler.send(new Object[]{"IBM", 76.6f, 400L});
         inputHandler.send(new Object[]{"WSO2", 45.6f, 50L});
         Thread.sleep(500);
+        System.out.println("ejecutando...");
 
         //Shutting down the runtime
         siddhiAppRuntime.shutdown();

@@ -34,5 +34,6 @@
 	<classpathentry kind="lib" path="lib/Siddhi/siddhi-io-file-2.0.10.jar"/>
 	<classpathentry kind="lib" path="lib/Siddhi/siddhi-query-api-5.1.13.jar"/>
 	<classpathentry kind="lib" path="lib/Siddhi/siddhi-query-compiler-5.1.13.jar"/>
+	<classpathentry kind="lib" path="etc/Siddhi/log4j.properties"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

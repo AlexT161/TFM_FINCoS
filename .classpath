@@ -34,6 +34,8 @@
 	<classpathentry kind="lib" path="lib/Siddhi/siddhi-io-file-2.0.10.jar"/>
 	<classpathentry kind="lib" path="lib/Siddhi/siddhi-query-api-5.1.13.jar"/>
 	<classpathentry kind="lib" path="lib/Siddhi/siddhi-query-compiler-5.1.13.jar"/>
-	<classpathentry kind="lib" path="etc/Siddhi/log4j.properties"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="etc/Siddhi/antlr-runtime-4.8.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/disruptor_3.3.2.wso2v2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

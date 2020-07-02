@@ -662,8 +662,9 @@ public final class Controller_GUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-					SiddhiISample.main();
+					new SiddhiISample();
 				} catch (InterruptedException e1) {
+					
 					e1.printStackTrace();
 				}
             }

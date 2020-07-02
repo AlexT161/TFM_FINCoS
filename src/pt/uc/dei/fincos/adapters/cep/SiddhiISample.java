@@ -27,7 +27,7 @@ import io.siddhi.core.util.EventPrinter;
 //import io.siddhi.sample.util.CustomFunctionExtension;
 
 public class SiddhiISample {
-	public static void main() throws InterruptedException {
+	public SiddhiISample() throws InterruptedException {
 
         // Creating Siddhi Manager
         SiddhiManager siddhiManager = new SiddhiManager();

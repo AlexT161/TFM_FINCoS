@@ -37,7 +37,7 @@ public final class CEP_EngineFactory {
 
     /** List of CEP engines for which there is an implemented adapter. */
     //ADD SUPPORT FOR OTHER CEP ENGINES HERE
-    private static final String[] supportedEngines = {"Esper"};
+    private static final String[] supportedEngines = {"Esper","Siddhi"};
 
 
     /**
@@ -91,6 +91,9 @@ public final class CEP_EngineFactory {
         }
         if (engine.equalsIgnoreCase("Esper")) {
             return EsperInterface.getInstance(prop, rtMode, rtResolution);
+        }
+        if (engine.equalsIgnoreCase("Siddhi")) {
+            return SiddhiInterface.getInstance(prop, rtMode, rtResolution);
         } else {
             /* !!! ADD SUPPORT FOR OTHER CEP ENGINES HERE !!! */
             throw new Exception("ERROR: Engine not supported. "

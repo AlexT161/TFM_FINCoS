@@ -12,7 +12,6 @@
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/jms/jms-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="lib/swingx-0.9.7.jar"/>
 	<classpathentry kind="lib" path="lib/Esper/antlr4-runtime-4.7.2.jar"/>
 	<classpathentry kind="lib" path="lib/Esper/commons-compiler-3.1.0.jar"/>
@@ -29,13 +28,71 @@
 	<classpathentry kind="lib" path="lib/jms/hornetq/hornetq-jms-client.jar"/>
 	<classpathentry kind="lib" path="lib/jms/hornetq/jnp-client.jar"/>
 	<classpathentry kind="lib" path="lib/jms/hornetq/netty.jar"/>
-	<classpathentry kind="lib" path="lib/Siddhi/siddhi-annotations-5.1.13.jar"/>
-	<classpathentry kind="lib" path="lib/Siddhi/siddhi-core-5.1.13.jar"/>
 	<classpathentry kind="lib" path="lib/Siddhi/siddhi-io-file-2.0.10.jar"/>
-	<classpathentry kind="lib" path="lib/Siddhi/siddhi-query-api-5.1.13.jar"/>
 	<classpathentry kind="lib" path="lib/Siddhi/siddhi-query-compiler-5.1.13.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
-	<classpathentry kind="lib" path="etc/Siddhi/antlr-runtime-4.8.jar"/>
-	<classpathentry kind="lib" path="lib/Siddhi/disruptor_3.3.2.wso2v2.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/accessors-smart-1.2-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/accessors-smart-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/aether-api-1.7.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/aether-impl-1.7.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/aether-spi-1.7.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/aether-util-1.7.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/animal-sniffer-annotations-1.14-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/animal-sniffer-annotations-1.14.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/asm-5.0.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/asm-5.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/asm-6.0_ALPHA.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/classindex-3.8-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/classindex-3.8.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/commons-io-2.5.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/disruptor-3.4.2.wso2v1.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/guava-23.0-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/guava-23.0.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/json-smart-2.3-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/json-smart-2.3.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/log4j-1.2.17-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/metrics-core-4.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/mvel2-2.4.4.Final-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/mvel2-2.4.4.Final.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/netty-buffer-4.0.27.Final.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/netty-codec-4.0.27.Final.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/netty-common-4.0.27.Final.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/netty-handler-4.0.27.Final.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/netty-transport-4.0.27.Final.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/org.abego.treelayout.core-1.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/org.abego.treelayout.core-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/org.eclipse.osgi.services-3.3.100.v20130513-1956.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/org.osgi.core-4.3.0-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/org.osgi.core-4.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/plexus-build-api-0.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/plexus-cipher-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/plexus-classworlds-2.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/plexus-compiler-api-2.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/plexus-compiler-javac-2.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/plexus-compiler-manager-2.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/plexus-component-annotations-1.6.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/plexus-interpolation-1.14.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/plexus-sec-dispatcher-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/plexus-utils-2.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/quartz-2.1.1.wso2v1.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/quartz-2.3.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/quartz-2.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/siddhi-annotations-5.1.8-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/siddhi-annotations-5.1.8.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/siddhi-core-5.1.8-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/siddhi-core-5.1.8.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/siddhi-query-api-5.1.8-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/siddhi-query-api-5.1.8.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/siddhi-query-compiler-5.1.8-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/sisu-guice-2.1.7-noaop.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/sisu-inject-bean-1.4.2.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/sisu-inject-plexus-1.4.2.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/slf4j-api-1.7.5-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/snakeyaml-1.25-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/snakeyaml-1.25.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/testng-6.14.3-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/testng-6.14.3.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/antlr4-runtime-4.5-sources.jar"/>
+	<classpathentry kind="lib" path="lib/Siddhi/antlr-runtime-4.8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

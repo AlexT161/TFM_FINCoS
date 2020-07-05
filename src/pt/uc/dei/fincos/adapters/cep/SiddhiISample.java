@@ -51,7 +51,7 @@ public class SiddhiISample {
                 EventPrinter.print(events);
                 System.out.println("eventos:"+events);
                 //To convert and print event as a map
-                //EventPrinter.print(toMap(events));
+                EventPrinter.print(toMap(events));
             }
         });
 

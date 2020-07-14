@@ -76,11 +76,10 @@ public class DaemonServer implements RemoteDaemonServerFunctions {
 	public final void startDriver(String alias) throws RemoteException {
 		Driver driver = this.driverList.get(alias);
 		if (driver == null) {
-		    System.out.println("Initializing new Driver application.");
+		    System.out.println("Initializing new Source application.");
             this.driverList.put(alias, new Driver(alias));
-            System.out.println("Initializing new Driver application.");
 		} else {
-		    System.out.println("Loading Driver \"" + alias + "\".");
+		    System.out.println("Loading Source \"" + alias + "\".");
 		    driver.setVisible(true);
 		}
 

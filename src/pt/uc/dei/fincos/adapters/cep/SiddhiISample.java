@@ -49,7 +49,6 @@ public class SiddhiISample {
             @Override
             public void receive(Event[] events) {
                 EventPrinter.print(events);
-                System.out.println("eventos:"+events);
                 //To convert and print event as a map
                 EventPrinter.print(toMap(events));
             }

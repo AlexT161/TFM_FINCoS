@@ -730,8 +730,6 @@ public final class Controller_GUI extends JFrame {
         queryMenu.add(editQueryMenuItem);
         queryMenu.add(deleteQueryMenuItem);
         
-        
-        
         menuBar.add(fileMenu);
         menuBar.add(schemaMenu);
         menuBar.add(driverMenu);

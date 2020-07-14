@@ -510,7 +510,6 @@ public final class ControllerFacade {
         remoteSink = (SinkRemoteFunctions) registry.lookup(sink.getAlias());
         synchronized (remoteSinks) {
             remoteSinks.put(sink, remoteSink);
-            System.out.println("Lista de Sinks"+remoteSink);
         }
 
         if (remoteSink != null) {

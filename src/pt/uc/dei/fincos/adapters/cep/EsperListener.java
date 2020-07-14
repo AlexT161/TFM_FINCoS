@@ -62,8 +62,6 @@ public final class EsperListener extends OutputListener implements UpdateListene
 
     /** The format used to exchange events with the Esper engine. */
     private int eventFormat;
-    
- //   private int outputNumber;
 
     /**
      * Constructor for direct communication between Esper and Sink.
@@ -95,14 +93,11 @@ public final class EsperListener extends OutputListener implements UpdateListene
         this.querySchema = querySchema;
         this.queryOutputName = queryOutputName;
         this.setEventFormat(eventFormat);
-   //     this.outputNumber = outputNumber;
     }
 
     @Override
     public void load() throws Exception {
         try {
-            System.out.println("Loading query: \n" + queryText);
-//            query = epService.getEPAdministrator().createEPL(queryText, queryOutputName);
             CompilerArguments args = new CompilerArguments(configuration);	//JAT
             args.getPath().add(runtime.getRuntimePath());	//JAT
             EPCompiled compiled = EPCompilerProvider.getCompiler().compile(queryText, args);	//JAT
@@ -141,7 +136,6 @@ public final class EsperListener extends OutputListener implements UpdateListene
     
     @Override
 	public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPRuntime arg3) {
-		// TODO Auto-generated method stub
 		update(arg0, arg1);
 	}
 

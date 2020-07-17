@@ -27,6 +27,7 @@ import pt.uc.dei.fincos.basic.CSV_Event;
 import pt.uc.dei.fincos.basic.Datatype;
 import pt.uc.dei.fincos.basic.Event;
 import pt.uc.dei.fincos.basic.EventType;
+import pt.uc.dei.fincos.basic.Globals;
 import pt.uc.dei.fincos.basic.Status;
 import pt.uc.dei.fincos.basic.Step;
 import pt.uc.dei.fincos.sink.Sink;
@@ -151,7 +152,87 @@ public final class SiddhiInterface extends CEP_EngineInterface {
 	
 	@Override
 	public void send(Event e) throws Exception {
-		// TODO Auto-generated method stub
+		if (this.status.getStep() == Step.READY || this.status.getStep() == Step.CONNECTED) {
+            if (this.eventFormat == OBJECT_ARRAY_FORMAT) {
+                sendObjectArrayEvent(e);
+            }/* else if (this.eventFormat == POJO_FORMAT) {
+                sendPOJOEvent(e);
+            } else {
+                sendMapEvent(e);
+            }
+
+            if (this.useExternalTimer && e.getType().getName().equals(extTSEventType)) {
+                advanceClock((Long) e.getAttributeValue(extTSIndex));
+            }*/
+        }		
+	}
+
+    /**
+     * Sends an Object-array event to Siddhi.
+     *
+     * Event record is initially represented using the FINCoS internal format
+     * and it is converted to a an Object-array format before sending to Siddhi.
+     *
+     * @param event     the event to be sent
+     * @throws InterruptedException 
+     */
+	private void sendObjectArrayEvent(Event event) throws InterruptedException {
+		String eventTypeName = event.getType().getName();
+        LinkedHashMap<String, String> eventSchema = streamsSchemas.get(eventTypeName);
+        if (eventSchema != null) {
+            Object[] objArrEvent = null;
+            Object[] payload = event.getValues();
+
+            int fieldCount = this.rtMode != Globals.NO_RT
+                           ? payload.length + 1
+                           : payload.length;
+
+            if (eventSchema.size() != fieldCount) {
+                System.err.println("ERROR: Number of fields in event \""
+                        + event + "\" (" + (fieldCount)
+                        + ") does not match schema of event type Object Array \""
+                        + eventTypeName + "\" ("
+                        + eventSchema.size() + ").");
+                return;
+            }
+
+            if (this.rtMode == Globals.NO_RT) { // No RT measurement: send event's payload
+            	objArrEvent = payload;           
+            } else { // With RT measurement: send event's payload and timestamp
+                objArrEvent = new Object[fieldCount];
+                for (int i = 0; i < fieldCount; i++) {
+                    if (i == fieldCount - 1) {    // Timestamp field (last one)
+                        if (this.rtMode == Globals.ADAPTER_RT) {
+                            /* Assigns a timestamp to the event just after conversion
+                               (i.e., just before sending the event to the target system) */
+                            long timestamp = 0;
+                            if (rtResolution == Globals.MILLIS_RT) {
+                                timestamp = System.currentTimeMillis();
+                            } else if (rtResolution == Globals.NANO_RT) {
+                                timestamp = System.nanoTime();
+                            }
+                            objArrEvent[i] = timestamp;
+                        } else if (rtMode == Globals.END_TO_END_RT) {
+                            // The timestamp comes from the Driver
+                            objArrEvent[i] = event.getTimestamp();
+                        }
+                    } else {
+                        objArrEvent[i] = payload[i];
+                    }
+                }
+            }
+            synchronized (inputHandler) {
+            	inputHandler.send(new Object[]{"IBM", 700f, 100L});
+                inputHandler.send(new Object[]{"WSO2", 60.5f, 200L});
+                inputHandler.send(new Object[]{"GOOG", 50f, 30L});
+                inputHandler.send(new Object[]{"IBM", 76.6f, 400L});
+                inputHandler.send(new Object[]{"WSO2", 45.6f, 50L});
+                Thread.sleep(500);
+            }
+        } else {
+            System.err.println("Unknown event 3 type \"" + eventTypeName + "\"."
+                    + "It is not possible to send event.");
+        }
 		
 	}
 
@@ -185,17 +266,8 @@ public final class SiddhiInterface extends CEP_EngineInterface {
         
         parseStreamsList(queriesFile, siddhiConfigurationFile);
         
-   /*     String siddhiApp = "" +
-        		"define stream StockStream (symbol string, price float, volume long); " +
-                "" +
-                "@info(name = 'query1') " +
-                "from StockStream[volume < 150] " +
-                "select symbol, price " +
-                "insert into OutputStream;";
-        
-       this.siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp); */
        this.status.setStep(Step.CONNECTED);
-//       this.unlistenedQueries = new ArrayList<EPStatement>();
+       this.unlistenedQueries = new ArrayList<SiddhiAppRuntime>();
        
        return true;
 	}
@@ -339,7 +411,7 @@ public final class SiddhiInterface extends CEP_EngineInterface {
         if (this.status.getStep() == Step.CONNECTED) {
             this.status.setStep(Step.LOADING);
             if (outputStreams != null) {
-                this.outputListeners = new EsperListener[outputStreams.length];
+                this.outputListeners = new SiddhiListener[outputStreams.length];
                 int i = 0;
                 for (Entry<String, String> query : this.queryNamesAndTexts.entrySet()) {                           	
                     if (hasListener(query.getKey(), outputStreams)) {
@@ -418,4 +490,16 @@ public final class SiddhiInterface extends CEP_EngineInterface {
         return outputStreamList != null ? outputStreamList : new String[0];
     }
 
+    /**
+     * Advances the external clock of the Siddhi instance, if necessary.
+     *
+     * @param extTimestamp  the latest timestamp
+     */
+    /*  private void advanceClock(Long extTimestamp) {
+        if (extTimestamp != lastExtTS) { // Time advanced       	
+        	this.inputHandler.sendEvent(new externalTimestamp(extTimestamp));
+            lastExtTS = extTimestamp;
+        }
+    }*/
+    
 }

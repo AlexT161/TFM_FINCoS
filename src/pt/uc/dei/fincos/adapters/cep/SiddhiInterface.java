@@ -222,12 +222,7 @@ public final class SiddhiInterface extends CEP_EngineInterface {
                 }
             }
             synchronized (inputHandler) {
-            	inputHandler.send(new Object[]{"IBM", 700f, 100L});
-                inputHandler.send(new Object[]{"WSO2", 60.5f, 200L});
-                inputHandler.send(new Object[]{"GOOG", 50f, 30L});
-                inputHandler.send(new Object[]{"IBM", 76.6f, 400L});
-                inputHandler.send(new Object[]{"WSO2", 45.6f, 50L});
-                Thread.sleep(500);
+            	inputHandler.send(objArrEvent);
             }
         } else {
             System.err.println("Unknown event 3 type \"" + eventTypeName + "\"."
@@ -265,7 +260,7 @@ public final class SiddhiInterface extends CEP_EngineInterface {
         this.siddhiManager = new SiddhiManager();
         
         parseStreamsList(queriesFile, siddhiConfigurationFile);
-        
+
        this.status.setStep(Step.CONNECTED);
        this.unlistenedQueries = new ArrayList<SiddhiAppRuntime>();
        
@@ -416,7 +411,7 @@ public final class SiddhiInterface extends CEP_EngineInterface {
                 for (Entry<String, String> query : this.queryNamesAndTexts.entrySet()) {                           	
                     if (hasListener(query.getKey(), outputStreams)) {
                         outputListeners[i] = new SiddhiListener("lsnr-0" + (i + 1),
-                                rtMode, rtResolution, sinkInstance, this.siddhiAppRuntime,
+                                rtMode, rtResolution, sinkInstance, this.siddhiManager,
                                 query.getKey(), query.getValue(),
                                 this.streamsSchemas.get(query.getKey()), this.eventFormat, inputHandler);
                         outputListeners[i].load();

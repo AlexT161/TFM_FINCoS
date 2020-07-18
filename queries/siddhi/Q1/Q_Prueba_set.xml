@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Siddhi-Queries
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<Query name="query1" text="from StockStream[volume = 150] select symbol, price insert into OutputStream;" />
+	<Query name="Prueba" text="from Nuevo select entero, TeS insert into OutputStream;" />
 </Siddhi-Queries>

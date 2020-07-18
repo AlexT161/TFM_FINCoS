@@ -221,12 +221,10 @@ public final class SiddhiInterface extends CEP_EngineInterface {
                     }
                 }
             }
-            synchronized (inputHandler) {
-            	inputHandler.send(objArrEvent);
-            }
+            inputHandler.send(objArrEvent);
         } else {
             System.err.println("Unknown event 3 type \"" + eventTypeName + "\"."
-                    + "It is not possible to send event.");
+                    + "It is not possible to send event to Siddhi.");
         }
 		
 	}
@@ -408,28 +406,35 @@ public final class SiddhiInterface extends CEP_EngineInterface {
             if (outputStreams != null) {
                 this.outputListeners = new SiddhiListener[outputStreams.length];
                 int i = 0;
-                for (Entry<String, String> query : this.queryNamesAndTexts.entrySet()) {                           	
+                for (Entry<String, String> query : this.queryNamesAndTexts.entrySet()) {
+                	System.out.println("SiddhiInterface:key: "+query.getKey());
+                	System.out.println("SiddhiInterface:OS: "+outputStreams[0]);
                     if (hasListener(query.getKey(), outputStreams)) {
                         outputListeners[i] = new SiddhiListener("lsnr-0" + (i + 1),
                                 rtMode, rtResolution, sinkInstance, this.siddhiManager,
                                 query.getKey(), query.getValue(),
                                 this.streamsSchemas.get(query.getKey()), this.eventFormat, inputHandler);
+                        System.out.println("SiddhiInterface:Previo a load");
                         outputListeners[i].load();
                         i++;
                     } else {
-                        System.err.println("WARNING: Query \"" + query.getKey()
+                        System.err.println("WARNING: Siddhi Query \"" + query.getKey()
                                            + "\" has no registered listener.");
-                        System.out.println("Loading query: \n"  + query.getValue());
+                        System.out.println("Loading Siddhi query: \n"  + query.getValue());
                         String siddhiApp = "" +
-                        		"define stream StockStream (symbol string, price float, volume long); " +
+                        		"define stream "+
+//                        		streamsSchemas.keySet()+
+                        		"Nuevo " +                            
+                        		" (entero int, TeS long); " +
                                 "" +
                                 "@info(name = '"+query.getKey()+"') " + 
-//                                query.getValue();
-								"from StockStream[volume < 150] " +
+                                query.getValue();
+/*								"from StockStream[volume < 150] " +
 								"select symbol, price " +
-								"insert into OutputStream;";
+								"insert into OutputStream;"; */
+                        System.out.println("SiddhiListener:siddhiApp: "+siddhiApp);
                         SiddhiAppRuntime runtime = this.siddhiManager.createSiddhiAppRuntime(siddhiApp);
-                        this.inputHandler = runtime.getInputHandler("StockStream");
+                        this.inputHandler = runtime.getInputHandler("Nuevo");
                         unlistenedQueries.add(runtime);
                     }
                 }

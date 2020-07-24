@@ -2,17 +2,11 @@ package pt.uc.dei.fincos.adapters.cep;
 
 import java.util.LinkedHashMap;
 
-import com.espertech.esper.common.client.configuration.Configuration;
-import com.espertech.esper.runtime.client.EPRuntime;
-import com.espertech.esper.runtime.client.EPRuntimeDestroyedException;
-import com.espertech.esper.runtime.client.EPUndeployException;
-
 import io.siddhi.core.SiddhiAppRuntime;
 import io.siddhi.core.SiddhiManager;
 import io.siddhi.core.event.Event;
 import io.siddhi.core.stream.input.InputHandler;
 import io.siddhi.core.stream.output.StreamCallback;
-import io.siddhi.core.util.EventPrinter;
 import pt.uc.dei.fincos.adapters.OutputListener;
 import pt.uc.dei.fincos.sink.Sink;
 
@@ -20,9 +14,7 @@ public final class SiddhiListener extends OutputListener {
 	
 	private SiddhiAppRuntime runtime;
 	
-	private StreamCallback streamCallback;
-	
-	private InputHandler inputHandler;
+	private InputHandler inputHandler;												
 	
 	private SiddhiManager siddhiManager;
 	
@@ -94,16 +86,17 @@ public final class SiddhiListener extends OutputListener {
                 "@info(name = '"+queryOutputName+"') " + 
                 queryText;
         this.runtime = this.siddhiManager.createSiddhiAppRuntime(siddhiApp);
-//		SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(queryText);
+		System.out.println("SiddhiListener:runtime Siddhi " +runtime);
 		runtime.addCallback("OutputStream", new StreamCallback() {
             @Override
             public void receive(Event[] events) {
             	SiddhiListener.this.onOutput(events);
             }
         });
+        inputHandler = runtime.getInputHandler("Nuevo");
 		runtime.start();
 		System.out.println("SiddhiListener: Iniciando runtime Siddhi");
-//		runtime.start();
+		System.out.println("SiddhiListener:IH: " +inputHandler);
 	}
 
 	@Override

@@ -56,18 +56,19 @@ public class SiddhiISample {
 
         //Retrieving InputHandler to push events into Siddhi
         InputHandler inputHandler = siddhiAppRuntime.getInputHandler("StockStream");
-
+        System.out.println("ejemplo Siddhi ih: " + inputHandler);
         //Starting event processing
         siddhiAppRuntime.start();
 
         //Sending events to Siddhi
+        System.out.println("ejemplo Siddhi: " + inputHandler);
         inputHandler.send(new Object[]{"IBM", 700f, 100L});
         inputHandler.send(new Object[]{"WSO2", 60.5f, 200L});
         inputHandler.send(new Object[]{"GOOG", 50f, 30L});
         inputHandler.send(new Object[]{"IBM", 76.6f, 400L});
         inputHandler.send(new Object[]{"WSO2", 45.6f, 50L});
         Thread.sleep(500);
-        System.out.println("ejecutando...");
+        System.out.println("ejecutando ejemplo Siddhi...");
 
         //Shutting down the runtime
         siddhiAppRuntime.shutdown();

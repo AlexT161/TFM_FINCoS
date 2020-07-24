@@ -2,6 +2,7 @@ package pt.uc.dei.fincos.adapters.cep;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -22,6 +23,12 @@ import io.siddhi.core.SiddhiManager;
 import io.siddhi.core.stream.input.InputHandler;
 import io.siddhi.core.stream.output.StreamCallback;
 import io.siddhi.core.util.EventPrinter;
+import javassist.CannotCompileException;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtField;
+import javassist.CtNewMethod;
+import javassist.NotFoundException;
 import pt.uc.dei.fincos.basic.Attribute;
 import pt.uc.dei.fincos.basic.CSV_Event;
 import pt.uc.dei.fincos.basic.Datatype;
@@ -221,7 +228,10 @@ public final class SiddhiInterface extends CEP_EngineInterface {
                     }
                 }
             }
-            inputHandler.send(objArrEvent);
+        	System.out.println("SiddhiInterface:inputHandler: "+inputHandler);
+            synchronized (inputHandler) {
+            	this.inputHandler.send(objArrEvent);
+            }
         } else {
             System.err.println("Unknown event 3 type \"" + eventTypeName + "\"."
                     + "It is not possible to send event to Siddhi.");
@@ -375,11 +385,7 @@ public final class SiddhiInterface extends CEP_EngineInterface {
 	                        }
 	                    }
 	                    eType = new EventType(typeName, atts);
-
-	                    // Load new class definition into JVM using javassist API
-//	                    createBean(eType);
-
-//	                    esperConfig.addEventType(typeName, Class.forName(typeName).getName());
+	                    createBean(eType);
 	                }
 	            }
 	        }
@@ -388,8 +394,62 @@ public final class SiddhiInterface extends CEP_EngineInterface {
 	            inputStreams.remove(outputStream);
 	        }
 	        this.inputStreamList = inputStreams.toArray(new String[0]);
-
 	}
+
+	/**
+     * Creates and loads into JVM a class with the same schema
+     * as the event type passed as argument.
+     *
+     * @param eType			Schema of new class
+     *
+     * @throws CannotCompileException   if class creation fails
+     * @throws NotFoundException        if class creation fails
+     */
+    private void createBean(EventType eType)
+    throws CannotCompileException, NotFoundException {
+        try {
+            Class.forName(eType.getName());
+        } catch (ClassNotFoundException e) {
+            ClassPool pool = ClassPool.getDefault();
+            CtClass schemaClass = pool.makeClass(eType.getName());
+
+            for (Attribute att : eType.getAttributes()) {
+                CtField cfield = null;
+                switch (att.getType()) {
+                case INTEGER:
+                    cfield = new CtField(CtClass.intType, att.getName(), schemaClass);
+                    break;
+                case FLOAT:
+                    cfield = new CtField(CtClass.floatType, att.getName(), schemaClass);
+                    break;
+                case DOUBLE:
+                    cfield = new CtField(CtClass.doubleType, att.getName(), schemaClass);
+                    break;
+                case TEXT:
+                    cfield = new CtField(pool.get("java.lang.String"), att.getName(), schemaClass);
+                    break;
+                case BOOLEAN:
+                    cfield = new CtField(CtClass.booleanType, att.getName(), schemaClass);
+                    break;
+                case LONG:
+                    cfield = new CtField(CtClass.longType, att.getName(), schemaClass);
+                    break;
+                }
+                if (cfield != null) {
+                    cfield.setModifiers(Modifier.PUBLIC);
+                    schemaClass.addField(cfield);
+                    String getterName = "get" + att.getName().substring(0, 1).toUpperCase()
+                                      + att.getName().substring(1);
+                    String setterName = "set" + att.getName().substring(0, 1).toUpperCase()
+                                      + att.getName().substring(1);
+                    schemaClass.addMethod(CtNewMethod.getter(getterName, cfield));
+                    schemaClass.addMethod(CtNewMethod.setter(setterName, cfield));
+                }
+            }
+
+            schemaClass.toClass();
+        }
+    }
 
 	@Override
 	public synchronized boolean load(String[] outputStreams, Sink sinkInstance) throws Exception {
@@ -410,6 +470,7 @@ public final class SiddhiInterface extends CEP_EngineInterface {
                 	System.out.println("SiddhiInterface:key: "+query.getKey());
                 	System.out.println("SiddhiInterface:OS: "+outputStreams[0]);
                     if (hasListener(query.getKey(), outputStreams)) {
+                    	System.out.println("SiddhiInterface:Handler pasado al Listener: "+inputHandler);
                         outputListeners[i] = new SiddhiListener("lsnr-0" + (i + 1),
                                 rtMode, rtResolution, sinkInstance, this.siddhiManager,
                                 query.getKey(), query.getValue(),
@@ -432,10 +493,11 @@ public final class SiddhiInterface extends CEP_EngineInterface {
 /*								"from StockStream[volume < 150] " +
 								"select symbol, price " +
 								"insert into OutputStream;"; */
-                        System.out.println("SiddhiListener:siddhiApp: "+siddhiApp);
-                        SiddhiAppRuntime runtime = this.siddhiManager.createSiddhiAppRuntime(siddhiApp);
-                        this.inputHandler = runtime.getInputHandler("Nuevo");
-                        unlistenedQueries.add(runtime);
+                        System.out.println("SiddhiInterface:siddhiApp: "+siddhiApp);
+                        this.siddhiAppRuntime = this.siddhiManager.createSiddhiAppRuntime(siddhiApp);
+                        inputHandler = siddhiAppRuntime.getInputHandler("Nuevo");
+                        System.out.println("SiddhiInterface:Handler: "+inputHandler);
+                        unlistenedQueries.add(siddhiAppRuntime);
                     }
                 }
                 try {

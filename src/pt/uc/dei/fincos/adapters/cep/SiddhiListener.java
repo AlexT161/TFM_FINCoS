@@ -32,10 +32,8 @@ public final class SiddhiListener extends OutputListener {
 	
 	public SiddhiListener(String lsnrID, int rtMode, int rtResolution, Sink sinkInstance,
 			SiddhiManager siddhiManager, String queryOutputName, String queryText,
-            LinkedHashMap<String, String> querySchema, int eventFormat, InputHandler inputHandler) {
+            LinkedHashMap<String, String> querySchema, int eventFormat) {
 		super(lsnrID, rtMode, rtResolution, sinkInstance);
-		this.inputHandler = inputHandler;
-//		this.runtime = siddhiAppRuntime;
         this.queryText = queryText;
         this.querySchema = querySchema;
         this.queryOutputName = queryOutputName;
@@ -83,10 +81,8 @@ public final class SiddhiListener extends OutputListener {
         		"Nuevo " +                            
         		" (entero int, TeS long); " +
                 "" +
-                "@info(name = '"+queryOutputName+"') " + 
-                queryText;
+                "@info(name = '"+queryOutputName+"') " + queryText;
         this.runtime = this.siddhiManager.createSiddhiAppRuntime(siddhiApp);
-		System.out.println("SiddhiListener:runtime Siddhi " +runtime);
 		runtime.addCallback("OutputStream", new StreamCallback() {
             @Override
             public void receive(Event[] events) {
@@ -95,8 +91,11 @@ public final class SiddhiListener extends OutputListener {
         });
         inputHandler = runtime.getInputHandler("Nuevo");
 		runtime.start();
-		System.out.println("SiddhiListener: Iniciando runtime Siddhi");
 		System.out.println("SiddhiListener:IH: " +inputHandler);
+	}
+
+	public InputHandler getInputHandler() {
+		return this.inputHandler;
 	}
 
 	@Override

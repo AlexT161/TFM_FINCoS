@@ -77,6 +77,9 @@ public final class SiddhiInterface extends CEP_EngineInterface {
     /** Stores schemas for streams whose events are represented as Maps or Object-arrays.*/
     private HashMap<String, LinkedHashMap<String, String>> streamsSchemas;
     
+    /** Stores schemas for streams whose events are represented as Maps or Object-arrays.*/
+    private HashMap<String, InputHandler> inputHandlers;
+    
     /** List of input streams.*/
     private String[] inputStreamList;
 
@@ -156,94 +159,6 @@ public final class SiddhiInterface extends CEP_EngineInterface {
     private static synchronized void destroyInstance() {
         instance = null;
     }
-	
-	@Override
-	public void send(Event e) throws Exception {
-		if (this.status.getStep() == Step.READY || this.status.getStep() == Step.CONNECTED) {
-            if (this.eventFormat == OBJECT_ARRAY_FORMAT) {
-                sendObjectArrayEvent(e);
-            }/* else if (this.eventFormat == POJO_FORMAT) {
-                sendPOJOEvent(e);
-            } else {
-                sendMapEvent(e);
-            }
-
-            if (this.useExternalTimer && e.getType().getName().equals(extTSEventType)) {
-                advanceClock((Long) e.getAttributeValue(extTSIndex));
-            }*/
-        }		
-	}
-
-    /**
-     * Sends an Object-array event to Siddhi.
-     *
-     * Event record is initially represented using the FINCoS internal format
-     * and it is converted to a an Object-array format before sending to Siddhi.
-     *
-     * @param event     the event to be sent
-     * @throws InterruptedException 
-     */
-	private void sendObjectArrayEvent(Event event) throws InterruptedException {
-		String eventTypeName = event.getType().getName();
-        LinkedHashMap<String, String> eventSchema = streamsSchemas.get(eventTypeName);
-        if (eventSchema != null) {
-            Object[] objArrEvent = null;
-            Object[] payload = event.getValues();
-
-            int fieldCount = this.rtMode != Globals.NO_RT
-                           ? payload.length + 1
-                           : payload.length;
-
-            if (eventSchema.size() != fieldCount) {
-                System.err.println("ERROR: Number of fields in event \""
-                        + event + "\" (" + (fieldCount)
-                        + ") does not match schema of event type Object Array \""
-                        + eventTypeName + "\" ("
-                        + eventSchema.size() + ").");
-                return;
-            }
-
-            if (this.rtMode == Globals.NO_RT) { // No RT measurement: send event's payload
-            	objArrEvent = payload;           
-            } else { // With RT measurement: send event's payload and timestamp
-                objArrEvent = new Object[fieldCount];
-                for (int i = 0; i < fieldCount; i++) {
-                    if (i == fieldCount - 1) {    // Timestamp field (last one)
-                        if (this.rtMode == Globals.ADAPTER_RT) {
-                            /* Assigns a timestamp to the event just after conversion
-                               (i.e., just before sending the event to the target system) */
-                            long timestamp = 0;
-                            if (rtResolution == Globals.MILLIS_RT) {
-                                timestamp = System.currentTimeMillis();
-                            } else if (rtResolution == Globals.NANO_RT) {
-                                timestamp = System.nanoTime();
-                            }
-                            objArrEvent[i] = timestamp;
-                        } else if (rtMode == Globals.END_TO_END_RT) {
-                            // The timestamp comes from the Driver
-                            objArrEvent[i] = event.getTimestamp();
-                        }
-                    } else {
-                        objArrEvent[i] = payload[i];
-                    }
-                }
-            }
-        	System.out.println("SiddhiInterface:inputHandler: "+inputHandler);
-            synchronized (inputHandler) {
-            	this.inputHandler.send(objArrEvent);
-            }
-        } else {
-            System.err.println("Unknown event 3 type \"" + eventTypeName + "\"."
-                    + "It is not possible to send event to Siddhi.");
-        }
-		
-	}
-
-	@Override
-	public void send(CSV_Event event) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public synchronized boolean connect() throws Exception {
@@ -271,6 +186,7 @@ public final class SiddhiInterface extends CEP_EngineInterface {
 
        this.status.setStep(Step.CONNECTED);
        this.unlistenedQueries = new ArrayList<SiddhiAppRuntime>();
+       this.inputHandlers = new HashMap<String, InputHandler>();
        
        return true;
 	}
@@ -463,6 +379,13 @@ public final class SiddhiInterface extends CEP_EngineInterface {
         }
         if (this.status.getStep() == Step.CONNECTED) {
             this.status.setStep(Step.LOADING);
+/*            String[] streamList = new String[streamsSchemas.size()];
+            int j=0;
+            for (String i : streamsSchemas.keySet()) {
+            	  streamList[j]=i;
+            	  j++;
+            	}
+            System.out.println("streamList: "+streamList);*/
             if (outputStreams != null) {
                 this.outputListeners = new SiddhiListener[outputStreams.length];
                 int i = 0;
@@ -470,29 +393,27 @@ public final class SiddhiInterface extends CEP_EngineInterface {
                 	System.out.println("SiddhiInterface:key: "+query.getKey());
                 	System.out.println("SiddhiInterface:OS: "+outputStreams[0]);
                     if (hasListener(query.getKey(), outputStreams)) {
-                    	System.out.println("SiddhiInterface:Handler pasado al Listener: "+inputHandler);
-                        outputListeners[i] = new SiddhiListener("lsnr-0" + (i + 1),
+                    	outputListeners[i] = new SiddhiListener("lsnr-0" + (i + 1),
                                 rtMode, rtResolution, sinkInstance, this.siddhiManager,
                                 query.getKey(), query.getValue(),
-                                this.streamsSchemas.get(query.getKey()), this.eventFormat, inputHandler);
-                        System.out.println("SiddhiInterface:Previo a load");
+                                this.streamsSchemas.get(query.getKey()), this.eventFormat);
                         outputListeners[i].load();
+                        String streamName = getStreamName(query.getValue());
+                        System.out.println("SiddhiInterface:Name: "+streamName);
+                        inputHandlers.put(streamName,((SiddhiListener) outputListeners[i]).getInputHandler());
                         i++;
                     } else {
                         System.err.println("WARNING: Siddhi Query \"" + query.getKey()
                                            + "\" has no registered listener.");
                         System.out.println("Loading Siddhi query: \n"  + query.getValue());
+                        String streamName = getStreamName(query.getValue());
                         String siddhiApp = "" +
                         		"define stream "+
-//                        		streamsSchemas.keySet()+
-                        		"Nuevo " +                            
+                        		streamName +                           
                         		" (entero int, TeS long); " +
                                 "" +
                                 "@info(name = '"+query.getKey()+"') " + 
                                 query.getValue();
-/*								"from StockStream[volume < 150] " +
-								"select symbol, price " +
-								"insert into OutputStream;"; */
                         System.out.println("SiddhiInterface:siddhiApp: "+siddhiApp);
                         this.siddhiAppRuntime = this.siddhiManager.createSiddhiAppRuntime(siddhiApp);
                         inputHandler = siddhiAppRuntime.getInputHandler("Nuevo");
@@ -514,6 +435,107 @@ public final class SiddhiInterface extends CEP_EngineInterface {
         }
 	}
 
+	private String getStreamName(String queryText) {
+		System.out.println("SiddhiInterface.queryText: "+ queryText);
+		String[] text = queryText.split(" ");
+		String name = "";
+		for (int i=0; i < text.length; i++) {
+			if(text[i].equals("from")) {
+				name = text[i+1];
+			}
+		}
+		return name;
+	}
+	
+	@Override
+	public void send(Event e) throws Exception {
+		if (this.status.getStep() == Step.READY || this.status.getStep() == Step.CONNECTED) {
+            if (this.eventFormat == OBJECT_ARRAY_FORMAT) {
+                sendObjectArrayEvent(e);
+            }/* else if (this.eventFormat == POJO_FORMAT) {
+                sendPOJOEvent(e);
+            } else {
+                sendMapEvent(e);
+            }
+
+            if (this.useExternalTimer && e.getType().getName().equals(extTSEventType)) {
+                advanceClock((Long) e.getAttributeValue(extTSIndex));
+            }*/
+        }		
+	}
+
+    /**
+     * Sends an Object-array event to Siddhi.
+     *
+     * Event record is initially represented using the FINCoS internal format
+     * and it is converted to a an Object-array format before sending to Siddhi.
+     *
+     * @param event     the event to be sent
+     * @throws InterruptedException 
+     */
+	private void sendObjectArrayEvent(Event event) throws InterruptedException {
+		String eventTypeName = event.getType().getName();
+		System.out.println("SiddhiInterface:event name: "+eventTypeName);
+        LinkedHashMap<String, String> eventSchema = streamsSchemas.get(eventTypeName);
+        if (eventSchema != null) {
+            Object[] objArrEvent = null;
+            Object[] payload = event.getValues();
+
+            int fieldCount = this.rtMode != Globals.NO_RT
+                           ? payload.length + 1
+                           : payload.length;
+
+            if (eventSchema.size() != fieldCount) {
+                System.err.println("ERROR: Number of fields in event \""
+                        + event + "\" (" + (fieldCount)
+                        + ") does not match schema of event type Object Array \""
+                        + eventTypeName + "\" ("
+                        + eventSchema.size() + ").");
+                return;
+            }
+
+            if (this.rtMode == Globals.NO_RT) { // No RT measurement: send event's payload
+            	objArrEvent = payload;           
+            } else { // With RT measurement: send event's payload and timestamp
+                objArrEvent = new Object[fieldCount];
+                for (int i = 0; i < fieldCount; i++) {
+                    if (i == fieldCount - 1) {    // Timestamp field (last one)
+                        if (this.rtMode == Globals.ADAPTER_RT) {
+                            /* Assigns a timestamp to the event just after conversion
+                               (i.e., just before sending the event to the target system) */
+                            long timestamp = 0;
+                            if (rtResolution == Globals.MILLIS_RT) {
+                                timestamp = System.currentTimeMillis();
+                            } else if (rtResolution == Globals.NANO_RT) {
+                                timestamp = System.nanoTime();
+                            }
+                            objArrEvent[i] = timestamp;
+                        } else if (rtMode == Globals.END_TO_END_RT) {
+                            // The timestamp comes from the Driver
+                            objArrEvent[i] = event.getTimestamp();
+                        }
+                    } else {
+                        objArrEvent[i] = payload[i];
+                    }
+                }
+            }
+        	System.out.println("SiddhiInterface:inputHandler: "+inputHandlers);
+            synchronized (this) {
+                    	inputHandlers.get(eventTypeName).send(objArrEvent);
+            }
+        } else {
+            System.err.println("Unknown event 3 type \"" + eventTypeName + "\"."
+                    + "It is not possible to send event to Siddhi.");
+        }
+		
+	}
+
+	@Override
+	public void send(CSV_Event event) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	private boolean hasListener(String key, String[] outputStreams) {
         for (int i = 0; i < outputStreams.length; i++) {
         	if (key.equals(outputStreams[i])) {

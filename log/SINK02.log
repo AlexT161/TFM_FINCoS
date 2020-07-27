@@ -2,7 +2,7 @@ FINCoS Sink Log File.
  Sink Alias: SINK02
  Sink Address: 127.0.0.1
  Connection: Siddhi (Sample)
- Start time: Fri Jul 24 16:34:14 CEST 2020
+ Start time: Mon Jul 27 14:10:23 CEST 2020
  Response Time Mode: ADAPTER
  Response Time Resolution: nanoseconds
  Log Sampling rate: 1.0

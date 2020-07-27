@@ -50,7 +50,7 @@ public class SiddhiISample {
             public void receive(Event[] events) {
                 EventPrinter.print(events);
                 //To convert and print event as a map
-                EventPrinter.print(toMap(events));
+                //EventPrinter.print(toMap(events));
             }
         });
 

@@ -6,7 +6,7 @@
 	<common>
 		<event-type name="Nuevo" type="Input">
 			<objectarray>
-				<objectarray-property class="boolean"
+				<objectarray-property class="bool"
 					name="bul" />
 				<objectarray-property class="int" name="entero" />
 				<objectarray-property class="long" name="TeS" />

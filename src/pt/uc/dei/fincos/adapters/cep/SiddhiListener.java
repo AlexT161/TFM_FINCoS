@@ -24,6 +24,12 @@ public final class SiddhiListener extends OutputListener {
     /** The EPL code of the query this listener listens to. */
     private String queryText;
 
+    /** The name of the input stream. */
+    private String streamName;
+    
+    /** Attributes of the input stream. */
+    private String streamAtts;
+    
     /** The schema of the output produced by the query. */
     LinkedHashMap<String, String> querySchema;
 
@@ -32,11 +38,13 @@ public final class SiddhiListener extends OutputListener {
 	
 	public SiddhiListener(String lsnrID, int rtMode, int rtResolution, Sink sinkInstance,
 			SiddhiManager siddhiManager, String queryOutputName, String queryText,
-            LinkedHashMap<String, String> querySchema, int eventFormat) {
+            LinkedHashMap<String, String> querySchema, String streamName, String streamAtt, int eventFormat) {
 		super(lsnrID, rtMode, rtResolution, sinkInstance);
         this.queryText = queryText;
         this.querySchema = querySchema;
         this.queryOutputName = queryOutputName;
+        this.streamName = streamName;
+        this.streamAtts = streamAtt;
         this.setEventFormat(eventFormat);
         this.siddhiManager  = siddhiManager;
 	}
@@ -64,24 +72,14 @@ public final class SiddhiListener extends OutputListener {
 
 	@Override
     public void run() {
-/*		runtime.addCallback("OutputStream", new StreamCallback() {
-            @Override
-            public void receive(Event[] events) {
-            	SiddhiListener.this.onOutput(events);
-            }
-        });
-		runtime.start();*/
     }
     
 	@Override
 	public void load() throws Exception {
         String siddhiApp = "" +
-        		"define stream "+
-//        		streamsSchemas.keySet()+
-        		"Nuevo " +                            
-        		" (entero int, TeS long); " +
+        		"define stream " + streamName + " (" + streamAtts + "); " +
                 "" +
-                "@info(name = '"+queryOutputName+"') " + queryText;
+                "@info(name = '" + queryOutputName + "') " + queryText;
         this.runtime = this.siddhiManager.createSiddhiAppRuntime(siddhiApp);
 		runtime.addCallback("OutputStream", new StreamCallback() {
             @Override
@@ -89,29 +87,20 @@ public final class SiddhiListener extends OutputListener {
             	SiddhiListener.this.onOutput(events);
             }
         });
-        inputHandler = runtime.getInputHandler("Nuevo");
+        inputHandler = runtime.getInputHandler(streamName);
 		runtime.start();
-		System.out.println("SiddhiListener:IH: " +inputHandler);
 	}
-
+	
 	public InputHandler getInputHandler() {
 		return this.inputHandler;
 	}
 
 	@Override
 	public void disconnect() {
-/*    	if (query != null) {
-			query.getStatements()[0].removeListener(this);
-			if (!query.getStatements()[0].isDestroyed()) {
-			try {
-				runtime.getDeploymentService().undeploy(query.getDeploymentId());
-			} catch (EPRuntimeDestroyedException e) {
-				e.printStackTrace();
-			} catch (EPUndeployException e) {
-				e.printStackTrace();
-			}
-    		}
-    	} */		
+    	if (inputHandler != null) {
+    		runtime.shutdown();
+    		siddhiManager.shutdown();
+    	}		
 	}
 
 }

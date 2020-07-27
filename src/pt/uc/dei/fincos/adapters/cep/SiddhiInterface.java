@@ -263,7 +263,7 @@ public final class SiddhiInterface extends CEP_EngineInterface {
 	                                attTypes[j] = double.class;
 	                            } else if (attType.equals("float")) {
 	                                attTypes[j] = float.class;
-	                            } else if (attType.equals("boolean")) {
+	                            } else if (attType.equals("bool")) {
 	                                attTypes[j] = boolean.class;
 	                            } else {
 	                                throw new Exception("Unsupported data type for"
@@ -379,45 +379,31 @@ public final class SiddhiInterface extends CEP_EngineInterface {
         }
         if (this.status.getStep() == Step.CONNECTED) {
             this.status.setStep(Step.LOADING);
-/*            String[] streamList = new String[streamsSchemas.size()];
-            int j=0;
-            for (String i : streamsSchemas.keySet()) {
-            	  streamList[j]=i;
-            	  j++;
-            	}
-            System.out.println("streamList: "+streamList);*/
             if (outputStreams != null) {
                 this.outputListeners = new SiddhiListener[outputStreams.length];
-                int i = 0;
+                int i = 0;           
                 for (Entry<String, String> query : this.queryNamesAndTexts.entrySet()) {
-                	System.out.println("SiddhiInterface:key: "+query.getKey());
-                	System.out.println("SiddhiInterface:OS: "+outputStreams[0]);
+                    String streamName = getStreamName(query.getValue());
+                    String streamAtt = getAttributes(streamName);
                     if (hasListener(query.getKey(), outputStreams)) {
                     	outputListeners[i] = new SiddhiListener("lsnr-0" + (i + 1),
                                 rtMode, rtResolution, sinkInstance, this.siddhiManager,
                                 query.getKey(), query.getValue(),
-                                this.streamsSchemas.get(query.getKey()), this.eventFormat);
+                                this.streamsSchemas.get(query.getKey()), streamName, streamAtt, this.eventFormat);
                         outputListeners[i].load();
-                        String streamName = getStreamName(query.getValue());
-                        System.out.println("SiddhiInterface:Name: "+streamName);
                         inputHandlers.put(streamName,((SiddhiListener) outputListeners[i]).getInputHandler());
                         i++;
                     } else {
                         System.err.println("WARNING: Siddhi Query \"" + query.getKey()
                                            + "\" has no registered listener.");
                         System.out.println("Loading Siddhi query: \n"  + query.getValue());
-                        String streamName = getStreamName(query.getValue());
                         String siddhiApp = "" +
-                        		"define stream "+
-                        		streamName +                           
-                        		" (entero int, TeS long); " +
+                        		"define stream "+ streamName + " ("+ streamAtt + "); " +
                                 "" +
-                                "@info(name = '"+query.getKey()+"') " + 
-                                query.getValue();
+                                "@info(name = '"+query.getKey()+"') " + query.getValue();
                         System.out.println("SiddhiInterface:siddhiApp: "+siddhiApp);
                         this.siddhiAppRuntime = this.siddhiManager.createSiddhiAppRuntime(siddhiApp);
-                        inputHandler = siddhiAppRuntime.getInputHandler("Nuevo");
-                        System.out.println("SiddhiInterface:Handler: "+inputHandler);
+                        inputHandler = siddhiAppRuntime.getInputHandler(streamName);
                         unlistenedQueries.add(siddhiAppRuntime);
                     }
                 }
@@ -435,8 +421,16 @@ public final class SiddhiInterface extends CEP_EngineInterface {
         }
 	}
 
+	private String getAttributes(String streamName) {
+		String att = "";
+		for(String i : streamsSchemas.get(streamName).keySet()) {
+			att = att + i + " " + streamsSchemas.get(streamName).get(i) + ",";
+		}
+		String att2 = att.substring(0, att.length() - 1);
+		return att2;
+	}
+
 	private String getStreamName(String queryText) {
-		System.out.println("SiddhiInterface.queryText: "+ queryText);
 		String[] text = queryText.split(" ");
 		String name = "";
 		for (int i=0; i < text.length; i++) {
@@ -475,7 +469,6 @@ public final class SiddhiInterface extends CEP_EngineInterface {
      */
 	private void sendObjectArrayEvent(Event event) throws InterruptedException {
 		String eventTypeName = event.getType().getName();
-		System.out.println("SiddhiInterface:event name: "+eventTypeName);
         LinkedHashMap<String, String> eventSchema = streamsSchemas.get(eventTypeName);
         if (eventSchema != null) {
             Object[] objArrEvent = null;
@@ -519,7 +512,6 @@ public final class SiddhiInterface extends CEP_EngineInterface {
                     }
                 }
             }
-        	System.out.println("SiddhiInterface:inputHandler: "+inputHandlers);
             synchronized (this) {
                     	inputHandlers.get(eventTypeName).send(objArrEvent);
             }

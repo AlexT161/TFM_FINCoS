@@ -46,23 +46,33 @@ public class QueryStream extends ComponentDetail{
 	private JPopupMenu detailTablePopup;
 	private String name, text;
 	private ArrayList<String> props = new ArrayList<String>();
+	private int engine;
 	
     /** List of attributes of this data type. */
     private ArrayList<Attribute> columns;
     
-	public QueryStream(String name, String text, EventType st) {
+	public QueryStream(String name, String text, EventType st, int engine) {
 		super(null);
         this.columns = new ArrayList<Attribute>();
         this.name = name;
         this.text = text;		
-		
+		this.engine = engine;
+        
         if (st!=null) {
             this.op = 0;
-            splitQuery(this.text);
+            if (engine == 1){
+            	splitEsperQuery(this.text);
+            } else if (engine ==2) {
+            	splitSiddhiQuery(this.text);
+            }
         } else {
         	this.op = 1;
         	setTitle("New Event Type");
-        	splitQuery(this.text);
+        	if (engine == 1){
+        		splitEsperQuery(this.text);
+        	} else if (engine == 2) {
+            	splitSiddhiQuery(this.text);
+            }
         }
 		
 		initComponents(name);
@@ -81,9 +91,26 @@ public class QueryStream extends ComponentDetail{
 	 * 
 	 * @param text2		String with the pattern detail
 	 */
-	private void splitQuery(String text2) {
+	private void splitEsperQuery(String text2) {
 		int beginIndex = text2.indexOf("select") + 6;
 		int endIndex = text2.lastIndexOf(" from");
+		String text3 = text2.substring(beginIndex, endIndex);
+		String[] parts = text3.split(",");
+		for (int j = 0; j < parts.length; j++) {
+			String[] split2 = parts[j].split(" ");
+			props.add(split2[split2.length - 1]);
+		}
+	}
+	
+	/**
+	 * 
+	 * Split the Pattern or query and add each Attribute to the ArrayList
+	 * 
+	 * @param text2		String with the pattern detail
+	 */
+	private void splitSiddhiQuery(String text2) {
+		int beginIndex = text2.indexOf("select") + 6;
+		int endIndex = text2.lastIndexOf(" insert");
 		String text3 = text2.substring(beginIndex, endIndex);
 		String[] parts = text3.split(",");
 		for (int j = 0; j < parts.length; j++) {
@@ -230,11 +257,19 @@ public class QueryStream extends ComponentDetail{
                         EventType newType = new EventType(name, atts);
                         switch (op) {
                         case 0:
-                            WriteStream.updateEventType(name, newType, 1);
+                        	if (engine == 1) {
+                            	WriteStream.updateEventType(name, newType, 1);
+                        	} else if (engine ==2) {
+                        		WriteSiddhiStream.updateEventType(name, newType, 1);
+                            }
                             dispose();
                             break;
                         case 1:
-                        	WriteStream.addEventType(newType, 1);
+                        	if (engine == 1) {
+                        		WriteStream.addEventType(newType, 1);
+                        	} else if (engine == 2) {
+                        		WriteSiddhiStream.addEventType(newType, 1);
+                        	}
                         	dispose();      
                         }
                     } else {

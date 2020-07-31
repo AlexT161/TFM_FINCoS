@@ -52,6 +52,7 @@ public class SchemaDetail extends ComponentDetail{
 	private JTextField propertyNameField;
 	private JLabel typeLabel;
 	private JLabel propertyLabel;
+	private JLabel cepEngineLabel;
 	private JPanel schemaPanel;
 	private JScrollPane scrollType;
 	private JPopupMenu detailTablePopup;
@@ -59,6 +60,9 @@ public class SchemaDetail extends ComponentDetail{
 	/** Path for the file containing the Streams. */
     public static final String STREAM_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Stream_Set.xml";
 	
+    /** Path for the file containing the Streams. */
+    public static final String STREAM_SET_SIDDHI_FILE = Globals.APP_PATH + "queries" + File.separator + "siddhi" + File.separator + "Q1" + File.separator + "Stream_Siddhi_Set.xml";
+    
 	/** Previous properties of the data type (when the form is open for update). */
     private String oldType;
     
@@ -66,8 +70,10 @@ public class SchemaDetail extends ComponentDetail{
     private ArrayList<Attribute> columns;
     
 	@SuppressWarnings("rawtypes")
-	private JComboBox dataTypeCombo; 
-    
+	private JComboBox dataTypeCombo;
+	
+	@SuppressWarnings("rawtypes")
+	private JComboBox cepEngineCombo;
     
 	/**
 	 * Configuration of Stream Schemas
@@ -101,14 +107,16 @@ public class SchemaDetail extends ComponentDetail{
 		detailTable = new JTable();
 		typeLabel = new JLabel();
 		propertyLabel = new JLabel();
+		cepEngineLabel = new JLabel();
 		okBtn = new JButton();
 		cancelBtn = new JButton();
 		addBtn = new JButton();
 		eventNameField = new JTextField();
-		propertyNameField = new JTextField();
+		propertyNameField = new JTextField();		
         schemaPanel = new JPanel();
         scrollType = new JScrollPane();
         dataTypeCombo = new JComboBox();
+        cepEngineCombo = new JComboBox();
         detailTablePopup = new JPopupMenu();
         
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -121,6 +129,14 @@ public class SchemaDetail extends ComponentDetail{
         
         eventNameField.setBounds(14,38,100,25);
         add(eventNameField);
+        
+        cepEngineLabel.setText("CEP Engine:");
+        cepEngineLabel.setBounds(120,10,100,25);
+        add(cepEngineLabel);
+        
+        cepEngineCombo.setModel(new DefaultComboBoxModel(new String[] { "Esper", "Siddhi" }));
+        cepEngineCombo.setBounds(120,38,110,25);
+        add(cepEngineCombo);
         
         schemaPanel.setBounds(30,153,200,130);
         schemaPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),"Properties"));    
@@ -198,35 +214,68 @@ public class SchemaDetail extends ComponentDetail{
                         Attribute[] atts = new Attribute[columns.size()];
                         atts = columns.toArray(atts);
                         EventType newType = new EventType(typeName, atts);
-                        switch (op) {
-                        case UPDATE:
-                            WriteStream.updateEventType(oldType,newType,0);
-                            dispose();
-                            break;
-                        case INSERT:
-                        	File f = new File(STREAM_SET_FILE);
-                            if (f.exists()) {
-                            	WriteStream.open(STREAM_SET_FILE);
-                            	HashMap<String[], EventType> list = WriteStream.loadStreams();
-                            	boolean ver = true;
-                            	for (String[] i : list.keySet()) {           			
-                            		if(eventNameField.getText().equals(i[0]) && i[1]=="Input") {
-                            			ver = false;
-                            		}
-                            	}
-                            	if(ver == false) {
-                            		eventNameField.setBackground(INVALID_INPUT_COLOR);
-                            		JOptionPane.showMessageDialog(null, "Stream Name already used.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
-                            	}                   		
-                            	else{
-                            		WriteStream.addEventType(newType,0);
-                            		dispose();
-                            	}
-                            } else {
-                        		WriteStream.addEventType(newType,0);
-                        		dispose();
-                        	}
-                        }
+                    	String engine = (String) cepEngineCombo.getSelectedItem();
+                    	if(engine =="esper") {
+                    		switch (op) {
+                    		case UPDATE:
+                    			WriteStream.updateEventType(oldType,newType,0);
+                    			dispose();
+                    			break;
+                    		case INSERT:
+                    			File f = new File(STREAM_SET_FILE);
+                    			if (f.exists()) {
+                    				WriteStream.open(STREAM_SET_FILE);
+                    				HashMap<String[], EventType> list = WriteStream.loadStreams();
+                    				boolean ver = true;
+                    				for (String[] i : list.keySet()) {           			
+                    					if(eventNameField.getText().equals(i[0]) && i[1]=="Input") {
+                    						ver = false;
+                    					}
+                    				}
+                    				if(ver == false) {
+                    					eventNameField.setBackground(INVALID_INPUT_COLOR);
+                    					JOptionPane.showMessageDialog(null, "Stream Name already used.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+                    				}                   		
+                    				else{
+                    					WriteStream.addEventType(newType,0);
+                    					dispose();
+                    				}
+                    			} else {
+                    				WriteStream.addEventType(newType,0);
+                    				dispose();
+                    			}
+                    		}
+                    	} else if( engine == "Siddhi") {
+                    		switch (op) {
+                    		case UPDATE:
+                    			WriteSiddhiStream.updateEventType(oldType,newType,0);
+                    			dispose();
+                    			break;
+                    		case INSERT:
+                    			File f = new File(STREAM_SET_SIDDHI_FILE);
+                    			if (f.exists()) {
+                    				WriteSiddhiStream.open(STREAM_SET_SIDDHI_FILE);
+                    				HashMap<String[], EventType> list = WriteSiddhiStream.loadStreams();
+                    				boolean ver = true;
+                    				for (String[] i : list.keySet()) {           			
+                    					if(eventNameField.getText().equals(i[0]) && i[1]=="Input") {
+                    						ver = false;
+                    					}
+                    				}
+                    				if(ver == false) {
+                    					eventNameField.setBackground(INVALID_INPUT_COLOR);
+                    					JOptionPane.showMessageDialog(null, "Stream Name already used.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+                    				}                   		
+                    				else{
+                    					WriteSiddhiStream.addEventType(newType,0);
+                    					dispose();
+                    				}
+                    			} else {
+                    				WriteSiddhiStream.addEventType(newType,0);
+                    				dispose();
+                    			}	
+                    		}
+                    	}
                     } else {
                         JOptionPane.showMessageDialog(null, "One or more required fields were not correctly filled.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
                     }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<siddhi-configuration
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<common>
+		<event-type name="Nuevo" type="Input">
+			<objectarray>
+				<objectarray-property class="bool" name="bul" />
+				<objectarray-property class="int" name="entero" />
+				<objectarray-property class="long" name="TeS" />
+			</objectarray>
+		</event-type>
+		<event-type name="otro" type="Input">
+			<objectarray>
+				<objectarray-property class="bool" name="as" />
+				<objectarray-property class="double"
+					name="asfgt" />
+			</objectarray>
+		</event-type>
+		<event-type name="Prueba" type="Output">
+			<objectarray>
+				<objectarray-property class="int" name="entero" />
+				<objectarray-property class="double"
+					name="avgEntero" />
+				<objectarray-property class="long" name="TeS" />
+			</objectarray>
+		</event-type>
+	</common>
+</siddhi-configuration>

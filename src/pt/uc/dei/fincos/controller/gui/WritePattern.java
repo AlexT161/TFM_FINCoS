@@ -27,6 +27,10 @@ import pt.uc.dei.fincos.controller.ConfigurationParser;
  * @author John Alexander Torres
  *
  */
+/**
+ * @author ares161
+ *
+ */
 public class WritePattern {
 	
     /** Root of the xml queries file. */
@@ -38,6 +42,11 @@ public class WritePattern {
 	/** Path for the file containing the Queries. */
     public static final String QUERY_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Query_Set.xml";
 
+    /** Path for the file containing the Queries. */
+    public static final String QUERY_SET_SIDDHI_FILE = Globals.APP_PATH + "queries" + File.separator + "siddhi" + File.separator + "Q1" + File.separator + "Query_Siddhi_Set.xml";
+    
+    /** Path for the file containing the Queries. */
+    public static String pathFile;
     
 	/**
 	 * Adds a new Pattern to the Query_Set file
@@ -49,15 +58,15 @@ public class WritePattern {
 	 * @throws IOException
 	 * @throws SAXException
 	 */
-	public static void addPattern(String name, String text) throws ParserConfigurationException, TransformerException, IOException, SAXException{
-		HashMap<String, String> queryList = openAndGetList();
+	public static void addPattern(String name, String text, int engine) throws ParserConfigurationException, TransformerException, IOException, SAXException{
+        pathFile = choosePath(engine);
+		HashMap<String, String> queryList = openAndGetList(pathFile);
         queryList.put(name, text);
-        new QueryStream(name, text, null);
-        saveToFile(queryList, QUERY_SET_FILE);
+        new QueryStream(name, text, null, engine);
+        saveToFile(queryList, pathFile);
         JOptionPane.showMessageDialog(null, "Pattern created, please fill out the Attributes", "Create", JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	
 	/**
 	 * Updates a Pattern From the Query_Set file
 	 * 
@@ -68,12 +77,13 @@ public class WritePattern {
 	 * @throws IOException
 	 * @throws TransformerException
 	 */
-	public static void updatePattern(String name, String text) throws ParserConfigurationException, SAXException, IOException, TransformerException{
-		HashMap<String, String> list = openAndGetList();
+	public static void updatePattern(String name, String text, int engine) throws ParserConfigurationException, SAXException, IOException, TransformerException{
+        pathFile = choosePath(engine);
+		HashMap<String, String> list = openAndGetList(pathFile);
     	if (text!=null) {
-    		updateQuery(name,text,list);    		
+    		updateQuery(name, text, list, engine);    		
     	} else {
-    		deletePattern(name,list);
+    		deletePattern(name, list, engine);
     	}
     	closeFile();
 	}
@@ -88,12 +98,12 @@ public class WritePattern {
 	 * @throws IOException
 	 * @throws TransformerException
 	 */
-	private static HashMap<String, String> openAndGetList() throws ParserConfigurationException, SAXException, IOException, TransformerException {
-		File f = new File(QUERY_SET_FILE);
+	private static HashMap<String, String> openAndGetList(String pathFile) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+        File f = new File(pathFile);
         if (!f.exists()) {
-            createEmptyFile(QUERY_SET_FILE);
+            createEmptyFile(pathFile);
         }
-        open(QUERY_SET_FILE);
+        open(pathFile);
         HashMap<String, String> queryList = getPatternList();
 		return queryList;
 	}
@@ -108,10 +118,15 @@ public class WritePattern {
 	 * @throws TransformerException
 	 * @throws SAXException
 	 */
-	private static void deletePattern(String name, HashMap<String, String> list) throws ParserConfigurationException, IOException, TransformerException, SAXException {
-    	list.remove(name);
-        saveToFile(list, QUERY_SET_FILE);
-        WriteStream.updateEventType(name, null, 1);
+	private static void deletePattern(String name, HashMap<String, String> list, int engine) throws ParserConfigurationException, IOException, TransformerException, SAXException {
+    	pathFile = choosePath(engine);
+		list.remove(name);
+        saveToFile(list, pathFile);
+        if( engine == 1) {
+        	WriteStream.updateEventType(name, null, 1);
+        } else if( engine == 2 ) {
+        	WriteSiddhiStream.updateEventType(name, null, 1);
+        }
         JOptionPane.showMessageDialog(null, "¡Pattern deleted!", "Delete", JOptionPane.WARNING_MESSAGE);			
 	}
 
@@ -127,14 +142,18 @@ public class WritePattern {
 	 * @throws IOException
 	 * @throws TransformerException
 	 */
-	private static void updateQuery(String name, String text, HashMap<String, String> list) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+	private static void updateQuery(String name, String text, HashMap<String, String> list, int engine) throws ParserConfigurationException, SAXException, IOException, TransformerException {
     	list.put(name, text);
-    	HashMap<String, EventType> streamList = WriteStream.loadStreams(1);
+    	HashMap<String, EventType> streamList = new HashMap<String, EventType>();
+    	if( engine == 1) {
+    		streamList = WriteStream.loadStreams(1);
+    	} else if (engine == 2) {
+    		streamList = WriteSiddhiStream.loadStreams(1);
+    	}
+    	pathFile = choosePath(engine);
 		EventType stream = streamList.get(name);
-		System.out.print(streamList);
-		System.out.print(stream);
-        new QueryStream(name , text, stream);
-        saveToFile(list, QUERY_SET_FILE);
+        new QueryStream(name , text, stream, engine);
+        saveToFile(list, pathFile);
         JOptionPane.showMessageDialog(null, "Pattern correctly updated, edit the Attributes if is necessary.", "Update", JOptionPane.INFORMATION_MESSAGE);		
 	}
 
@@ -234,7 +253,7 @@ public class WritePattern {
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document docu = builder.newDocument();
 		docu.setXmlVersion("1.0");
-		Element root = docu.createElement("Esper-Queries");
+		Element root = docu.createElement("CEP-Queries");
 		root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 		for(String name : list.keySet()) {
 			Element query = docu.createElement("Query");			
@@ -243,7 +262,6 @@ public class WritePattern {
 			root.appendChild(query);	
 		}
 		docu.appendChild(root);
-		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(filePath), false));
         bw.write(ConfigurationParser.fromXMLDocToString(docu));
         bw.flush();
@@ -251,5 +269,17 @@ public class WritePattern {
 
 	}
 
+	/**
+	 * @param engine Choose between (1)Esper and (2)Siddhi
+	 * @return		The corresponding path
+	 */
+	private static String choosePath(int engine) {
+		if(engine == 1) {
+        	pathFile = QUERY_SET_FILE;
+        } else if (engine == 2) {
+        	pathFile = QUERY_SET_SIDDHI_FILE;
+        }
+		return pathFile;
+	}
 
 }

@@ -32,7 +32,7 @@ public class EditPattern extends ComponentDetail{
 	private JLabel nameLabel;
 	private JButton setBtn, delBtn, cancelBtn;
 	private HashMap<String, String> list;
-
+	private int engine;
 	private String[] combo;
     
 	/**
@@ -43,9 +43,10 @@ public class EditPattern extends ComponentDetail{
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-	public EditPattern(HashMap<String, String> list, int mode) throws ParserConfigurationException, SAXException, IOException {
+	public EditPattern(HashMap<String, String> list, int mode, int engine) throws ParserConfigurationException, SAXException, IOException {
 		super(null);
 		this.list = list;
+		this.engine = engine;
 		this.combo = new String[list.size()];
 		initComponents(mode);
 		addListeners();
@@ -125,7 +126,7 @@ public class EditPattern extends ComponentDetail{
             	if (JOptionPane.showConfirmDialog(null, "Delete Schema " + type + " ?", "Confirm Delete", JOptionPane.YES_NO_OPTION)
                         == JOptionPane.YES_OPTION) {
 					try {
-						WritePattern.updatePattern(type,null);
+						WritePattern.updatePattern(type,null,engine);
 					} catch (ParserConfigurationException e1) {
 						e1.printStackTrace();
 					} catch (IOException e1) {

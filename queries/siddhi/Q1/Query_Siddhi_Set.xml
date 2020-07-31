@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<CEP-Queries
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Query name="Prueba"
+		text="from Nuevo select entero, TeS insert into OutputStream;" />
+</CEP-Queries>

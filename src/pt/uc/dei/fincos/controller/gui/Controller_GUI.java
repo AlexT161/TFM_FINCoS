@@ -41,7 +41,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -76,8 +75,6 @@ import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
 
-import pt.uc.dei.fincos.adapters.cep.SiddhiISample;
-import pt.uc.dei.fincos.basic.EventType;
 import pt.uc.dei.fincos.basic.Globals;
 import pt.uc.dei.fincos.basic.InvalidStateException;
 import pt.uc.dei.fincos.basic.Step;
@@ -114,24 +111,19 @@ public final class Controller_GUI extends JFrame {
 
     /** Path for the file containing connections. */
     public static final String CONNECTIONS_FILE = Globals.APP_PATH + "config" + File.separator + "Connections.fcf";
-	/** Path for the file containing the Streams. */
-    public static final String STREAM_SET_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Stream_Set.xml";
-	/** Path for the file containing the Queries. */
-    public static final String PATTERNS_FILE = Globals.APP_PATH + "queries" + File.separator + "esper" + File.separator + "Q1" + File.separator + "Query_Set.xml";
-
 
     //	=========================== GUI ===================================
     private Timer guiRefresher;
 
     // Menu
     private JMenuBar menuBar = new JMenuBar();
-    private JMenu fileMenu, driverMenu, sinkMenu, testMenu, alterLoadFactorMenuItem, viewMenu, queryMenu, schemaMenu;
+    private JMenu fileMenu, driverMenu, sinkMenu, testMenu, alterLoadFactorMenuItem, viewMenu, patternMenu, schemaMenu;
     private JMenuItem profileLoadMenuItem, saveMenuItem, saveAsMenuItem, exitMenuItem,
             newDriverMenuItem, editDriverMenuItem, deleteDriverMenuItem,
             newSinkMenuItem, editSinkMenuItem, deleteSinkMenuItem,
             loadMenuItem, startMenuItem, pauseMenuItem, stopMenuItem, switchMenuItem, optionsMenuItem,
-            connectionsMenuItem, perfmonMenuItem, offlinePerformMenuItem, siddhiMenuItem,
-            newQueryMenuItem, editQueryMenuItem, deleteQueryMenuItem,
+            connectionsMenuItem, perfmonMenuItem, offlinePerformMenuItem,
+            newPatternMenuItem, editPatternMenuItem, deletePatternMenuItem,
             newSchemaMenuItem, editSchemaMenuItem, deleteSchemaMenuItem;
     private ButtonGroup rateFactorGroup;
 
@@ -656,30 +648,15 @@ public final class Controller_GUI extends JFrame {
             }
         });
         
-        siddhiMenuItem = new JMenuItem("Siddhi");
-        siddhiMenuItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-					new SiddhiISample();
-				} catch (InterruptedException e1) {
-					
-					e1.printStackTrace();
-				}
-            }
-        });
-        
         viewMenu.add(connectionsMenuItem);
         viewMenu.add(perfmonMenuItem);
         viewMenu.add(offlinePerformMenuItem);     
-        viewMenu.add(siddhiMenuItem); //JAT Temporal
         
-        //Menu Queries JAT
-        queryMenu = new JMenu("Queries");
+        //Menu Patterns JAT
+        patternMenu = new JMenu("Patterns");
         
-        newQueryMenuItem = new JMenuItem("New...");
-        newQueryMenuItem.addActionListener(new ActionListener(){
+        newPatternMenuItem = new JMenuItem("New...");
+        newPatternMenuItem.addActionListener(new ActionListener(){
         	
         	@Override
         	public void actionPerformed(ActionEvent e) {
@@ -702,38 +679,30 @@ public final class Controller_GUI extends JFrame {
         	}
         });
         
-        editQueryMenuItem = new JMenuItem("Edit...");
-        editQueryMenuItem.addActionListener(new ActionListener(){
+        editPatternMenuItem = new JMenuItem("Edit...");
+        editPatternMenuItem.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent e) {
         		editPattern();        		
         	}
         });
         
-        deleteQueryMenuItem = new JMenuItem("Delete");
-        deleteQueryMenuItem.addActionListener(new ActionListener(){
+        deletePatternMenuItem = new JMenuItem("Delete");
+        deletePatternMenuItem.addActionListener(new ActionListener(){
         	@Override
         	public void actionPerformed(ActionEvent e) {
-                    try {
-						deletePattern();
-					} catch (ParserConfigurationException e1) {
-						e1.printStackTrace();
-					} catch (SAXException e1) {
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
+                    deletePattern();
         		}
         });
         
-        queryMenu.add(newQueryMenuItem);
-        queryMenu.add(editQueryMenuItem);
-        queryMenu.add(deleteQueryMenuItem);
+        patternMenu.add(newPatternMenuItem);
+        patternMenu.add(editPatternMenuItem);
+        patternMenu.add(deletePatternMenuItem);
         
         menuBar.add(fileMenu);
         menuBar.add(schemaMenu);
         menuBar.add(driverMenu);
-        menuBar.add(queryMenu);
+        menuBar.add(patternMenu);
         menuBar.add(sinkMenu);
         menuBar.add(testMenu);
         menuBar.add(viewMenu);
@@ -1504,128 +1473,22 @@ public final class Controller_GUI extends JFrame {
     }
 
     /**
-     * Calls the Stream Schema Editor if exist any Stream Schema in the Stream_Set.xml // JAT
+     * Calls the Stream Schema Editor if exist any Stream Schema in the Stream Set // JAT
      *
      */
     public void editSchemas() {
-    	File f = new File(STREAM_SET_FILE);
-		try {
-			WriteStream.open(STREAM_SET_FILE);
-		} catch (ParserConfigurationException e2) {
-			e2.printStackTrace();
-		} catch (SAXException e2) {
-			e2.printStackTrace();
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		}
-		HashMap<String, EventType> list = new HashMap<String, EventType>(1);
-		try {
-			list = WriteStream.loadStreams(0);
-		} catch (ParserConfigurationException e2) {
-			e2.printStackTrace();
-		} catch (SAXException e2) {
-			e2.printStackTrace();
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		} catch (TransformerException e2) {
-			e2.printStackTrace();
-		}
-		if (!f.exists() || list.isEmpty()) {
-			JOptionPane.showMessageDialog(null, "You must create a Stream Schema first","Error", JOptionPane.ERROR_MESSAGE);
-			WriteStream.closeFile();
-		} else {
-			try {
-				new EditSchema(list, 0).setVisible(true);
-			} catch (ParserConfigurationException e1) {
-				e1.printStackTrace();
-			} catch (SAXException e1) {
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			} catch (TransformerException e1) {
-				e1.printStackTrace();
-			}
-		}
+    	new EditSchemaCep(0).setVisible(true);
     }
     /**
-     * Removes a Stream Schema from the Stream_Set.xml // JAT
+     * Removes a Stream Schema from the Stream Set // JAT
      *
      */
     public void deleteSchemas() {
-    	File f = new File(STREAM_SET_FILE);
-    	try {
-    		WriteStream.open(STREAM_SET_FILE);
-    	} catch (ParserConfigurationException e2) {
-    		e2.printStackTrace();
-    	} catch (SAXException e2) {
-    		e2.printStackTrace();
-    	} catch (IOException e2) {
-    		e2.printStackTrace();
-    	}
-    	HashMap<String, EventType> list = new HashMap<String, EventType>(1);
-    	try {
-    		list = WriteStream.loadStreams(0);
-    	} catch (ParserConfigurationException e2) {
-    		e2.printStackTrace();
-    	} catch (SAXException e2) {
-    		e2.printStackTrace();
-    	} catch (IOException e2) {
-    		e2.printStackTrace();
-    	} catch (TransformerException e2) {
-    		e2.printStackTrace();
-    	}
-    	if (!f.exists() || list.isEmpty()) {
-    		JOptionPane.showMessageDialog(null, "You must create a Stream Schema first","Error", JOptionPane.ERROR_MESSAGE);
-    		WriteStream.closeFile();
-    	} else {
-    		try {
-    			new EditSchema(list, 1).setVisible(true);
-    		} catch (ParserConfigurationException e1) {
-    			e1.printStackTrace();
-    		} catch (SAXException e1) {
-    			e1.printStackTrace();
-    		} catch (IOException e1) {
-    			e1.printStackTrace();
-    		} catch (TransformerException e) {
-    			e.printStackTrace();
-    		}
-    	}
+    	new EditSchemaCep(1).setVisible(true);
     }
     
     public void editPattern(){
-    	File f = new File(PATTERNS_FILE);
-    	try {
-    		WritePattern.open(PATTERNS_FILE);
-    	} catch (ParserConfigurationException e) {
-    		e.printStackTrace();
-    	} catch (SAXException e) {
-    		e.printStackTrace();
-    	} catch (IOException e) {
-    		e.printStackTrace();
-    	}
-    	HashMap<String, String> list = new HashMap<String, String>(1);
-    	try {
-    		list = WritePattern.getPatternList();
-    	} catch (ParserConfigurationException e) {
-    		e.printStackTrace();
-    	} catch (SAXException e) {
-    		e.printStackTrace();
-    	} catch (IOException e) {
-    		e.printStackTrace();
-    	}
-    	if (!f.exists() || list.isEmpty()) {
-    		JOptionPane.showMessageDialog(null, "You must create a Pattern first","Error", JOptionPane.ERROR_MESSAGE);
-    	} else {	        
-    		try {
-    			new EditPattern(list,0).setVisible(true);
-    		} catch (ParserConfigurationException e) {
-    			e.printStackTrace();
-    		} catch (SAXException e) {
-    			e.printStackTrace();
-    		} catch (IOException e) {
-    			e.printStackTrace();
-    		}
-    	}
+    	new EditPatternCep(0).setVisible(true);
     }
     
     /**
@@ -1635,32 +1498,8 @@ public final class Controller_GUI extends JFrame {
      * @throws ParserConfigurationException 
      *
      */
-    public void deletePattern() throws ParserConfigurationException, SAXException, IOException {
-    	File f = new File(PATTERNS_FILE);
-    	try {
-    		WritePattern.open(PATTERNS_FILE);
-    	} catch (ParserConfigurationException e) {
-    		e.printStackTrace();
-    	} catch (SAXException e) {
-    		e.printStackTrace();
-    	} catch (IOException e) {
-    		e.printStackTrace();
-    	}
-    	HashMap<String, String> list = new HashMap<String, String>(1);
-    	try {
-    		list = WritePattern.getPatternList();
-    	} catch (ParserConfigurationException e) {
-    		e.printStackTrace();
-    	} catch (SAXException e) {
-    		e.printStackTrace();
-    	} catch (IOException e) {
-    		e.printStackTrace();
-    	}
-    	if (!f.exists() || list.isEmpty()) {
-    		JOptionPane.showMessageDialog(null, "You must create a Pattern first","Error", JOptionPane.ERROR_MESSAGE);
-    	} else {
-    		new EditPattern(list, 1).setVisible(true);
-    	}
+    public void deletePattern(){
+    	new EditPatternCep(1).setVisible(true);
     }
     
     /**

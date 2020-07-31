@@ -251,7 +251,7 @@ public class WriteStream {
 		Document docu = builder.newDocument();
 		docu.setXmlVersion("1.0");
 		
-		Element root = docu.createElement("espercon-figuration");
+		Element root = docu.createElement("esper-configuration");
 		root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 		root.setAttribute("xmlns", "http://www.espertech.com/schema/esper");
 		root.setAttribute("xsi:noNamespaceSchemaLocation", "esper-configuration-8-0.xsd");

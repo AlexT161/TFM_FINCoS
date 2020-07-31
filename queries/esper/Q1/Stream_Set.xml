@@ -1,28 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<espercon-figuration
+<esper-configuration
 	xmlns="http://www.espertech.com/schema/esper"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="esper-configuration-8-0.xsd">
 	<common>
-		<event-type name="Prueba2" type="Output">
-			<objectarray>
-				<objectarray-property class="float" name="Sum" />
-			</objectarray>
-		</event-type>
-		<event-type name="Prueba" type="Output">
-			<objectarray>
-				<objectarray-property class="int" name="entero" />
-				<objectarray-property class="double"
-					name="avgEntero" />
-				<objectarray-property class="long" name="TeS" />
-			</objectarray>
-		</event-type>
-		<event-type name="StockAvg2" type="Output">
+		<event-type name="StockAvg" type="Output">
 			<objectarray>
 				<objectarray-property class="string"
 					name="symbol" />
 				<objectarray-property class="double"
-					name="Avg2" />
+					name="avgPrice" />
+				<objectarray-property class="long" name="TS" />
 			</objectarray>
 		</event-type>
 		<event-type name="StockTick" type="Input">
@@ -35,6 +23,27 @@
 				<objectarray-property class="long" name="TS" />
 			</objectarray>
 		</event-type>
+		<event-type name="Prueba2" type="Output">
+			<objectarray>
+				<objectarray-property class="float" name="Sum" />
+			</objectarray>
+		</event-type>
+		<event-type name="StockAvg2" type="Output">
+			<objectarray>
+				<objectarray-property class="string"
+					name="symbol" />
+				<objectarray-property class="double"
+					name="Avg2" />
+			</objectarray>
+		</event-type>
+		<event-type name="Prueba" type="Output">
+			<objectarray>
+				<objectarray-property class="int" name="entero" />
+				<objectarray-property class="double"
+					name="avgEntero" />
+				<objectarray-property class="long" name="TeS" />
+			</objectarray>
+		</event-type>
 		<event-type name="Nuevo" type="Input">
 			<objectarray>
 				<objectarray-property class="boolean"
@@ -43,20 +52,11 @@
 				<objectarray-property class="long" name="TeS" />
 			</objectarray>
 		</event-type>
-		<event-type name="StockAvg" type="Output">
-			<objectarray>
-				<objectarray-property class="string"
-					name="symbol" />
-				<objectarray-property class="double"
-					name="avgPrice" />
-				<objectarray-property class="long" name="TS" />
-			</objectarray>
-		</event-type>
 		<variant-stream name="MyVariantStream">
-			<variant-event-type name="Prueba2" />
-			<variant-event-type name="Prueba" />
-			<variant-event-type name="StockAvg2" />
 			<variant-event-type name="StockAvg" />
+			<variant-event-type name="Prueba2" />
+			<variant-event-type name="StockAvg2" />
+			<variant-event-type name="Prueba" />
 		</variant-stream>
 		<loggin>
 			<jdbc enabled="false" />
@@ -73,4 +73,4 @@
 		</view-resources>
 	</compiler>
 	<runtime />
-</espercon-figuration>
+</esper-configuration>

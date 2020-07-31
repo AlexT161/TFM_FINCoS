@@ -9,8 +9,10 @@ import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.BoundedRangeModel;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -32,12 +34,14 @@ import org.xml.sax.SAXException;
 @SuppressWarnings("serial")
 public class PatternDetail extends ComponentDetail{
 
-	private JLabel nameLabel;
+	private JLabel nameLabel, cepLabel;
 	private JTextField nameField, patternField;
 	private JButton cancelBtn, okBtn;
 	private JPanel patternPanel;
 	private JScrollBar scrollType;
 	private String oldPattern;
+	@SuppressWarnings("rawtypes")
+	private JComboBox cepPatternBox;
 
 	public PatternDetail(String os, String tx) {
 		super(null);
@@ -50,7 +54,7 @@ public class PatternDetail extends ComponentDetail{
             fillProperties(os,tx);
         } else {
         	this.op = 0; //Insert
-        	setTitle("New Query");
+        	setTitle("New Pattern");
         }
 		
 		this.setSize(500, 200);
@@ -64,10 +68,13 @@ public class PatternDetail extends ComponentDetail{
 		this.patternField.setText(tx);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void initComponents() {
 		nameLabel = new JLabel();
+		cepLabel = new JLabel();
 		nameField = new JTextField();
 		patternField = new JTextField();
+		cepPatternBox = new JComboBox();
 		cancelBtn = new JButton();
 		okBtn = new JButton();
 		patternPanel = new JPanel();
@@ -91,6 +98,14 @@ public class PatternDetail extends ComponentDetail{
         case 0:
         	nameField.setEnabled(true);
         }
+        
+        cepLabel.setText("CEP Engine:");
+        cepLabel.setBounds(250,10,100,25);
+        add(cepLabel);
+        
+	    cepPatternBox.setModel(new DefaultComboBoxModel(new String[] { "Esper" , "Siddhi" }));
+	    cepPatternBox.setBounds(330,10,110,25);
+	    add(cepPatternBox);
         
         patternPanel.setBounds(10,50,480,70);
         patternPanel.setBorder(BorderFactory.createTitledBorder("Pattern"));
@@ -133,16 +148,17 @@ public class PatternDetail extends ComponentDetail{
             public void actionPerformed(ActionEvent ev) {
             	String name= nameField.getText();
             	String qtext = patternField.getText();
+            	int engine = chooseEngine((String) cepPatternBox.getSelectedItem());
             	try {
 					if (validateFields()) {						
 							switch (op) {
 	                        case 1:
-	                        	WritePattern.updatePattern(name,qtext);
+	                        	WritePattern.updatePattern(name,qtext,engine);
 	                            dispose();
 	                            break;
 	                        case 0:
 	                        try {
-								WritePattern.addPattern(name,qtext);
+								WritePattern.addPattern(name,qtext,engine);
 							} catch (ParserConfigurationException e) {
 								e.printStackTrace();
 							} catch (TransformerException e) {
@@ -167,6 +183,16 @@ public class PatternDetail extends ComponentDetail{
 		
 	}
 
+	private int chooseEngine(String engine) {
+    	int engineNo = 0;
+    	if(engine == "Esper") {
+    		engineNo = 1;
+    	} else if(engine== "Siddhi") {
+    		engineNo = 2;
+    	}
+		return engineNo;
+	}
+	
 	@Override
 	protected boolean validateFields() throws Exception {
 		boolean ret = true;

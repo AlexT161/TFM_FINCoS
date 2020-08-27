@@ -604,7 +604,6 @@ public final class EsperInterface extends CEP_EngineInterface {
                 i++;
             }
             synchronized (myEvent) {
-            	//runtime.sendEvent(mapEvent, eventTypeName);
             	myEvent.sendEventMap(mapEvent, eventTypeName); //JAT
             }
         } else {
@@ -684,7 +683,6 @@ public final class EsperInterface extends CEP_EngineInterface {
             }
 
             synchronized (myEvent) {
-                //myEvent.sendEvent(pojoEvent);
             	myEvent.sendEventBean(pojoEvent, eventTypeName); //JAT
             }
         } catch (ClassNotFoundException cnfe) {

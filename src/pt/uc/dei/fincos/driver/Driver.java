@@ -117,8 +117,8 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
     /** Saves the events submitted by this driver into disk. */
     private Logger logger = null;
 
-    /** Set of worker threads the generate load into the SUT. */
-    private Sender[] senders;
+			    /** Set of worker threads the generate load into the SUT. */
+			    private Sender[] senders;
 
     /** Number of Sender threads (applies only for synthetic workloads). */
     private int threadCount;
@@ -704,7 +704,7 @@ public final class Driver extends JFrame implements DriverRemoteFunctions {
                             }
 
                             /* After phase completion, update stats and check if
-                             *  Driver was stopped or paused. */
+                             *  Source was stopped or paused. */
                             synchronized (status) {
                                 if (status.getStep() != Step.STOPPED) {
                                     for (Sender sender: senders) {

@@ -46,10 +46,10 @@ import pt.uc.dei.fincos.sink.SinkRemoteFunctions;
  *
  * Facade class that implementing controller functions.
  * 1) Loading of test setup from configuration file
- * 2) Keeping the list of configured Drivers and Sinks
- * 3) RMI communication with drivers and sinks:
- *      3.1) Keeping the list of active Drivers and Sinks
- * 		3.2) Initialize Drivers and Sinks
+ * 2) Keeping the list of configured Sources and Sinks
+ * 3) RMI communication with sources and sinks:
+ *      3.1) Keeping the list of active Sources and Sinks
+ * 		3.2) Initialize Sources and Sinks
  * 		3.3) Start, pause, stop load submission
  * 		3.4) Alter event submission rates
  *

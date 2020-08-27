@@ -200,7 +200,6 @@ public final class EsperListener extends OutputListener implements UpdateListene
                 eventObj[fieldCount - 1] = timestamp;
             }
         }
-
         return eventObj;
     }
 

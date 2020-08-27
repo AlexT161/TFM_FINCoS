@@ -661,7 +661,7 @@ public final class Controller_GUI extends JFrame {
         	@Override
         	public void actionPerformed(ActionEvent e) {
         		try {
-					if(WriteStream.loadStreams(0).isEmpty()) {
+					if(WriteStream.loadStreams(0).isEmpty() && WriteSiddhiStream.loadStreams(0).isEmpty()) {
 						JOptionPane.showMessageDialog(null, "You should first create some Input Stream", "Warning", JOptionPane.WARNING_MESSAGE);
 					}
 				} catch (HeadlessException e1) {
@@ -1503,7 +1503,7 @@ public final class Controller_GUI extends JFrame {
     }
     
     /**
-     * Updates the GUI with information about the Status of the components (Drivers and Sinks).
+     * Updates the GUI with information about the Status of the components (Sources and Sinks).
      */
     private void refreshGUI() {
         Step s;

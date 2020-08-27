@@ -2,10 +2,12 @@ package pt.uc.dei.fincos.adapters.cep;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 
@@ -272,7 +274,6 @@ public final class SiddhiInterface extends CEP_EngineInterface {
 	                                        + "\".");
 	                            }
 	                        }
-	                       // esperConfig.getCommon().addEventType(typeName, attNames, attTypes); //JAT
 	                    }
 
 	                } else if (this.eventFormat == POJO_FORMAT) {
@@ -457,6 +458,147 @@ public final class SiddhiInterface extends CEP_EngineInterface {
             }*/
         }		
 	}
+    /**
+     * Sends a Map event to Siddhi.
+     *
+     * Event record is initially represented using the FINCoS internal format
+     * and it is converted to a Map format before sending to Siddhi.
+     *
+     * @param event     the event to be sent
+     */
+	 /*   private void sendMapEvent(Event event) {
+        String eventTypeName = event.getType().getName();
+        LinkedHashMap<String, String> eventSchema = streamsSchemas.get(eventTypeName);
+
+        if (eventSchema != null) {
+            int fieldCount = this.rtMode != Globals.NO_RT
+                                  ? event.getType().getAttributeCount() + 1
+                                  : event.getType().getAttributeCount();
+
+            if (eventSchema.size() != fieldCount) {
+                System.err.println("ERROR: Number of fields in event \""
+                                   + event + "\" (" + (fieldCount)
+                                   + ") does not match schema of event type Map \""
+                                   + eventTypeName + "\" ("
+                                   + eventSchema.size() + ").");
+                return;
+            }
+
+            Map<String, Object> mapEvent = new HashMap<String, Object>();
+            int i = 0;
+
+            for (Entry <String, String> field: eventSchema.entrySet()) {
+                if (i == eventSchema.size() - 1) { // Timestamp field (last one, if there is)
+                    if (this.rtMode == Globals.ADAPTER_RT) {
+                        long timestamp = 0;
+                        if (rtResolution == Globals.MILLIS_RT) {
+                            timestamp = System.currentTimeMillis();
+                        } else if (rtResolution == Globals.NANO_RT) {
+                            timestamp = System.nanoTime();
+                        }
+                        mapEvent.put(field.getKey(), timestamp);
+                    } else if (rtMode == Globals.END_TO_END_RT) {
+                        // The timestamp comes from the Driver
+                        mapEvent.put(field.getKey(), event.getTimestamp());
+                    } else if (rtMode == Globals.NO_RT) {
+                        mapEvent.put(field.getKey(), event.getAttributeValue(i));
+                    }
+                } else {
+                    mapEvent.put(field.getKey(), event.getAttributeValue(i));
+                }
+                i++;
+            }
+            synchronized (this) {
+            	inputHandlers.get(eventTypeName).send(mapEvent);
+            }
+        } else {
+            System.err.println("Unknown event 1 type \"" + eventTypeName + "\"."
+                    + "It is not possible to send event.");
+        }
+    }*/
+
+    /**
+     * Sends a POJO event to Siddhi.
+     *
+     * Event record is initially represented using the FINCoS internal format
+     * and it is converted to a Plain Java Object before sending to Siddhi.
+     *
+     * @param event     the event to be sent
+     */
+  /*  private void sendPOJOEvent(Event event) {
+        String eventTypeName = event.getType().getName();
+        try {
+            Class<?> eventSchema = Class.forName(eventTypeName);
+            Field[] eventFields = eventSchema.getDeclaredFields();
+            Object pojoEvent = eventSchema.getDeclaredConstructor().newInstance();
+
+            int eventFieldCount = this.rtMode != Globals.NO_RT
+                                  ? event.getType().getAttributeCount() + 1
+                                  : event.getType().getAttributeCount();
+
+            if (eventFields.length != eventFieldCount) {
+                System.err.println("ERROR: Number of fields in event \"" + event
+                                    + "\" (" + (eventFieldCount)
+                                    + ") does not match schema of POJO event type \""
+                                    + eventTypeName + "\" ("
+                                    + eventFields.length + ").");
+                return;
+            }
+
+            // Fill object attributes with event data
+            Field f;
+            for (int i = 0; i < eventFields.length; i++) {
+                f = eventFields[i];
+                try {
+                    // Assigns Timestamp
+                    if (i == eventFields.length - 1) { // timestamp field (the last one)
+                        if (this.rtMode == Globals.ADAPTER_RT) {
+                            long timestamp = 0;
+                            if (rtResolution == Globals.MILLIS_RT) {
+                                timestamp = System.currentTimeMillis();
+                            } else if (rtResolution == Globals.NANO_RT) {
+                                timestamp = System.nanoTime();
+                            }
+                            f.setLong(pojoEvent, timestamp);
+                        } else if (rtMode == Globals.END_TO_END_RT) {
+                            // The timestamp comes from the Driver
+                            f.setLong(pojoEvent, event.getTimestamp());
+                        }
+                    } else {
+                        if (f.getType() == int.class) {
+                            f.setInt(pojoEvent, (Integer) event.getAttributeValue(i));
+                        } else if (f.getType() == long.class) {
+                            f.setLong(pojoEvent, (Long) event.getAttributeValue(i));
+                        } else if (f.getType() == String.class) {
+                            f.set(pojoEvent, event.getAttributeValue(i));
+                        } else if (f.getType() == double.class) {
+                            f.setDouble(pojoEvent, (Double) event.getAttributeValue(i));
+                        } else if (f.getType() == float.class) {
+                            f.setFloat(pojoEvent, (Float) event.getAttributeValue(i));
+                        }
+                    }
+                } catch (ClassCastException cce) {
+                    System.err.println("Invalid field value (" + event.getAttributeValue(i)
+                                     + ") for field [" + f
+                                     + "]. It is not possible to send event.");
+                    return;
+                }
+            }
+
+            synchronized (this) {
+            	inputHandlers.get(eventTypeName).send(pojoEvent);
+            }
+        } catch (ClassNotFoundException cnfe) {
+            System.err.println("Unknown event 2 type \"" + eventTypeName
+                             + "\"." + "It is not possible to send event.");
+            return;
+        } catch (Exception e) {
+            System.err.println("Unexpected exception: " + e.getMessage()
+                    + ". It is not possible to send event.");
+            e.printStackTrace();
+            return;
+        }
+    }*/
 
     /**
      * Sends an Object-array event to Siddhi.

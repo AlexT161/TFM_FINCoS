@@ -1,5 +1,6 @@
 package pt.uc.dei.fincos.adapters.cep;
 
+import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 
 import io.siddhi.core.SiddhiAppRuntime;
@@ -8,9 +9,10 @@ import io.siddhi.core.event.Event;
 import io.siddhi.core.stream.input.InputHandler;
 import io.siddhi.core.stream.output.StreamCallback;
 import pt.uc.dei.fincos.adapters.OutputListener;
+import pt.uc.dei.fincos.basic.Globals;
 import pt.uc.dei.fincos.sink.Sink;
 
-public final class SiddhiListener extends OutputListener {
+public final class SiddhiListener extends OutputListener{
 	
 	private SiddhiAppRuntime runtime;
 	
@@ -102,5 +104,109 @@ public final class SiddhiListener extends OutputListener {
     		siddhiManager.shutdown();
     	}		
 	}
+
+    public void update(Event[] newEvents, Event[] oldEvents) {
+        long timestamp = -1;
+        if (this.rtMode == Globals.ADAPTER_RT) {
+            if (this.rtResolution == Globals.MILLIS_RT) {
+                timestamp = System.currentTimeMillis();
+            } else if (this.rtResolution == Globals.NANO_RT) {
+                timestamp = System.nanoTime();
+            }
+        }
+
+        for (int i = 0; i < newEvents.length; i++) {
+            try {
+                processIncomingEvent(newEvents[i], timestamp);
+                System.out.println("SiddhiListener: "+newEvents[i]+" timestamp: "+timestamp);
+            } catch (Exception e) {
+               System.err.println(e.getMessage());
+            }
+        }
+    }
+    
+    /**
+     * Processes an event coming from Siddhi.
+     *
+     * @param event         the incoming event
+     * @param timestamp     the timestamp associated with the event
+     * @throws Exception    if the incoming event is of an unknown type
+     */
+    private void processIncomingEvent(Event event, long timestamp) throws Exception {
+        onOutput(toFieldArray(event, timestamp));
+    }
+    
+    /**
+     * Translates the event from the Siddhi native format to Array of Objects.
+     *
+     * @param event         The event in Siddhi's native representation
+     * @param timestamp     The timestamp associated with the incoming event
+     * @return              The event as an array of objects
+     * @throws Exception    if the incoming event is of an unknown type
+     *
+     */
+    private Object[] toFieldArray(Event event, long timestamp) throws Exception {
+        Object[] eventObj = null;
+        int fieldCount = 0;
+        if (querySchema != null) { ////Input events are MAPs
+            int i = 1;
+            /* If response time is being measured, leave a slot for the arrival
+             *  time of the event (filled here or at the Sink). */
+            fieldCount = rtMode != Globals.NO_RT ? querySchema.size() + 2
+                    : querySchema.size() + 1;
+            eventObj = new Object[fieldCount];
+            for (String att: querySchema.keySet()) {
+            //    eventObj[i] = event.get(att);
+                i++;
+            }
+        } else { //Input events are POJO
+            try {
+                Field[] fields = Class.forName(queryOutputName).getFields();
+                /* If response time is being measured, leave a slot for the arrival time of the
+                event (filled here or at the Sink). */
+                fieldCount = rtMode != Globals.NO_RT ? fields.length + 2
+                                                     : fields.length + 1;
+                eventObj = new Object[fieldCount];
+                int i = 1;
+                for (Field f : fields) {
+               //     eventObj[i] = event.get(f.getName());
+                    i++;
+                }
+            } catch (ClassNotFoundException cne) {
+                throw new Exception("The type \"" + queryOutputName + "\" has not been defined. ");
+            }
+        }
+        return eventObj;
+    }
+    
+    /**
+    *
+    * Translates the event from the Siddhi native format to the framework's CSV format.
+    *
+    * @param event The event in Siddhi's native representation
+    * @return      The event in CSV representation
+    */
+   public String toCSV(Event event) {
+       StringBuilder sb = new StringBuilder();
+       sb.append(queryOutputName);
+       if (eventFormat == SiddhiInterface.MAP_FORMAT) { // Input events are MAPs
+           if (querySchema != null) {
+               for (String att: querySchema.keySet()) {
+                   sb.append(Globals.CSV_DELIMITER);
+                 //  sb.append(event.get(att));
+               }
+           }
+       } else { //Input events are POJO
+           try {
+               for (Field f : Class.forName(queryOutputName).getFields()) {
+                   sb.append(Globals.CSV_DELIMITER);
+                 //  sb.append(event.get(f.getName()));
+               }
+           } catch (Exception e) {
+               e.printStackTrace();
+           }
+       }
+       return sb.toString();
+   }
 
 }

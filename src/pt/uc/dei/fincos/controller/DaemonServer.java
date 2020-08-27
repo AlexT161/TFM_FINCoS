@@ -32,15 +32,15 @@ import pt.uc.dei.fincos.sink.Sink;
 /**
  *
  * Remote application that runs in background to receive RMI calls in order to
- * start Driver and Sink applications. This application should be started on
- * every machine where a Driver or Sink is supposed to run.
+ * start Source and Sink applications. This application should be started on
+ * every machine where a Source or Sink is supposed to run.
  *
  * @author  Marcelo R.N. Mendes
  *
  */
 public class DaemonServer implements RemoteDaemonServerFunctions {
 
-    /** The list of Drivers running at this service instance. */
+    /** The list of Sources running at this service instance. */
     private HashMap<String, Driver> driverList;
 
     /** The list of Sink running at this service instance. */

@@ -1421,8 +1421,8 @@ public final class Controller_GUI extends JFrame {
     /**
      * Updates the configuration of an existing Sink.
      *
-     * @param oldCfg		The old configuration of the Driver
-     * @param newCfg		The new configuration of the Driver
+     * @param oldCfg		The old configuration of the Sink
+     * @param newCfg		The new configuration of the Sink
      */
     public void updateSink(SinkConfig oldCfg, SinkConfig newCfg) {
         synchronized (sinksTable) {

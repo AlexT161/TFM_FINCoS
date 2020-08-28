@@ -19,8 +19,7 @@
 		<event-type name="Prueba" type="Output">
 			<objectarray>
 				<objectarray-property class="int" name="entero" />
-				<objectarray-property class="double"
-					name="avgEntero" />
+			<!--	<objectarray-property class="double" name="avgEntero" />-->
 				<objectarray-property class="long" name="TeS" />
 			</objectarray>
 		</event-type>

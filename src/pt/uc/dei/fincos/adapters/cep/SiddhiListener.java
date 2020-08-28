@@ -86,7 +86,7 @@ public final class SiddhiListener extends OutputListener{
 		runtime.addCallback("OutputStream", new StreamCallback() {
             @Override
             public void receive(Event[] events) {
-            	SiddhiListener.this.onOutput(events);
+            	SiddhiListener.this.update(events,null);
             }
         });
         inputHandler = runtime.getInputHandler(streamName);
@@ -118,7 +118,6 @@ public final class SiddhiListener extends OutputListener{
         for (int i = 0; i < newEvents.length; i++) {
             try {
                 processIncomingEvent(newEvents[i], timestamp);
-                System.out.println("SiddhiListener: "+newEvents[i]+" timestamp: "+timestamp);
             } catch (Exception e) {
                System.err.println(e.getMessage());
             }
@@ -156,8 +155,8 @@ public final class SiddhiListener extends OutputListener{
                     : querySchema.size() + 1;
             eventObj = new Object[fieldCount];
             for (String att: querySchema.keySet()) {
-            //    eventObj[i] = event.get(att);
-                i++;
+            	eventObj[i] = event.getData(i-1);
+            	i++;
             }
         } else { //Input events are POJO
             try {
@@ -169,11 +168,19 @@ public final class SiddhiListener extends OutputListener{
                 eventObj = new Object[fieldCount];
                 int i = 1;
                 for (Field f : fields) {
-               //     eventObj[i] = event.get(f.getName());
+                	eventObj[i] = event.getData(i-1);
                     i++;
                 }
             } catch (ClassNotFoundException cne) {
                 throw new Exception("The type \"" + queryOutputName + "\" has not been defined. ");
+            }
+        }
+        if (eventObj != null) {
+            // First element is the stream name
+            eventObj[0] = queryOutputName;
+            // Last element is the arrival time
+            if (rtMode == Globals.ADAPTER_RT) {
+                eventObj[fieldCount - 1] = timestamp;
             }
         }
         return eventObj;

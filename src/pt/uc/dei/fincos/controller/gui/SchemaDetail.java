@@ -215,7 +215,7 @@ public class SchemaDetail extends ComponentDetail{
                         atts = columns.toArray(atts);
                         EventType newType = new EventType(typeName, atts);
                     	String engine = (String) cepEngineCombo.getSelectedItem();
-                    	if(engine =="esper") {
+                    	if(engine =="Esper") {
                     		switch (op) {
                     		case UPDATE:
                     			WriteStream.updateEventType(oldType,newType,0);

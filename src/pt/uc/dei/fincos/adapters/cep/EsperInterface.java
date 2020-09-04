@@ -683,7 +683,7 @@ public final class EsperInterface extends CEP_EngineInterface {
             }
 
             synchronized (myEvent) {
-            	myEvent.sendEventBean(pojoEvent, eventTypeName); //JAT
+            	myEvent.sendEventBean(pojoEvent, eventTypeName);
             }
         } catch (ClassNotFoundException cnfe) {
             System.err.println("Unknown event 2 type \"" + eventTypeName
@@ -717,7 +717,7 @@ public final class EsperInterface extends CEP_EngineInterface {
                            : payload.length;
 
             if (eventSchema.size() != fieldCount) {
-                System.err.println("ERROR: Number of fields in event \""
+                System.err.println("ERROR: Number of fields in Esper event \""
                         + event + "\" (" + (fieldCount)
                         + ") does not match schema of event type Object Array \""
                         + eventTypeName + "\" ("
@@ -742,7 +742,7 @@ public final class EsperInterface extends CEP_EngineInterface {
                             }
                             objArrEvent[i] = timestamp;
                         } else if (rtMode == Globals.END_TO_END_RT) {
-                            // The timestamp comes from the Driver
+                            // The timestamp comes from the Source
                             objArrEvent[i] = event.getTimestamp();
                         }
                     } else {
@@ -751,8 +751,7 @@ public final class EsperInterface extends CEP_EngineInterface {
                 }
             }
             synchronized (myEvent) {
-                //myEvent.sendEvent(objArrEvent, eventTypeName);
-                myEvent.sendEventObjectArray(objArrEvent, eventTypeName); //JAT
+                myEvent.sendEventObjectArray(objArrEvent, eventTypeName);
             }
         } else {
             System.err.println("Unknown event 3 type \"" + eventTypeName + "\"."

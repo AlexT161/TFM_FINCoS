@@ -2,7 +2,7 @@ FINCoS Sink Log File.
  Sink Alias: AQ_ESPER_SINK
  Sink Address: 127.0.0.1
  Connection: Esper (sample)
- Start time: Fri Sep 04 12:40:19 CEST 2020
+ Start time: Fri Sep 04 13:16:19 CEST 2020
  Response Time Mode: ADAPTER
  Response Time Resolution: nanoseconds
- Log Sampling rate: 0.25
+ Log Sampling rate: 0.5

@@ -1061,8 +1061,7 @@ public final class EsperInterface extends CEP_EngineInterface {
      */
     private void advanceClock(Long extTimestamp) {
         if (extTimestamp != lastExtTS) { // Time advanced       	
-        	this.myEvent.advanceTime(extTimestamp); //JAT
-            //this.myEvent.sendEvent(new CurrentTimeEvent(extTimestamp));
+        	this.myEvent.advanceTime(extTimestamp);
             lastExtTS = extTimestamp;
         }
     }

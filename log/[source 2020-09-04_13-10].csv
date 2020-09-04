@@ -1,0 +1,5 @@
+FINCoS Performance Log File.
+Generated from:
+ "/Users/ares161/eclipse-workspace/TFM FINCoS/log/AQ_ESPER_SOURCE.log" [Fri Sep 04 13:01:57 CEST 2020] to [Fri Sep 04 13:10:17 CEST 2020]
+log file(s).
+Timestamp,Server,Stream,Avg_Throughput,Min_Throughput,Max_Throughput,Last_Throughput,Avg_RT,Min_RT,Max_RT,Stdev_RT,Last_RT

@@ -83,7 +83,7 @@ public final class SiddhiListener extends OutputListener{
                 "" +
                 "@info(name = '" + queryOutputName + "') " + queryText;
         this.runtime = this.siddhiManager.createSiddhiAppRuntime(siddhiApp);
-		runtime.addCallback("OutputStream", new StreamCallback() {
+		runtime.addCallback("AirQualityLevel", new StreamCallback() {
             @Override
             public void receive(Event[] events) {
             	SiddhiListener.this.update(events,null);

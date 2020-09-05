@@ -381,7 +381,13 @@ public final class SinkDetail extends ComponentDetail {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
         builder = factory.newDocumentBuilder();
-        String queriesFile = "./queries/esper/Q1/Query_Set.xml";
+        int engine = (Integer) connCombo.getSelectedItem();
+        String queriesFile = "";
+        if (engine == 0) {
+        	queriesFile = queriesFile + "./queries/esper/Q1/Query_Set.xml";
+        } else if (engine == 2) {
+        	queriesFile = queriesFile + "./queries/siddhi/Q1/Query_Siddhi_Set.xml";
+        }
         // Parsing of Queries file
         Document doc = builder.parse(new File(queriesFile));
         Element queriesList = doc.getDocumentElement();

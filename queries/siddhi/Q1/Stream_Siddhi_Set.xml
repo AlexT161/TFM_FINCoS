@@ -2,40 +2,112 @@
 <siddhi-configuration
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<common>
-		<event-type name="otro" type="Input">
+		<event-type name="NO2_VeryUnhealthy_s" type="Output">
 			<objectarray>
-				<objectarray-property class="bool" name="as" />
-				<objectarray-property class="double"
-					name="asfgt" />
+				<objectarray-property class="long"
+					name="timestamp" />
+				<objectarray-property class="int"
+					name="stationId" />
+				<objectarray-property class="int"
+					name="levelNumber" />
+				<objectarray-property class="string"
+					name="levelName" />
 			</objectarray>
 		</event-type>
-		<event-type name="Nuevo" type="Input">
+		<event-type name="NO2_Good_s" type="Output">
 			<objectarray>
-				<objectarray-property class="bool" name="bul" />
-				<objectarray-property class="int" name="entero" />
-				<objectarray-property class="long" name="TeS" />
+				<objectarray-property class="long"
+					name="timestamp" />
+				<objectarray-property class="int"
+					name="stationId" />
+				<objectarray-property class="int"
+					name="levelNumber" />
+				<objectarray-property class="string"
+					name="levelName" />
 			</objectarray>
 		</event-type>
-		<event-type name="Prueba" type="Output">
+		<event-type name="NO2_UnhealthyForSensitiveGroups_s"
+			type="Output">
 			<objectarray>
-				<objectarray-property class="int" name="entero" />
-				<objectarray-property class="long" name="TeS" />
+				<objectarray-property class="long"
+					name="timestamp" />
+				<objectarray-property class="int"
+					name="stationId" />
+				<objectarray-property class="int"
+					name="levelNumber" />
+				<objectarray-property class="string"
+					name="levelName" />
+			</objectarray>
+		</event-type>
+		<event-type name="NO2_Moderate_s" type="Output">
+			<objectarray>
+				<objectarray-property class="long"
+					name="timestamp" />
+				<objectarray-property class="int"
+					name="stationId" />
+				<objectarray-property class="int"
+					name="levelNumber" />
+				<objectarray-property class="string"
+					name="levelName" />
+			</objectarray>
+		</event-type>
+		<event-type name="NO2_Hazardous_s" type="Output">
+			<objectarray>
+				<objectarray-property class="long"
+					name="timestamp" />
+				<objectarray-property class="int"
+					name="stationId" />
+				<objectarray-property class="int"
+					name="levelNumber" />
+				<objectarray-property class="string"
+					name="levelName" />
 			</objectarray>
 		</event-type>
 		<event-type name="AirMeasurement" type="Input">
 			<objectarray>
-				<objectarray-property class="long"
-					name="stationTs" />
 				<objectarray-property class="int"
 					name="stationId" />
+				<objectarray-property class="double" name="no2" />
 				<objectarray-property class="double"
 					name="pm2_5" />
 				<objectarray-property class="double"
 					name="pm10" />
 				<objectarray-property class="double" name="o3" />
-				<objectarray-property class="double" name="no2" />
 				<objectarray-property class="double" name="so2" />
 				<objectarray-property class="double" name="co" />
+				<objectarray-property class="long"
+					name="stationTs" />
+			</objectarray>
+		</event-type>
+		<event-type name="AirQualityLevel_s" type="Output">
+			<objectarray>
+				<objectarray-property class="long"
+					name="timestamp" />
+				<objectarray-property class="int"
+					name="stationId" />
+				<objectarray-property class="int" name="level" />
+			</objectarray>
+		</event-type>
+		<event-type name="NO2_Unhealthy_s" type="Output">
+			<objectarray>
+				<objectarray-property class="long"
+					name="timestamp" />
+				<objectarray-property class="int"
+					name="stationId" />
+				<objectarray-property class="int"
+					name="levelNumber" />
+				<objectarray-property class="string"
+					name="levelName" />
+			</objectarray>
+		</event-type>
+		<event-type name="NO2_Avg_s" type="Output">
+			<objectarray>
+				<objectarray-property class="long"
+					name="timestamp" />
+				<objectarray-property class="int"
+					name="stationId" />
+				<objectarray-property class="double"
+					name="value" />
 			</objectarray>
 		</event-type>
 	</common>

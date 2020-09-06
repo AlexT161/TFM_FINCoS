@@ -402,7 +402,6 @@ public final class SiddhiInterface extends CEP_EngineInterface {
                         		"define stream "+ streamName + " ("+ streamAtt + "); " +
                                 "" +
                                 "@info(name = '"+query.getKey()+"') " + query.getValue();
-                        System.out.println("SiddhiInterface:siddhiApp: "+siddhiApp);
                         this.siddhiAppRuntime = this.siddhiManager.createSiddhiAppRuntime(siddhiApp);
                         inputHandler = siddhiAppRuntime.getInputHandler(streamName);
                         unlistenedQueries.add(siddhiAppRuntime);
@@ -424,6 +423,7 @@ public final class SiddhiInterface extends CEP_EngineInterface {
 
 	private String getAttributes(String streamName) {
 		String att = "";
+		System.out.println("SiddhiInterface:StreamName: " + streamName);
 		for(String i : streamsSchemas.get(streamName).keySet()) {
 			att = att + i + " " + streamsSchemas.get(streamName).get(i) + ",";
 		}
@@ -439,7 +439,9 @@ public final class SiddhiInterface extends CEP_EngineInterface {
 				name = text[i+1];
 			}
 		}
-		return name;
+		String [] name2 = name.split("#");
+		String name3 = name2[0];
+		return name3;
 	}
 	
 	@Override

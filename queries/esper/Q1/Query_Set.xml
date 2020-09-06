@@ -6,9 +6,9 @@
 	<Query name="NO2_Hazardous"
 		text="insert into PollutantLevel select timestamp, stationId, 6 as levelNumber, 'NO2_Hazardous' as levelName from NO2_Avg (value &gt;= 1250.0 and value &lt;= 2049.0)" />
 	<Query name="AirQualityLevel"
-		text="insert into AirQualityLevel select timestamp, stationId, max(levelNumber) as level from PollutantLevel.win:time_batch(5 minutes) group by stationId" />
+		text="insert into AirQualityLevel select timestamp, stationId, max(levelNumber) as level from PollutantLevel.win:time_batch(1 minute) group by stationId" />
 	<Query name="NO2_Avg"
-		text="insert into NO2_Avg select stationTs as timestamp, stationId, avg(no2) as value from AirMeasurement.win:time(1 hour) group by stationId" />
+		text="insert into NO2_Avg select stationTs as timestamp, stationId, avg(no2) as value from AirMeasurement.win:time(3 minutes) group by stationId" />
 	<Query name="StockAvg2"
 		text="insert into StockAvg2 select a1.symbol as symbol, 2*a1.avgPrice as Avg2 from StockAvg as a1" />
 	<Query name="NO2_UnhealthyForSensitiveGroup"

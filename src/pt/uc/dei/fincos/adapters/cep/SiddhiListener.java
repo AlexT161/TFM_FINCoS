@@ -81,9 +81,10 @@ public final class SiddhiListener extends OutputListener{
         String siddhiApp = "" +
         		"define stream " + streamName + " (" + streamAtts + "); " +
                 "" +
-                "@info(name = '" + queryOutputName + "') " + queryText;
+                "@info(name ='" + queryOutputName + "') " + queryText + ";";
         this.runtime = this.siddhiManager.createSiddhiAppRuntime(siddhiApp);
-		runtime.addCallback("AirQualityLevel", new StreamCallback() {
+        String callback = getCallback();
+		runtime.addCallback(callback, new StreamCallback() {
             @Override
             public void receive(Event[] events) {
             	SiddhiListener.this.update(events,null);
@@ -91,6 +92,18 @@ public final class SiddhiListener extends OutputListener{
         });
         inputHandler = runtime.getInputHandler(streamName);
 		runtime.start();
+	}
+	
+	private String getCallback() {
+		String[] text = queryText.split(" ");
+		String name = "";
+		for (int i=0; i < text.length; i++) {
+			if(text[i].equals("into")) {
+				name = text[i+1];
+			}
+		}
+		System.out.println("SiddhiListener:callback: " + name);
+		return name;
 	}
 	
 	public InputHandler getInputHandler() {

@@ -1,5 +1,0 @@
-FINCoS Performance Log File.
-Generated from:
- "/Users/ares161/eclipse-workspace/TFM FINCoS/log/AQ_SIDDHI_SINK_NO2.log" [Sun Sep 06 16:35:22 CEST 2020] to [Sun Sep 06 16:43:42 CEST 2020]
-log file(s).
-Timestamp,Server,Stream,Avg_Throughput,Min_Throughput,Max_Throughput,Last_Throughput,Avg_RT,Min_RT,Max_RT,Stdev_RT,Last_RT

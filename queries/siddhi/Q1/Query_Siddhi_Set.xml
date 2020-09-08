@@ -2,6 +2,7 @@
 <CEP-Queries
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Query name="NO2_UnhealthyForSensitiveGroups_s"
+<<<<<<< HEAD
 		text="from NO2_Avg_s[value &gt;= 101 and value &lt;361] select timestamp, stationId, 3 as levelNumber, 'NO2_UnhealthyForSensitiveGroups' as levelName  insert into PollutantLevel" />	
 	<Query name="NO2_Moderate_s"
 		text="from NO2_Avg_s[value &gt;= 54 and value &lt; 101] select timestamp, stationId, 2 as levelNumber, 'NO2_Moderate' as levelName insert into PollutantLevel" />	
@@ -17,4 +18,21 @@
 		text="from AirMeasurement#window.time(3 min) select stationTs as timestamp, stationId, avg(no2) as value group by stationId insert into NO2_Avg_s" />	
 	<Query name="NO2_Good_s"
 		text="from NO2_Avg_s[value &gt;= 0 and value &lt; 54] select timestamp, stationId, 1 as levelNumber, 'NO2_Good' as levelName insert into PollutantLevel" />
+=======
+		text="from NO2_Avg_s [value &gt;= 101.0 and value &lt;361.0] select timestamp, stationId, 3 as levelNumber, 'NO2_UnhealthyForSensitiveGroups' as levelName  insert into PollutantLevel" />
+	<Query name="NO2_Moderate_s"
+		text="from NO2_Avg_s [value &gt;= 54.0 and value &lt; 101.0] select timestamp, stationId, 2 as levelNumber, 'NO2_Moderate' as levelName insert into PollutantLevel" />
+	<Query name="NO2_Hazardous_s"
+		text="from NO2_Avg_s [value &gt;= 1250.0 and value &lt; 2049.0] select timestamp, stationId, 6 as levelNumber, 'NO2_Hazardous' as levelName insert into PollutantLevel" />
+	<Query name="NO2_VeryUnhealthy_s"
+		text="from NO2_Avg_s [value &gt;= 650.0 and value &lt; 1250.0] select timestamp, stationId, 5 as levelNumber, 'NO2_VeryUnhealthy' as levelName insert into PollutantLevel" />
+	<Query name="NO2_Unhealthy_s"
+		text="from NO2_Avg_s [value &gt;= 361.0 and value &lt; 650.0] select timestamp, stationId, 4 as levelNumber, 'NO2_Unhealthy' as levelName insert into PollutantLevel" />
+	<Query name="AirQualityLevel_s"
+		text="from PollutantLevel#window.timeBatch(1 min) select timestamp, stationId, max(levelNumber) as level group by stationId insert into AirQualityLevel_s" />
+	<Query name="NO2_Avg_s"
+		text="from AirMeasurement#window.time(3 min) select stationTs as timestamp, stationId, avg(no2) as value group by stationId insert into NO2_Avg" />
+	<Query name="NO2_Good_s"
+		text="from NO2_Avg_s [value &gt;= 0.0 and value &lt; 54.0] select timestamp, stationId, 1 as levelNumber, 'NO2_Good' as levelName insert into PollutantLevel" />
+>>>>>>> 8a3c0a57a3d581a627ee5eb0453919328e59a13d
 </CEP-Queries>

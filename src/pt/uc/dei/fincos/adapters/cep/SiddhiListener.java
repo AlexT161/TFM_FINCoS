@@ -82,12 +82,15 @@ public final class SiddhiListener extends OutputListener{
         		"define stream " + streamName + " (" + streamAtts + "); " +
                 "" +
                 "@info(name ='" + queryOutputName + "') " + queryText + ";";
-        this.runtime = this.siddhiManager.createSiddhiAppRuntime(siddhiApp);
+        System.out.println("SiddhiApp: " + siddhiApp);
+        this.runtime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
         String callback = getCallback();
+        System.out.println("Callback: " + callback);
+        System.out.println("");
 		runtime.addCallback(callback, new StreamCallback() {
             @Override
             public void receive(Event[] events) {
-            	SiddhiListener.this.update(events,null);
+            	SiddhiListener.this.update(events,events);
             }
         });
         inputHandler = runtime.getInputHandler(streamName);
@@ -102,7 +105,6 @@ public final class SiddhiListener extends OutputListener{
 				name = text[i+1];
 			}
 		}
-		System.out.println("SiddhiListener:callback: " + name);
 		return name;
 	}
 	
@@ -161,14 +163,14 @@ public final class SiddhiListener extends OutputListener{
         Object[] eventObj = null;
         int fieldCount = 0;
         if (querySchema != null) { ////Input events are MAPs
-            int i = 1;
+            int i = 0;
             /* If response time is being measured, leave a slot for the arrival
              *  time of the event (filled here or at the Sink). */
             fieldCount = rtMode != Globals.NO_RT ? querySchema.size() + 2
                     : querySchema.size() + 1;
             eventObj = new Object[fieldCount];
             for (String att: querySchema.keySet()) {
-            	eventObj[i] = event.getData(i-1);
+            	eventObj[i] = event.getData(i);
             	i++;
             }
         } else { //Input events are POJO
@@ -213,14 +215,12 @@ public final class SiddhiListener extends OutputListener{
            if (querySchema != null) {
                for (String att: querySchema.keySet()) {
                    sb.append(Globals.CSV_DELIMITER);
-                 //  sb.append(event.get(att));
                }
            }
        } else { //Input events are POJO
            try {
                for (Field f : Class.forName(queryOutputName).getFields()) {
                    sb.append(Globals.CSV_DELIMITER);
-                 //  sb.append(event.get(f.getName()));
                }
            } catch (Exception e) {
                e.printStackTrace();

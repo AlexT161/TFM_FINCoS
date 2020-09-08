@@ -379,8 +379,7 @@ public final class EsperInterface extends CEP_EngineInterface {
                     // Load new class definition into JVM using javassist API
                     createBean(eType);
 
-//                    esperConfig.addEventType(typeName, Class.forName(typeName).getName());
-                    esperConfig.getCommon().addEventType(typeName, Class.forName(typeName).getName()); //JAT
+                    esperConfig.getCommon().addEventType(typeName, Class.forName(typeName).getName());
                 }
             }
         }

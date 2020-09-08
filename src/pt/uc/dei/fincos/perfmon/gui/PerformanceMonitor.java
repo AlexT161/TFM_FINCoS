@@ -149,7 +149,7 @@ public final class PerformanceMonitor extends JFrame {
      * Perfmon is opened as a stand-alone application for offline processing of log files.
      */
     public PerformanceMonitor() {
-        super("FINCoS Performance Monitor (Offline mode).");
+        super("FINCoS++ Performance Monitor (Offline mode).");
         this.setIconImage(Toolkit.getDefaultToolkit().getImage("imgs/perfmon.png"));
         initGUI();
         addListeners();

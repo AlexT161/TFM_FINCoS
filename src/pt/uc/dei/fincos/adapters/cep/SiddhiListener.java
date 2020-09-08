@@ -82,16 +82,11 @@ public final class SiddhiListener extends OutputListener{
         		"define stream " + streamName + " (" + streamAtts + "); " +
                 "" +
                 "@info(name ='" + queryOutputName + "') " + queryText + ";";
-<<<<<<< HEAD
         System.out.println("SiddhiApp: " + siddhiApp);
         this.runtime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
         String callback = getCallback();
         System.out.println("Callback: " + callback);
         System.out.println("");
-=======
-        this.runtime = this.siddhiManager.createSiddhiAppRuntime(siddhiApp);
-        String callback = getCallback();
->>>>>>> 8a3c0a57a3d581a627ee5eb0453919328e59a13d
 		runtime.addCallback(callback, new StreamCallback() {
             @Override
             public void receive(Event[] events) {
@@ -110,10 +105,7 @@ public final class SiddhiListener extends OutputListener{
 				name = text[i+1];
 			}
 		}
-<<<<<<< HEAD
-=======
 		System.out.println("SiddhiListener:callback: " + name);
->>>>>>> 8a3c0a57a3d581a627ee5eb0453919328e59a13d
 		return name;
 	}
 	

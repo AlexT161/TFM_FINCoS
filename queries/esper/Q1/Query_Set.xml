@@ -1,28 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <CEP-Queries
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<Query name="Prueba"
-		text="insert into Prueba select entero, AVG(entero) as avgEntero, Nuevo.TeS as TeS from Nuevo.win:time(1 min)" />
 	<Query name="NO2_Hazardous"
-		text="insert into PollutantLevel select timestamp, stationId, 6 as levelNumber, 'NO2_Hazardous' as levelName from NO2_Avg (value &gt;= 1250.0 and value &lt;= 2049.0)" />
+		text="insert into PollutantLevel select a1.timestamp as timestamp, a1.stationId as stationId, 6 as levelNumber, 'NO2_Hazardous' as levelName from pattern [every a1 = NO2_Avg (a1.value &gt;= 1250.0 and a1.value &lt;= 2049.0)]" />
 	<Query name="AirQualityLevel"
-		text="insert into AirQualityLevel select timestamp, stationId, max(levelNumber) as level from PollutantLevel.win:time_batch(1 minute) group by stationId" />
+		text="insert into AirQualityLevel select current_timestamp() as timestamp, a1.stationId as stationId, max(a1.levelNumber) as level from pattern [every a1 = PollutantLevel].win:time_batch(30 sec) group by a1.stationId" />
 	<Query name="NO2_Avg"
-		text="insert into NO2_Avg select stationTs as timestamp, stationId, avg(no2) as value from AirMeasurement.win:time(3 minutes) group by stationId" />
-	<Query name="StockAvg2"
-		text="insert into StockAvg2 select a1.symbol as symbol, 2*a1.avgPrice as Avg2 from StockAvg as a1" />
+		text="insert into NO2_Avg select current_timestamp() as timestamp, a1.stationId as stationId, avg(a1.no2) as value from pattern [every a1 = AirMeasurement].win:time(1 minute) group by a1.stationId" />
 	<Query name="NO2_UnhealthyForSensitiveGroup"
-		text="insert into PollutantLevel select timestamp, stationId, 3 as levelNumber, 'NO2_UnhealthyForSensitiveGroups' as levelName from NO2_Avg (value &gt;= 101.0 and value &lt; 361.0)" />
+		text="insert into PollutantLevel select a1.timestamp as timestamp, a1.stationId as stationId, 3 as levelNumber, 'NO2_UnhealthyForSensitiveGroups' as levelName from pattern [every a1 = NO2_Avg (a1.value &gt;= 101.0 and a1.value &lt; 361.0)]" />
 	<Query name="NO2_Moderate"
-		text="insert into PollutantLevel select timestamp, stationId, 2 as levelNumber, 'NO2_Moderate' as levelName from NO2_Avg (value &gt;= 54.0 and value &lt; 101.0)" />
+		text="insert into PollutantLevel select a1.timestamp as timestamp, a1.stationId as stationId, 2 as levelNumber, 'NO2_Moderate' as levelName from pattern [every a1 = NO2_Avg (a1.value &gt;= 54.0 and a1.value &lt; 101.0)]" />
 	<Query name="NO2_Unhealthy"
-		text="insert into PollutantLevel select timestamp, stationId, 4 as levelNumber, 'NO2_Unhealthy' as levelName from NO2_Avg (value &gt;= 361.0 and value &lt; 650.0)" />
-	<Query name="Prueba2"
-		text="select sum(avgEntero) as Sum from Prueba.win:time(30 sec)" />
+		text="insert into PollutantLevel select a1.timestamp as timestamp, a1.stationId as stationId, 4 as levelNumber, 'NO2_Unhealthy' as levelName from pattern [every a1 = NO2_Avg (a1.value &gt;= 361.0 and a1.value &lt; 650.0)]" />
 	<Query name="NO2_VeryUnhealthy"
-		text="insert into PollutantLevel select timestamp, stationId, 5 as levelNumber, 'NO2_VeryUnhealthy' as levelName from NO2_Avg (value &gt;= 650.0 and value &lt; 1250.0)" />
+		text="insert into PollutantLevel select a1.timestamp as timestamp, a1.stationId as stationId, 5 as levelNumber, 'NO2_VeryUnhealthy' as levelName from pattern [every a1 = NO2_Avg (a1.value &gt;= 650.0 and a1.value &lt; 1250.0)]" />
 	<Query name="NO2_Good"
-		text="insert into PollutantLevel select timestamp, stationId, 1 as levelNumber, 'NO2_Good' as levelName from NO2_Avg (value &gt;= 0.0 and value &lt; 54.0)" />
-	<Query name="StockAvg"
-		text="insert into StockAvg select symbol, AVG(price) as avgPrice, StockTick.TS as TS from StockTick.win:time(1 min) group by symbol" />
+		text="insert into PollutantLevel select a1.timestamp as timestamp, a1.stationId as stationId, 1 as levelNumber, 'NO2_Good' as levelName from pattern [every a1 = NO2_Avg (a1.value &gt;= 0.0 and a1.value &lt; 54.0)]" />
 </CEP-Queries>

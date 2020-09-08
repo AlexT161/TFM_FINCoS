@@ -8,12 +8,12 @@ Las principales diferencias entre FINCoS y FINCoS++ son las siguientes:
 - El acceso a la visualización de las estadísticas recogidas dentro de la misma aplicación.
 
 Los directorios del repositorio actual están divididos de la siguiente manera:
->> bin: Binarios necesarios para la ejecución de aplicaciones FINCoS++.
->> config: Archivos de configuración de pruebas y de configuración general.
->> data: Archivos de datos de ejemplo.
->> lib: librerías requeridas por FINCoS++.
->> log: Archivos de registro producidos por sources y sinks.
->> queries: Archivos de ejemplo con patrones específicos en el lenguaje específico de cada motor CEP.
->> src: Archivos con el código fuente de FINCoS++.
->> etc:Librerías adicionales para la ejecución de los motores de prueba.
->> licence: Licencias de FINCoS++, FINCoS y Siddhi.
+- bin: Binarios necesarios para la ejecución de aplicaciones FINCoS++.
+- config: Archivos de configuración de pruebas y de configuración general.
+- data: Archivos de datos de ejemplo.
+- lib: librerías requeridas por FINCoS++.
+- log: Archivos de registro producidos por sources y sinks.
+- queries: Archivos de ejemplo con patrones específicos en el lenguaje específico de cada motor CEP.
+- src: Archivos con el código fuente de FINCoS++.
+- etc:Librerías adicionales para la ejecución de los motores de prueba.
+- licence: Licencias de FINCoS++, FINCoS y Siddhi.

@@ -191,7 +191,6 @@ public final class EsperListener extends OutputListener implements UpdateListene
                 throw new Exception("The type \"" + queryOutputName + "\" has not been defined. ");
             }
         }
-
         if (eventObj != null) {
             // First element is the stream name
             eventObj[0] = queryOutputName;

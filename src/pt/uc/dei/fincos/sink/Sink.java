@@ -455,8 +455,12 @@ public final class Sink extends JFrame implements SinkRemoteFunctions {
             Long inputTS = 0L;
             Long outputTS = 0L;
             if (rtMode != Globals.NO_RT) {
-                inputTS = (Long) event[event.length - 2];
+                try {
+            	inputTS = (Long) event[event.length - 2];
                 outputTS = (Long) event[event.length - 1];
+                }catch(Exception e) {
+                	System.out.println("Error ******* ");
+                }
             }
             this.perfStats.offer((String) event[0], inputTS, outputTS, rtResolution);
         }

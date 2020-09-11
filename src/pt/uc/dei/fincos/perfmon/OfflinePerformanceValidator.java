@@ -376,7 +376,7 @@ public final class OfflinePerformanceValidator {
                 String header = logReader.getNextLine();
                 totalReadBytes += (header.length() / charsPerByte + 2);
                 if (header.contains("FINCoS")) {
-                    if (header.contains("Driver")) {
+                    if (header.contains("Source")) {
                         streamType = Stream.INPUT;
                     } else if (header.contains("Sink")) {
                         streamType = Stream.OUTPUT;
@@ -432,7 +432,6 @@ public final class OfflinePerformanceValidator {
                 logSamplRateStr = logSamplRateStr.substring(logSamplRateStr.indexOf(":") + 2);
                 int logSamplingFactor =
                         (int) Math.round(1 / Double.parseDouble(logSamplRateStr));
-
                 double rt;
                 while (keepProcessing && (event = logReader.getNextLine()) != null) {
                     try {

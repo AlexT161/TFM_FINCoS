@@ -397,14 +397,10 @@ public final class EsperInterface extends CEP_EngineInterface {
         stopAllListeners();
         // Stops all "internal" queries            
         for (EPStatement q: unlistenedQueries) {
-/*        if (!q.isStopped() && !q.isDestroyed()) {
-                q.stop();
-            }	*/
         	if (!q.isDestroyed()) {
-            	try { //JAT
-            		runtime.getDeploymentService().undeploy(q.getDeploymentId()); //JAT
+            	try {
+            		runtime.getDeploymentService().undeploy(q.getDeploymentId());
 				} catch (EPUndeployException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
         	}
@@ -467,12 +463,9 @@ public final class EsperInterface extends CEP_EngineInterface {
                         System.err.println("WARNING: Query \"" + query.getKey()
                                            + "\" has no registered listener.");
                         System.out.println("Loading query: \n"  + query.getValue());
-//                      EPStatement st = runtime.getEPAdministrator.createEPL(query.getValue(),
-//                                                                                  query.getKey());
-//                      unlistenedQueries.add(st);                        
-                        esperConfig = runtime.getConfigurationDeepCopy(); //JAT
-                        EPDeployment st = compileDeploy(runtime, query.getValue()); //JAT
-                        unlistenedQueries.add(st.getStatements()[0]); //JAT
+                        esperConfig = runtime.getConfigurationDeepCopy();
+                        EPDeployment st = compileDeploy(runtime, query.getValue());
+                        unlistenedQueries.add(st.getStatements()[0]);
                     }
                 }
 

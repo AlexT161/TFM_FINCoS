@@ -596,7 +596,7 @@ public final class PerformanceMonitor extends JFrame {
             guiLastRefresh = now - Globals.DEFAULT_GUI_REFRESH_RATE * 1000;
         }
         long interval = now - guiLastRefresh; // in milliseconds
-        // For each Driver
+        // For each Source
         for (DriverConfig dr: drivers) {
             DriverRemoteFunctions remoteDr = remoteDrivers.get(dr);
             if (remoteDr != null) {

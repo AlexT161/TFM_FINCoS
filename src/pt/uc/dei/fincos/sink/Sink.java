@@ -459,7 +459,7 @@ public final class Sink extends JFrame implements SinkRemoteFunctions {
             	inputTS = (Long) event[event.length - 2];
                 outputTS = (Long) event[event.length - 1];
                 }catch(Exception e) {
-                	System.out.println("Error ******* ");
+                	System.out.println("Error reading timestamps");
                 }
             }
             this.perfStats.offer((String) event[0], inputTS, outputTS, rtResolution);

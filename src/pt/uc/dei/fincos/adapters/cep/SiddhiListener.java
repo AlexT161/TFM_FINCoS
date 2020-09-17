@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import io.siddhi.core.SiddhiAppRuntime;
 import io.siddhi.core.SiddhiManager;
 import io.siddhi.core.event.Event;
+import io.siddhi.core.query.output.callback.QueryCallback;
 import io.siddhi.core.stream.input.InputHandler;
 import io.siddhi.core.stream.output.StreamCallback;
 import pt.uc.dei.fincos.adapters.OutputListener;
@@ -84,14 +85,20 @@ public final class SiddhiListener extends OutputListener{
                 "@info(name ='" + queryOutputName + "') " + queryText + ";";
         System.out.println("SiddhiApp: " + siddhiApp);
         this.runtime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
-        String callback = getCallback();
-        System.out.println("Callback: " + callback);
+//        String callback = getCallback();
+        System.out.println("Callback: " + queryOutputName);
         System.out.println("");
-		runtime.addCallback(callback, new StreamCallback() {
-            @Override
+		/*runtime.addCallback(callback, new StreamCallback() {
+        	@Override
             public void receive(Event[] events) {
             	SiddhiListener.this.update(events,events);
             }
+        });*/
+		runtime.addCallback(queryOutputName, new QueryCallback() {
+			@Override
+			public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
+            	SiddhiListener.this.update(inEvents,removeEvents, timestamp);
+			}
         });
         inputHandler = runtime.getInputHandler(streamName);
 		runtime.start();
@@ -105,7 +112,6 @@ public final class SiddhiListener extends OutputListener{
 				name = text[i+1];
 			}
 		}
-		System.out.println("SiddhiListener:callback: " + name);
 		return name;
 	}
 	
@@ -121,19 +127,20 @@ public final class SiddhiListener extends OutputListener{
     	}		
 	}
 
-    public void update(Event[] newEvents, Event[] oldEvents) {
-        long timestamp = -1;
+    public void update(Event[] newEvents, Event[] oldEvents, long timestamp) {
+        long timestamp2 = -1;
         if (this.rtMode == Globals.ADAPTER_RT) {
             if (this.rtResolution == Globals.MILLIS_RT) {
-                timestamp = System.currentTimeMillis();
+//            	timestamp2 = timestamp-1;
+                timestamp2 = System.currentTimeMillis();
             } else if (this.rtResolution == Globals.NANO_RT) {
-                timestamp = System.nanoTime();
+                timestamp2 = System.nanoTime();
             }
         }
 
         for (int i = 0; i < newEvents.length; i++) {
             try {
-                processIncomingEvent(newEvents[i], timestamp);
+                processIncomingEvent(newEvents[i], timestamp2);
             } catch (Exception e) {
                System.err.println(e.getMessage());
             }
@@ -164,14 +171,14 @@ public final class SiddhiListener extends OutputListener{
         Object[] eventObj = null;
         int fieldCount = 0;
         if (querySchema != null) { ////Input events are MAPs
-            int i = 0;
+            int i = 1;
             /* If response time is being measured, leave a slot for the arrival
              *  time of the event (filled here or at the Sink). */
             fieldCount = rtMode != Globals.NO_RT ? querySchema.size() + 2
                     : querySchema.size() + 1;
             eventObj = new Object[fieldCount];
             for (String att: querySchema.keySet()) {
-            	eventObj[i] = event.getData(i);
+            	eventObj[i] = event.getData(i-1);
             	i++;
             }
         } else { //Input events are POJO

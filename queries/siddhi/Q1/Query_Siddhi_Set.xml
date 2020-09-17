@@ -5,4 +5,5 @@
 		text="from AirMeasurement#window.time(10 sec) select stationId as stationId, avg(no2) as value, currentTimeMillis() as TS group by stationId insert into NO2_Avg_s" />
 	<Query name="NO2_Avg_s2"
 		text="from P2#window.time(20 sec) select statio as stationId2, avg(so2*2) as value2, currentTimeMillis() as TS2 group by statio insert into NO2_Avg_s2" />
+	<Query name="NO2_Good_s" text="from NO2_Avg_s[value &gt;= 0.0 and value &lt; 54.0] select stationId as stationId, 1 as levelNumber, 'NO2_Good' as levelName, currentTimeMillis() as TS insert into PollutantLevel" />
 </CEP-Queries>

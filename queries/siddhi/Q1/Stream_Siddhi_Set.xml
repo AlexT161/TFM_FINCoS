@@ -11,13 +11,6 @@
 					name="stationTs" />
 			</objectarray>
 		</event-type>
-<!--			<event-type name="P2" type="Input">
-			<objectarray>
-				<objectarray-property class="int" name="statio" />
-				<objectarray-property class="double" name="so2" />
-				<objectarray-property class="long" name="tsp" />
-			</objectarray>
-		</event-type> -->
 		<event-type name="NO2_Avg_s" type="Output">
 			<objectarray>
 				<objectarray-property class="int"
@@ -25,15 +18,6 @@
 				<objectarray-property class="double"
 					name="value" />
 				<objectarray-property class="long" name="TS" />
-			</objectarray>
-		</event-type>
-		<event-type name="NO2_Avg_s2" type="Output">
-			<objectarray>
-				<objectarray-property class="int"
-					name="stationId2" />
-				<objectarray-property class="double"
-					name="value2" />
-				<objectarray-property class="long" name="TS2" />
 			</objectarray>
 		</event-type>
 		<event-type name="NO2_Good_s" type="Output">
@@ -48,7 +32,7 @@
 					name="TS" />
 			</objectarray>
 		</event-type>
-		<event-type name="PollutantLevel" type="Input">
+		<event-type name="PollutantLevel" type="Output">
 			<objectarray>
 				<objectarray-property class="int"
 					name="stationId" />
@@ -56,6 +40,15 @@
 					name="levelNumber" />
 				<objectarray-property class="string"
 					name="levelName" />
+				<objectarray-property class="long"
+					name="TS" />
+			</objectarray>
+		</event-type>
+				<event-type name="AirQualityLevel_s" type="Output">
+			<objectarray>
+				<objectarray-property class="int"
+					name="stationId" />
+				<objectarray-property class="int" name="level" />
 				<objectarray-property class="long"
 					name="TS" />
 			</objectarray>

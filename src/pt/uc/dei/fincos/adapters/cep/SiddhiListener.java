@@ -98,7 +98,6 @@ public final class SiddhiListener extends OutputListener{
 			}
         });
         inputHandler = this.runtime.getInputHandler(streamName);
-        System.out.println("IH: "+inputHandler);
 	}
 	
 /*	
@@ -178,7 +177,6 @@ public final class SiddhiListener extends OutputListener{
             eventObj = new Object[fieldCount];
             for (String att: querySchema.keySet()) {
             	eventObj[i] = event.getData(i-1);
-            	System.out.println("eventObj: "+ att +"= "+ eventObj[i]);
             	i++;
             }
         } else { //Input events are POJO

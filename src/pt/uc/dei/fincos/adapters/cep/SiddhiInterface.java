@@ -515,7 +515,12 @@ public final class SiddhiInterface extends CEP_EngineInterface {
             }
             synchronized (this) {
             	for(String name: inputHandlers.keySet()) {
-                    	inputHandlers.get(name).send(objArrEvent);
+            		System.out.println("SiddhiInterface:inputHandler: " + name);
+            		System.out.println("SiddhiInterface:eventTypeName: " + eventTypeName);
+                    //Revisar si el inputHandler debe tener el valor de la query	
+            		if(name == eventTypeName) {
+                    			inputHandlers.get(name).send(objArrEvent);
+                    	}
             }
             }
         } else {

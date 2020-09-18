@@ -82,8 +82,7 @@ public final class EsperListener extends OutputListener implements UpdateListene
      * @param eventFormat           Either MAP or POJO
      */
     public EsperListener(String lsnrID, int rtMode, int rtResolution,
-    	//	Sink sinkInstance, EPServiceProvider epService,
-            Sink sinkInstance, EPRuntime runtime,
+    	    Sink sinkInstance, EPRuntime runtime,
             String queryOutputName, String queryText,
             LinkedHashMap<String, String> querySchema, int eventFormat, Configuration configuration) {
         super(lsnrID, rtMode, rtResolution, sinkInstance);
@@ -98,10 +97,10 @@ public final class EsperListener extends OutputListener implements UpdateListene
     @Override
     public void load() throws Exception {
         try {
-            CompilerArguments args = new CompilerArguments(configuration);	//JAT
-            args.getPath().add(runtime.getRuntimePath());	//JAT
-            EPCompiled compiled = EPCompilerProvider.getCompiler().compile(queryText, args);	//JAT
-            query = runtime.getDeploymentService().deploy(compiled);	//JAT
+            CompilerArguments args = new CompilerArguments(configuration);
+            args.getPath().add(runtime.getRuntimePath());
+            EPCompiled compiled = EPCompilerProvider.getCompiler().compile(queryText, args);
+            query = runtime.getDeploymentService().deploy(compiled);
         } catch (Exception e) {
             throw new Exception("Could not create EPL statement ("
                                 + e.getMessage() + ").");
@@ -110,8 +109,7 @@ public final class EsperListener extends OutputListener implements UpdateListene
 
     @Override
     public void run() {
-//        query.addListener(this);
-    	query.getStatements()[0].addListener(this); //JAT
+    	query.getStatements()[0].addListener(this);
     }
 
 
@@ -162,7 +160,6 @@ public final class EsperListener extends OutputListener implements UpdateListene
     private Object[] toFieldArray(EventBean event, long timestamp) throws Exception {
         Object[] eventObj = null;
         int fieldCount = 0;
-
         if (querySchema != null) { ////Input events are MAPs
             int i = 1;
             /* If response time is being measured, leave a slot for the arrival
@@ -232,17 +229,6 @@ public final class EsperListener extends OutputListener implements UpdateListene
         return sb.toString();
     }
 
-/*    public void disconnect() {
-    	if (query != null) {
-    		query.removeListener(this);
-    		            if (!query.isStopped() && !query.isDestroyed()) {
-    		                query.stop();
-    		            }
-    		            if (!query.isDestroyed()) {
-    		                query.destroy();
-    		            }
-    		}
-    }*/
     @Override
     public void disconnect() {
     	if (query != null) {

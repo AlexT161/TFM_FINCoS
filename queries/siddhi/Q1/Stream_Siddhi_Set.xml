@@ -11,13 +11,13 @@
 					name="stationTs" />
 			</objectarray>
 		</event-type>
-				<event-type name="P2" type="Input">
+<!--			<event-type name="P2" type="Input">
 			<objectarray>
 				<objectarray-property class="int" name="statio" />
 				<objectarray-property class="double" name="so2" />
 				<objectarray-property class="long" name="tsp" />
 			</objectarray>
-		</event-type>
+		</event-type> -->
 		<event-type name="NO2_Avg_s" type="Output">
 			<objectarray>
 				<objectarray-property class="int"

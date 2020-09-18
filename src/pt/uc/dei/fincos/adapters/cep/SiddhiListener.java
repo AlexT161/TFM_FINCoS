@@ -8,7 +8,6 @@ import io.siddhi.core.SiddhiManager;
 import io.siddhi.core.event.Event;
 import io.siddhi.core.query.output.callback.QueryCallback;
 import io.siddhi.core.stream.input.InputHandler;
-import io.siddhi.core.stream.output.StreamCallback;
 import pt.uc.dei.fincos.adapters.OutputListener;
 import pt.uc.dei.fincos.basic.Globals;
 import pt.uc.dei.fincos.sink.Sink;
@@ -75,6 +74,7 @@ public final class SiddhiListener extends OutputListener{
 
 	@Override
     public void run() {
+		this.runtime.start();
     }
     
 	@Override
@@ -83,27 +83,25 @@ public final class SiddhiListener extends OutputListener{
         		"define stream " + streamName + " (" + streamAtts + "); " +
                 "" +
                 "@info(name ='" + queryOutputName + "') " + queryText + ";";
-        System.out.println("SiddhiApp: " + siddhiApp);
-        this.runtime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
-//        String callback = getCallback();
-        System.out.println("Callback: " + queryOutputName);
-        System.out.println("");
-		/*runtime.addCallback(callback, new StreamCallback() {
+        runtime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
+/*        String callback = getCallback();
+			runtime.addCallback(callback, new StreamCallback() {
         	@Override
             public void receive(Event[] events) {
             	SiddhiListener.this.update(events,events);
             }
         });*/
-		runtime.addCallback(queryOutputName, new QueryCallback() {
+		this.runtime.addCallback(queryOutputName, new QueryCallback() {
 			@Override
 			public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
             	SiddhiListener.this.update(inEvents,removeEvents, timestamp);
 			}
         });
-        inputHandler = runtime.getInputHandler(streamName);
-		runtime.start();
+        inputHandler = this.runtime.getInputHandler(streamName);
+        System.out.println("IH: "+inputHandler);
 	}
 	
+/*	
 	private String getCallback() {
 		String[] text = queryText.split(" ");
 		String name = "";
@@ -113,12 +111,12 @@ public final class SiddhiListener extends OutputListener{
 			}
 		}
 		return name;
-	}
+	}*/
 	
 	public InputHandler getInputHandler() {
 		return this.inputHandler;
 	}
-
+	
 	@Override
 	public void disconnect() {
     	if (inputHandler != null) {
@@ -167,7 +165,8 @@ public final class SiddhiListener extends OutputListener{
      * @throws Exception    if the incoming event is of an unknown type
      *
      */
-    private Object[] toFieldArray(Event event, long timestamp) throws Exception {
+    @SuppressWarnings("unused")
+	private Object[] toFieldArray(Event event, long timestamp) throws Exception {
         Object[] eventObj = null;
         int fieldCount = 0;
         if (querySchema != null) { ////Input events are MAPs
@@ -179,6 +178,7 @@ public final class SiddhiListener extends OutputListener{
             eventObj = new Object[fieldCount];
             for (String att: querySchema.keySet()) {
             	eventObj[i] = event.getData(i-1);
+            	System.out.println("eventObj: "+ att +"= "+ eventObj[i]);
             	i++;
             }
         } else { //Input events are POJO

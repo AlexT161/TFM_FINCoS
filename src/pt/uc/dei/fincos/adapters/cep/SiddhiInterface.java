@@ -1,30 +1,23 @@
 package pt.uc.dei.fincos.adapters.cep;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import io.siddhi.core.SiddhiAppRuntime;
 import io.siddhi.core.SiddhiManager;
 import io.siddhi.core.stream.input.InputHandler;
-import io.siddhi.core.stream.output.StreamCallback;
-import io.siddhi.core.util.EventPrinter;
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -53,22 +46,26 @@ public final class SiddhiInterface extends CEP_EngineInterface {
 	private SiddhiManager siddhiManager;
 
     /** Retrieving InputHandler to push events into Siddhi */
+	@SuppressWarnings("unused")
 	private InputHandler inputHandler;
 	
     /** Siddhi runtime. */
 	private SiddhiAppRuntime siddhiAppRuntime;
 	
     /** Indicates if an external clock should be used. */
-    private boolean useExternalTimer;
+    @SuppressWarnings("unused")
+	private boolean useExternalTimer;
 
     /** The name of the stream that carries time information. */
     private String extTSEventType;
 
     /** Index of the external timestamp field. */
-    private int extTSIndex;
+    @SuppressWarnings("unused")
+	private int extTSIndex;
 
     /** External timestamp of the last received event. */
-    private long lastExtTS;
+    @SuppressWarnings("unused")
+	private long lastExtTS;
     
     /** List of queries for which there is no registered listener. */
     private ArrayList<SiddhiAppRuntime> unlistenedQueries;
@@ -368,6 +365,16 @@ public final class SiddhiInterface extends CEP_EngineInterface {
         }
     }
 
+    @Override
+    public synchronized String[] getInputStreamList() throws Exception {
+        return inputStreamList != null ? inputStreamList : new String[0];
+    }
+
+    @Override
+    public synchronized String[] getOutputStreamList() throws Exception {
+        return outputStreamList != null ? outputStreamList : new String[0];
+    }
+    
 	@Override
 	public synchronized boolean load(String[] outputStreams, Sink sinkInstance) throws Exception {
 		// This interface instance has already been loaded
@@ -405,7 +412,7 @@ public final class SiddhiInterface extends CEP_EngineInterface {
                                 "" +
                                 "@info(name = '"+query.getKey()+"') " + query.getValue() + ";";
                         this.siddhiAppRuntime = this.siddhiManager.createSiddhiAppRuntime(siddhiApp);
-                        inputHandler = siddhiAppRuntime.getInputHandler(streamName);
+                        this.inputHandler = siddhiAppRuntime.getInputHandler(streamName);
                         unlistenedQueries.add(siddhiAppRuntime);
                     }
                 }
@@ -463,7 +470,7 @@ public final class SiddhiInterface extends CEP_EngineInterface {
      */
 	private void sendObjectArrayEvent(Event event) throws InterruptedException {
 		String eventTypeName = event.getType().getName();
-        LinkedHashMap<String, String> eventSchema = streamsSchemas.get(eventTypeName);
+		LinkedHashMap<String, String> eventSchema = streamsSchemas.get(eventTypeName);
         if (eventSchema != null) {
             Object[] objArrEvent = null;
             Object[] payload = event.getValues();
@@ -507,8 +514,9 @@ public final class SiddhiInterface extends CEP_EngineInterface {
                 }
             }
             synchronized (this) {
-                    	inputHandlers.get(eventTypeName).send(objArrEvent);
-                    //	Thread.sleep(100);
+            	for(String name: inputHandlers.keySet()) {
+                    	inputHandlers.get(name).send(objArrEvent);
+            }
             }
         } else {
             System.err.println("Unknown event 3 type \"" + eventTypeName + "\"."
@@ -547,30 +555,7 @@ public final class SiddhiInterface extends CEP_EngineInterface {
 
 	@Override
 	public void disconnect2() {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
-
-    @Override
-    public synchronized String[] getInputStreamList() throws Exception {
-        return inputStreamList != null ? inputStreamList : new String[0];
-    }
-
-    @Override
-    public synchronized String[] getOutputStreamList() throws Exception {
-        return outputStreamList != null ? outputStreamList : new String[0];
-    }
-
-    /**
-     * Advances the external clock of the Siddhi instance, if necessary.
-     *
-     * @param extTimestamp  the latest timestamp
-     */
-    /*  private void advanceClock(Long extTimestamp) {
-        if (extTimestamp != lastExtTS) { // Time advanced       	
-        	this.inputHandler.sendEvent(new externalTimestamp(extTimestamp));
-            lastExtTS = extTimestamp;
-        }
-    }*/
     
 }

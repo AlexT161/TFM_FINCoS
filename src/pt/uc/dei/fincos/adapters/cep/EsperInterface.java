@@ -213,15 +213,12 @@ public final class EsperInterface extends CEP_EngineInterface {
         esperConfig.getCompiler().getByteCode().setBusModifierEventType(EventTypeBusModifier.BUS);
         this.esperConfig.configure(new File(esperConfigurationFile));
         if (useExternalTimer) {
-          //esperConfig.getEngineDefaults().getThreading().setInternalTimerEnabled(false);
-            esperConfig.getRuntime().getThreading().setInternalTimerEnabled(false); //JAT
+            esperConfig.getRuntime().getThreading().setInternalTimerEnabled(false);
         }
 
         parseStreamsList(queriesFile, esperConfigurationFile);
-        //this.epService = EPServiceProviderManager.getDefaultProvider(esperConfig);
-        this.runtime = EPRuntimeProvider.getDefaultRuntime(esperConfig); //JAT
-        //this.runtime = epService.getEPRuntime();
-        this.myEvent = runtime.getEventService(); //JAT
+        this.runtime = EPRuntimeProvider.getDefaultRuntime(esperConfig);
+        this.myEvent = runtime.getEventService();
         this.status.setStep(Step.CONNECTED);
         this.unlistenedQueries = new ArrayList<EPStatement>();
 
@@ -964,8 +961,7 @@ public final class EsperInterface extends CEP_EngineInterface {
                 i++;
             }
             synchronized (myEvent) {
-                //myEvent.sendEvent(objArrEvent, eventTypeName);
-                myEvent.sendEventObjectArray(objArrEvent, eventTypeName); //JAT
+                myEvent.sendEventObjectArray(objArrEvent, eventTypeName);
             }
         } else {
             System.err.println("Unknown event 6 type \"" + eventTypeName + "\"."

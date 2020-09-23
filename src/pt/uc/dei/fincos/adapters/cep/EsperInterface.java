@@ -697,6 +697,7 @@ public final class EsperInterface extends CEP_EngineInterface {
     private void sendObjectArrayEvent(Event event) {
         String eventTypeName = event.getType().getName();
         LinkedHashMap<String, String> eventSchema = streamsSchemas.get(eventTypeName);
+
         if (eventSchema != null) {
             Object[] objArrEvent = null;
             Object[] payload = event.getValues();
@@ -912,7 +913,6 @@ public final class EsperInterface extends CEP_EngineInterface {
     private void sendObjectArrayEvent(CSV_Event event) {
         String eventTypeName = event.getType();
         LinkedHashMap<String, String> eventSchema = streamsSchemas.get(eventTypeName);
-
         if (eventSchema != null) {
             String[] payload = event.getPayload();
             int fieldCount = this.rtMode != Globals.NO_RT

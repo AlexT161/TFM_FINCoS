@@ -394,12 +394,14 @@ public final class SiddhiInterface extends CEP_EngineInterface {
                     if (hasListener(query.getKey(), outputStreams)) {
                     	String streamName = getStreamName(query.getValue());
                         String streamAtt = getAttributes(streamName);
+                        String callback = getCallback(query.getValue());
+                        String outputStreamAtt = getAttributes(callback);
                     	outputListeners[i] = new SiddhiListener("lsnr-0" + (i + 1),
                                 rtMode, rtResolution, sinkInstance, this.siddhiManager,
                                 query.getKey(), query.getValue(),
-                                this.streamsSchemas.get(query.getKey()), streamName, streamAtt, this.eventFormat);
+                                this.streamsSchemas.get(query.getKey()), streamName, streamAtt, outputStreamAtt, this.eventFormat);
                         outputListeners[i].load();
-                        inputHandlers.put(streamName,((SiddhiListener) outputListeners[i]).getInputHandler());
+                        inputHandlers.put(query.getKey(),((SiddhiListener) outputListeners[i]).getInputHandler());
                         i++;
                     } else {
                     	String streamName = getStreamName(query.getValue());
@@ -430,6 +432,17 @@ public final class SiddhiInterface extends CEP_EngineInterface {
         }
 	}
 
+	private String getCallback(String query) {
+		String[] text = query.split(" ");
+		String name = "";
+		for (int i=0; i < text.length; i++) {
+			if(text[i].equals("into")) {
+				name = text[i+1];
+			}
+		}
+		return name;
+	}
+	
 	private String getAttributes(String streamName) {
 		String att = "";
 		for(String i : streamsSchemas.get(streamName).keySet()) {
@@ -471,7 +484,7 @@ public final class SiddhiInterface extends CEP_EngineInterface {
 	private void sendObjectArrayEvent(Event event) throws InterruptedException {
 		String eventTypeName = event.getType().getName();
 		LinkedHashMap<String, String> eventSchema = streamsSchemas.get(eventTypeName);
-        if (eventSchema != null) {
+		if (eventSchema != null) {
             Object[] objArrEvent = null;
             Object[] payload = event.getValues();
 
@@ -515,13 +528,8 @@ public final class SiddhiInterface extends CEP_EngineInterface {
             }
             synchronized (this) {
             	for(String name: inputHandlers.keySet()) {
-            		System.out.println("SiddhiInterface:inputHandler: " + name);
-            		System.out.println("SiddhiInterface:eventTypeName: " + eventTypeName);
-                    //Revisar si el inputHandler debe tener el valor de la query	
-            		if(name == eventTypeName) {
-                    			inputHandlers.get(name).send(objArrEvent);
-                    	}
-            }
+            		inputHandlers.get(name).send(objArrEvent);
+                    }
             }
         } else {
             System.err.println("Unknown event 3 type \"" + eventTypeName + "\"."

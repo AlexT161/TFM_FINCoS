@@ -2,7 +2,7 @@
 <siddhi-configuration
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<common>
-		<event-type name="AirMeasurement" type="Input">
+		<event-type name="AirMeasurement_s" type="Input">
 			<objectarray>
 				<objectarray-property class="int"
 					name="stationId" />
@@ -32,7 +32,68 @@
 					name="TS" />
 			</objectarray>
 		</event-type>
-		<event-type name="PollutantLevel" type="Output">
+		<event-type name="NO2_Moderate_s" type="Output">
+			<objectarray>
+				<objectarray-property class="int"
+					name="stationId" />
+				<objectarray-property class="int"
+					name="levelNumber" />
+				<objectarray-property class="string"
+					name="levelName" />
+				<objectarray-property class="long"
+					name="TS" />
+			</objectarray>
+		</event-type>
+		<event-type name="NO2_Unhealthy_s" type="Output">
+			<objectarray>
+				<objectarray-property class="int"
+					name="stationId" />
+				<objectarray-property class="int"
+					name="levelNumber" />
+				<objectarray-property class="string"
+					name="levelName" />
+				<objectarray-property class="long"
+					name="TS" />
+			</objectarray>
+		</event-type>
+		<event-type name="NO2_UnhealthyForSensitiveGroups_s"
+			type="Output">
+			<objectarray>
+				<objectarray-property class="int"
+					name="stationId" />
+				<objectarray-property class="int"
+					name="levelNumber" />
+				<objectarray-property class="string"
+					name="levelName" />
+				<objectarray-property class="long"
+					name="TS" />
+			</objectarray>
+		</event-type>
+		<event-type name="NO2_Hazardous_s" type="Output">
+			<objectarray>
+				<objectarray-property class="int"
+					name="stationId" />
+				<objectarray-property class="int"
+					name="levelNumber" />
+				<objectarray-property class="string"
+					name="levelName" />
+				<objectarray-property class="long"
+					name="TS" />
+			</objectarray>
+		</event-type>
+		<event-type name="NO2_VeryUnhealthy_s" type="Output">
+			<objectarray>
+				<objectarray-property class="int"
+					name="stationId" />
+				<objectarray-property class="int"
+					name="levelNumber" />
+				<objectarray-property class="string"
+					name="levelName" />
+				<objectarray-property class="long"
+					name="TS" />
+			</objectarray>
+		</event-type>
+		<event-type name="PollutantLevel_s" type="Input">
 			<objectarray>
 				<objectarray-property class="int"
 					name="stationId" />

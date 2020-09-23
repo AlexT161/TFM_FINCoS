@@ -32,6 +32,9 @@ public final class SiddhiListener extends OutputListener{
     /** Attributes of the input stream. */
     private String streamAtts;
     
+    /** Attributes of the output stream. */
+    private String outputStreamAtt;
+    
     /** The schema of the output produced by the query. */
     LinkedHashMap<String, String> querySchema;
 
@@ -40,13 +43,14 @@ public final class SiddhiListener extends OutputListener{
 	
 	public SiddhiListener(String lsnrID, int rtMode, int rtResolution, Sink sinkInstance,
 			SiddhiManager siddhiManager, String queryOutputName, String queryText,
-            LinkedHashMap<String, String> querySchema, String streamName, String streamAtt, int eventFormat) {
+            LinkedHashMap<String, String> querySchema, String streamName, String streamAtt, String outputStreamAtt, int eventFormat) {
 		super(lsnrID, rtMode, rtResolution, sinkInstance);
         this.queryText = queryText;
         this.querySchema = querySchema;
         this.queryOutputName = queryOutputName;
         this.streamName = streamName;
         this.streamAtts = streamAtt;
+        this.outputStreamAtt = outputStreamAtt;
         this.setEventFormat(eventFormat);
         this.siddhiManager  = siddhiManager;
 	}
@@ -57,10 +61,10 @@ public final class SiddhiListener extends OutputListener{
      * @param eventFormat  the event format (either POJO or Map)
      */
     private void setEventFormat(int eventFormat) {
-        if (eventFormat == EsperInterface.POJO_FORMAT) {
+        if (eventFormat == SiddhiInterface.POJO_FORMAT) {
             this.eventFormat = eventFormat;
         } else {
-            this.eventFormat = EsperInterface.MAP_FORMAT;
+            this.eventFormat = SiddhiInterface.MAP_FORMAT;
         }		
 	}
     
@@ -74,33 +78,32 @@ public final class SiddhiListener extends OutputListener{
 
 	@Override
     public void run() {
-		this.runtime.start();
+		runtime.start();
     }
     
 	@Override
 	public void load() throws Exception {
-        String siddhiApp = "" +
+		String siddhiApp = "" +
         		"define stream " + streamName + " (" + streamAtts + "); " +
                 "" +
+        		"define stream " + queryOutputName + " (" + outputStreamAtt + "); " +
+                "" +
                 "@info(name ='" + queryOutputName + "') " + queryText + ";";
+        System.out.println("SiddhiListener:SiddhiApp = " + siddhiApp);
         runtime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
-/*        String callback = getCallback();
-			runtime.addCallback(callback, new StreamCallback() {
-        	@Override
-            public void receive(Event[] events) {
-            	SiddhiListener.this.update(events,events);
-            }
-        });*/
-		this.runtime.addCallback(queryOutputName, new QueryCallback() {
+		runtime.addCallback(queryOutputName, new QueryCallback() {
 			@Override
 			public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
             	SiddhiListener.this.update(inEvents,removeEvents, timestamp);
 			}
         });
-        inputHandler = this.runtime.getInputHandler(streamName);
+        inputHandler = runtime.getInputHandler(streamName);
 	}
 	
-/*	
+	/*	
+	 * In case of use StreamCallback()
+	 */
+	@SuppressWarnings("unused")
 	private String getCallback() {
 		String[] text = queryText.split(" ");
 		String name = "";
@@ -110,7 +113,7 @@ public final class SiddhiListener extends OutputListener{
 			}
 		}
 		return name;
-	}*/
+	}
 	
 	public InputHandler getInputHandler() {
 		return this.inputHandler;
@@ -128,7 +131,6 @@ public final class SiddhiListener extends OutputListener{
         long timestamp2 = -1;
         if (this.rtMode == Globals.ADAPTER_RT) {
             if (this.rtResolution == Globals.MILLIS_RT) {
-//            	timestamp2 = timestamp-1;
                 timestamp2 = System.currentTimeMillis();
             } else if (this.rtResolution == Globals.NANO_RT) {
                 timestamp2 = System.nanoTime();
@@ -152,7 +154,7 @@ public final class SiddhiListener extends OutputListener{
      * @throws Exception    if the incoming event is of an unknown type
      */
     private void processIncomingEvent(Event event, long timestamp) throws Exception {
-        onOutput(toFieldArray(event, timestamp));
+    	onOutput(toFieldArray(event, timestamp));
     }
     
     /**
@@ -199,6 +201,7 @@ public final class SiddhiListener extends OutputListener{
         if (eventObj != null) {
             // First element is the stream name
             eventObj[0] = queryOutputName;
+            System.out.println("SiddhiListener:Output: "+queryOutputName);
             // Last element is the arrival time
             if (rtMode == Globals.ADAPTER_RT) {
                 eventObj[fieldCount - 1] = timestamp;
@@ -214,7 +217,8 @@ public final class SiddhiListener extends OutputListener{
     * @param event The event in Siddhi's native representation
     * @return      The event in CSV representation
     */
-   public String toCSV(Event event) {
+   @SuppressWarnings("unused")
+public String toCSV(Event event) {
        StringBuilder sb = new StringBuilder();
        sb.append(queryOutputName);
        if (eventFormat == SiddhiInterface.MAP_FORMAT) { // Input events are MAPs

@@ -93,7 +93,7 @@
 					name="TS" />
 			</objectarray>
 		</event-type>
-		<event-type name="PollutantLevel_s" type="Input">
+		<event-type name="PollutantLevel" type="Input">
 			<objectarray>
 				<objectarray-property class="int"
 					name="stationId" />

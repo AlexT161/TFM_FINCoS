@@ -89,7 +89,6 @@ public final class SiddhiListener extends OutputListener{
         		"define stream " + queryOutputName + " (" + outputStreamAtt + "); " +
                 "" +
                 "@info(name ='" + queryOutputName + "') " + queryText + ";";
-        System.out.println("SiddhiListener:SiddhiApp = " + siddhiApp);
         runtime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
 		runtime.addCallback(queryOutputName, new QueryCallback() {
 			@Override
@@ -201,7 +200,6 @@ public final class SiddhiListener extends OutputListener{
         if (eventObj != null) {
             // First element is the stream name
             eventObj[0] = queryOutputName;
-            System.out.println("SiddhiListener:Output: "+queryOutputName);
             // Last element is the arrival time
             if (rtMode == Globals.ADAPTER_RT) {
                 eventObj[fieldCount - 1] = timestamp;
